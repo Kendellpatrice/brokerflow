@@ -55,11 +55,15 @@ export default function ApplicantsPage() {
             </div>
           </div>
           <nav className="flex flex-col gap-1">
+            <Link href="/" className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
+              <span className="material-symbols-outlined text-[20px]">info</span>
+              <span className="text-sm font-medium">Introduction</span>
+            </Link>
             <div className="flex items-center gap-3 rounded-lg bg-primary px-4 py-3 text-white shadow-sm">
               <span className="material-symbols-outlined text-[20px]">group</span>
               <span className="text-sm font-medium">Applicants</span>
             </div>
-            <Link href="/" className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
+            <Link href="/personal-details" className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
               <span className="material-symbols-outlined text-[20px]">person</span>
               <span className="text-sm font-semibold">Personal Details</span>
             </Link>
@@ -222,11 +226,11 @@ export default function ApplicantsPage() {
 
             {/* Navigation Buttons */}
             <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
-              <button className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5">
+              <Link href="/" className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5">
                 <span className="material-symbols-outlined text-[20px]">arrow_back</span>
-                Save &amp; Exit
-              </button>
-              <Link href="/" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
+                Back
+              </Link>
+              <Link href="/personal-details" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
                 Next Step
                 <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
               </Link>

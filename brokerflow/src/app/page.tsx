@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-export default function Home() {
+export default function IntroductionPage() {
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
       {/* Header / Navigation */}
@@ -55,14 +55,18 @@ export default function Home() {
             </div>
           </div>
           <nav className="flex flex-col gap-1">
+            <div className="flex items-center gap-3 rounded-lg bg-primary px-4 py-3 text-white shadow-sm">
+              <span className="material-symbols-outlined text-[20px]">info</span>
+              <span className="text-sm font-semibold">Introduction</span>
+            </div>
             <Link href="/applicants" className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
               <span className="material-symbols-outlined text-[20px]">group</span>
               <span className="text-sm font-medium">Applicants</span>
             </Link>
-            <div className="flex items-center gap-3 rounded-lg bg-primary px-4 py-3 text-white shadow-sm">
+            <Link href="/personal-details" className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
               <span className="material-symbols-outlined text-[20px]">person</span>
               <span className="text-sm font-semibold">Personal Details</span>
-            </div>
+            </Link>
             <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
               <span className="material-symbols-outlined text-[20px]">work</span>
               <span className="text-sm font-medium">Employment &amp; Income</span>
@@ -83,13 +87,13 @@ export default function Home() {
           <div className="mt-auto border-t border-primary/5 pt-6">
             <div className="mb-2 flex justify-between items-end">
               <span className="text-xs font-bold text-primary dark:text-slate-300">Form Progress</span>
-              <span className="text-xs font-bold text-primary dark:text-slate-300">33%</span>
+              <span className="text-xs font-bold text-primary dark:text-slate-300">0%</span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-              <div className="h-full w-1/3 bg-primary"></div>
+              <div className="h-full w-0 bg-primary text-white"></div>
             </div>
             <p className="mt-4 text-[11px] italic leading-relaxed text-slate-500">
-              Your progress is automatically saved as you go.
+              Begin your fact find to start saving progress.
             </p>
           </div>
         </aside>
@@ -99,228 +103,68 @@ export default function Home() {
           <div className="mx-auto max-w-4xl">
             <header className="mb-10">
               <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
-                Step 2 of 6
+                Welcome to uBroker
               </span>
               <h1 className="mb-4 text-4xl font-extrabold text-primary dark:text-slate-100">
-                Personal Details
+                Digital Fact Find
               </h1>
-              <p className="text-slate-600 dark:text-slate-400">
-                Please provide the primary contact and identity information for all applicants
-                associated with this mortgage application.
+              <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-3xl">
+                Hi James &amp; Sarah, this digital fact find helps us understand your current financial situation, goals, and requirements so we can find the best mortgage solution for you.
               </p>
             </header>
-
-            {/* Applicant 1 Section */}
-            <div className="mb-12">
-              <div className="mb-6 flex items-center gap-2 border-b border-primary/10 pb-2">
-                <span className="material-symbols-outlined text-primary">looks_one</span>
-                <h2 className="text-xl font-bold text-primary dark:text-slate-100">Applicant 1</h2>
-              </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    First Name
-                  </label>
-                  <input
-                    className="rounded border-slate-300 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
-                    placeholder="e.g. James"
-                    type="text"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Last Name
-                  </label>
-                  <input
-                    className="rounded border-slate-300 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
-                    placeholder="e.g. Smith"
-                    type="text"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Email Address
-                  </label>
-                  <input
-                    className="rounded border-slate-300 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
-                    placeholder="james.smith@example.com"
-                    type="email"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Phone Number
-                  </label>
-                  <input
-                    className="rounded border-slate-300 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
-                    placeholder="0400 000 000"
-                    type="tel"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Marital Status
-                  </label>
-                  <select className="rounded border-slate-300 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800">
-                    <option>Select...</option>
-                    <option>Single</option>
-                    <option>Married</option>
-                    <option>De Facto</option>
-                    <option>Divorced</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Residency Status
-                  </label>
-                  <select className="rounded border-slate-300 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800">
-                    <option>Select...</option>
-                    <option>Citizen</option>
-                    <option>Permanent Resident</option>
-                    <option>Visa Holder</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Applicant 2 Section */}
-            <div className="mb-12 rounded-xl border-2 border-dashed border-primary/20 bg-primary/5 p-8">
-              <div className="mb-6 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">looks_two</span>
-                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Applicant 2</h2>
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    className="rounded text-primary focus:ring-primary"
-                    id="no-applicant-2"
-                    type="checkbox"
-                  />
-                  <label
-                    className="text-sm text-slate-600 dark:text-slate-400"
-                    htmlFor="no-applicant-2"
-                  >
-                    No Second Applicant
-                  </label>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-6 opacity-80 md:grid-cols-2">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    First Name
-                  </label>
-                  <input
-                    className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800"
-                    placeholder="e.g. Sarah"
-                    type="text"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Last Name
-                  </label>
-                  <input
-                    className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800"
-                    placeholder="e.g. Smith"
-                    type="text"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Email Address
-                  </label>
-                  <input
-                    className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800"
-                    type="email"
-                  />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Relationship to Applicant 1
-                  </label>
-                  <select className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800">
-                    <option>Spouse</option>
-                    <option>Partner</option>
-                    <option>Sibling</option>
-                    <option>Friend / Investor</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Current Address */}
-            <div className="mb-12">
-              <div className="mb-6 flex items-center gap-2 border-b border-primary/10 pb-2">
-                <span className="material-symbols-outlined text-primary">home_pin</span>
-                <h2 className="text-xl font-bold text-primary dark:text-slate-100">
-                  Current Residential Address
-                </h2>
-              </div>
-              <div className="grid grid-cols-1 gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                    Address Finder
-                  </label>
-                  <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-                      search
-                    </span>
-                    <input
-                      className="w-full rounded border-slate-300 pl-10 focus:border-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
-                      placeholder="Start typing your address..."
-                      type="text"
-                    />
+            
+            <div className="rounded-2xl border-2 border-primary/10 bg-white p-8 dark:bg-slate-900 dark:border-slate-800 shadow-sm mb-12">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">What you will need</h2>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="flex items-start gap-4">
+                  <div className="flex size-10 items-center justify-center shrink-0 rounded-full bg-primary/10 text-primary">
+                    <span className="material-symbols-outlined">badge</span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white">Identification</h3>
+                    <p className="text-sm text-slate-500">A valid driver&apos;s license or passport for all applicants.</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                  <div className="col-span-2 flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Suburb
-                    </label>
-                    <input
-                      className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800"
-                      type="text"
-                    />
+                <div className="flex items-start gap-4">
+                  <div className="flex size-10 items-center justify-center shrink-0 rounded-full bg-primary/10 text-primary">
+                    <span className="material-symbols-outlined">receipt_long</span>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      State
-                    </label>
-                    <select className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800">
-                      <option>NSW</option>
-                      <option>VIC</option>
-                      <option>QLD</option>
-                      <option>WA</option>
-                      <option>SA</option>
-                      <option>TAS</option>
-                      <option>ACT</option>
-                      <option>NT</option>
-                    </select>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white">Income Evidence</h3>
+                    <p className="text-sm text-slate-500">Most recent payslips or tax returns if self-employed.</p>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Postcode
-                    </label>
-                    <input
-                      className="rounded border-slate-300 dark:border-slate-700 dark:bg-slate-800"
-                      type="text"
-                    />
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="flex size-10 items-center justify-center shrink-0 rounded-full bg-primary/10 text-primary">
+                    <span className="material-symbols-outlined">account_balance</span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white">Asset Details</h3>
+                    <p className="text-sm text-slate-500">Estimated value of current properties, vehicles, and savings.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="flex size-10 items-center justify-center shrink-0 rounded-full bg-primary/10 text-primary">
+                    <span className="material-symbols-outlined">credit_score</span>
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-slate-900 dark:text-white">Liability Information</h3>
+                    <p className="text-sm text-slate-500">Current balances and repayments for loans and credit cards.</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Navigation Buttons */}
-            <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
-              <Link href="/applicants" className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5">
-                <span className="material-symbols-outlined text-[20px]">arrow_back</span>
-                Back
+            <div className="flex flex-col items-center justify-center rounded-2xl bg-primary/5 py-12 px-6 text-center border border-dashed border-primary/20">
+              <h3 className="text-2xl font-bold text-primary mb-3">Ready to get started?</h3>
+              <p className="text-slate-600 mb-8 max-w-md">It should take approximately 10-15 minutes to complete. You can always save your progress and return later.</p>
+              
+              <Link href="/applicants" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-4 font-bold text-white shadow-xl transition-all hover:bg-primary/90 hover:scale-[1.02]">
+                Start Fact Find
+                <span className="material-symbols-outlined">arrow_forward</span>
               </Link>
-              <button className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
-                Next Step
-                <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-              </button>
             </div>
+
           </div>
         </section>
       </main>
