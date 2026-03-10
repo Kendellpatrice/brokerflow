@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1a2b3d",
+                        "background-light": "#f6f7f7",
+                        "background-dark": "#15191d",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<title>Mortgage Broker CRM - Digital Fact Find</title>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary dark:text-slate-100">
+<div class="size-6 flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">account_balance</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">Mortgage Broker CRM</h2>
+</div>
+<label class="flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-slate-500 flex border-none bg-slate-100 dark:bg-slate-800 items-center justify-center pl-4 rounded-l-lg">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-0 border-none bg-slate-100 dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-500 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal" placeholder="Search" value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<div class="flex gap-2">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="User profile avatar circle" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCZsfroalevGnBqvezcljn3eJWvfuu55jWN4OBQyEoJDCdCGZg3-eXkRLLtfLVRUkQz0b-67g8kCy3B9cvLbt5IUPejGK1FMARis3rzq8SyVAn8iVrTqCP8w1EeTefL0ckwlLdbfCEy3JHaAPNm6_uo_AL-l_J3KZ2pXQ61Ai9ZbSRsjZ2hwOVU67AMRWHXhcQdOSAt9U1MchAtEEsy-WonHRae3ofaO4yFfaBbVzweRfHuaOD4mbL76UQG4yUSdNZu93r66O_K4eCP");'></div>
+</div>
+</header>
+<div class="flex flex-1 px-4 md:px-10 lg:px-20 py-8 gap-8">
+<aside class="hidden lg:flex w-72 flex-col gap-6 bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 h-fit sticky top-8">
+<div class="flex flex-col gap-1">
+<h1 class="text-slate-900 dark:text-white text-lg font-bold">Digital Fact Find</h1>
+<p class="text-slate-500 text-xs font-medium uppercase tracking-wider">Case #88291</p>
+</div>
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 px-3 py-2 text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-xl">info</span>
+<p class="text-sm font-semibold">Introduction</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary dark:bg-primary/20 dark:text-slate-100">
+<span class="material-symbols-outlined text-xl">group</span>
+<p class="text-sm font-bold">Applicants</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-400 cursor-not-allowed">
+<span class="material-symbols-outlined text-xl">person</span>
+<p class="text-sm font-semibold">Personal Details</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-400 cursor-not-allowed">
+<span class="material-symbols-outlined text-xl">account_balance_wallet</span>
+<p class="text-sm font-semibold">Income &amp; Expenses</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 text-slate-400 cursor-not-allowed">
+<span class="material-symbols-outlined text-xl">domain</span>
+<p class="text-sm font-semibold">Assets &amp; Liabilities</p>
+</div>
+</div>
+<div class="mt-4 pt-6 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-4">
+<div class="flex justify-between items-end">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-bold">Overall Progress</p>
+<p class="text-primary text-sm font-bold">40%</p>
+</div>
+<div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 40%;"></div>
+</div>
+<p class="text-slate-500 text-xs leading-normal">Step 2 of 5: Applicants</p>
+</div>
+<button class="w-full mt-4 flex items-center justify-center rounded-lg h-11 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all">
+<span>Save Progress</span>
+</button>
+</aside>
+<main class="flex-1 max-w-4xl">
+<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-2">
+<h2 class="text-slate-900 dark:text-white text-3xl font-black tracking-tight">Applicants</h2>
+<p class="text-slate-500 text-lg">Add all individuals or entities involved in this mortgage application. This helps us tailor the rest of the fact find.</p>
+</div>
+<div class="flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-white text-xl font-bold">Current Applicants</h3>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-primary text-primary font-bold text-sm hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-lg">person_add</span>
+<span>Add Another Applicant</span>
+</button>
+</div>
+<div class="grid gap-4">
+<div class="flex items-center justify-between p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center gap-4">
+<div class="size-12 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">person</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">James Wilson</h4>
+<p class="text-sm text-slate-500">Primary Applicant • Main Borrower</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center size-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="flex items-center justify-center size-9 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-300 cursor-not-allowed" title="Primary applicant cannot be removed">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between p-6 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm border-l-4 border-l-primary/50">
+<div class="flex items-center gap-4">
+<div class="size-12 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-500">
+<span class="material-symbols-outlined text-2xl">person_outline</span>
+</div>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white">Sarah Wilson</h4>
+<p class="text-sm text-slate-500">Secondary Applicant • Spouse/Partner</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center justify-center size-9 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
+<span class="material-symbols-outlined">edit</span>
+</button>
+<button class="flex items-center justify-center size-9 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-red-500">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-primary/5 dark:bg-slate-800/50 p-8 rounded-2xl border-2 border-dashed border-primary/20 flex flex-col items-center gap-6">
+<div class="text-center space-y-2">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Adding a new applicant?</h3>
+<p class="text-slate-500 max-w-md">Selecting the correct relationship type ensures we collect the right documentation and financial data for everyone involved.</p>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+<label class="relative flex flex-col p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary cursor-pointer transition-all">
+<input class="absolute top-4 right-4 text-primary focus:ring-primary h-4 w-4" name="relationship" type="radio"/>
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">favorite</span>
+<span class="font-bold text-slate-900 dark:text-white text-sm">Spouse / Partner</span>
+<span class="text-xs text-slate-500">Jointly responsible</span>
+</label>
+<label class="relative flex flex-col p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary cursor-pointer transition-all">
+<input class="absolute top-4 right-4 text-primary focus:ring-primary h-4 w-4" name="relationship" type="radio"/>
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">business_center</span>
+<span class="font-bold text-slate-900 dark:text-white text-sm">Business Partner</span>
+<span class="text-xs text-slate-500">Commercial interest</span>
+</label>
+<label class="relative flex flex-col p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-primary cursor-pointer transition-all">
+<input class="absolute top-4 right-4 text-primary focus:ring-primary h-4 w-4" name="relationship" type="radio"/>
+<span class="material-symbols-outlined text-primary mb-2 text-3xl">group_add</span>
+<span class="font-bold text-slate-900 dark:text-white text-sm">Co-Borrower</span>
+<span class="text-xs text-slate-500">Friend or relative</span>
+</label>
+</div>
+<div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-bold text-slate-700 dark:text-slate-300">First Name</label>
+<input class="form-input rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary w-full" placeholder="Legal first name" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-sm font-bold text-slate-700 dark:text-slate-300">Last Name</label>
+<input class="form-input rounded-lg border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 focus:border-primary focus:ring-1 focus:ring-primary w-full" placeholder="Legal last name" type="text"/>
+</div>
+</div>
+<div class="flex gap-3 w-full justify-end pt-4">
+<button class="px-6 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Cancel</button>
+<button class="px-8 py-2.5 rounded-lg bg-primary text-white font-bold hover:bg-primary/90 transition-shadow shadow-lg shadow-primary/20">Confirm Applicant</button>
+</div>
+</div>
+<div class="flex items-center justify-between py-10 mt-4 border-t border-slate-200 dark:border-slate-800">
+<button class="flex items-center gap-2 px-6 py-3 rounded-lg text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">arrow_back</span>
+<span>Back</span>
+</button>
+<button class="flex items-center gap-2 px-8 py-3 rounded-lg bg-primary text-white font-bold text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/10">
+<span>Continue to Personal Details</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</div>
+</div>
+</body></html>
