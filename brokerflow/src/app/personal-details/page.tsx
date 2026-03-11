@@ -59,12 +59,13 @@ export default function PersonalDetailsPage() {
 
             {/* Applicant 1 Section */}
             <div className="mb-12">
-              <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                <span className="material-symbols-outlined text-primary">looks_one</span>
-                <h2 className="text-xl font-bold text-primary dark:text-slate-100">Applicant Details</h2>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
+                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
+                  <span className="material-symbols-outlined text-primary">looks_one</span>
+                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Applicant Details</h2>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Title</label>
                   <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
@@ -159,12 +160,14 @@ export default function PersonalDetailsPage() {
                   <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
                 </div>
               </div>
-
-              <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                <span className="material-symbols-outlined text-primary">contact_phone</span>
-                <h3 className="text-lg font-bold text-primary dark:text-slate-100">Contact Details</h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
+                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
+                  <span className="material-symbols-outlined text-primary">contact_phone</span>
+                  <h3 className="text-lg font-bold text-primary dark:text-slate-100">Contact Details</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
                   <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="james.smith@example.com" type="email"/>
@@ -184,12 +187,14 @@ export default function PersonalDetailsPage() {
                   <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel"/>
                 </div>
               </div>
-
-              <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                <span className="material-symbols-outlined text-primary">group</span>
-                <h3 className="text-lg font-bold text-primary dark:text-slate-100">Nearest Relative <span className="text-sm font-normal italic text-slate-500">*Not living with you</span></h3>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
+                  <span className="material-symbols-outlined text-primary">group</span>
+                  <h3 className="text-lg font-bold text-primary dark:text-slate-100">Nearest Relative <span className="text-sm font-normal italic text-slate-500">*Not living with you</span></h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Name</label>
                   <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
@@ -207,16 +212,18 @@ export default function PersonalDetailsPage() {
                   <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
                 </div>
               </div>
+              </div>
             </div>
 
             {/* Address Details */}
             <div className="mb-12">
-              <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                <span className="material-symbols-outlined text-primary">home_pin</span>
-                <h2 className="text-xl font-bold text-primary dark:text-slate-100">Address Details</h2>
-              </div>
-              
-              <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200">Current Residential Address</h3>
+              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
+                  <span className="material-symbols-outlined text-primary">home_pin</span>
+                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Address Details</h2>
+                </div>
+                
+                <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200">Current Residential Address</h3>
               <div className="grid grid-cols-1 gap-6 mb-8">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Address Finder</label>
@@ -267,7 +274,8 @@ export default function PersonalDetailsPage() {
                 </div>
               </div>
 
-              <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200 mt-10">Previous Address <span className="text-sm font-normal italic text-slate-500">(if at current address &lt; 3 years)</span></h3>
+              <div className="border-t border-slate-200 dark:border-slate-700 my-8"></div>
+              <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200">Previous Address <span className="text-sm font-normal italic text-slate-500">(if at current address &lt; 3 years)</span></h3>
               <div className="grid grid-cols-1 gap-6">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Previous Address</label>
@@ -284,6 +292,7 @@ export default function PersonalDetailsPage() {
                   </div>
                 </div>
               </div>
+              </div>
             </div>
 
             {/* Navigation Buttons */}
@@ -292,10 +301,24 @@ export default function PersonalDetailsPage() {
                 <span className="material-symbols-outlined text-[20px]">arrow_back</span>
                 Back
               </Link>
-              <button className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
-                Next Step
-                <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-              </button>
+              <div className="flex items-center gap-6">
+                <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
+                <button className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
+                  Next Step
+                  <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Need Help Box */}
+            <div className="mt-8 bg-slate-100 border border-slate-200 rounded-xl p-6 dark:bg-slate-800/50 dark:border-slate-700">
+              <div className="flex gap-4">
+                <span className="material-symbols-outlined text-primary mt-0.5">info</span>
+                <div>
+                  <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Need help?</h3>
+                  <p className="text-slate-600 dark:text-slate-400 text-sm">If you&apos;re unsure about any details, you can save your progress and return later. Your mortgage broker will also review all information during your consultation.</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
