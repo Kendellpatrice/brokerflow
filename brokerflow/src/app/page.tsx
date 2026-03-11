@@ -1,3 +1,4 @@
+import { SidebarNav } from "@/components/SidebarNav";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -39,64 +40,7 @@ export default function IntroductionPage() {
       </header>
 
       <main className="flex w-full flex-grow flex-col md:flex-row">
-        {/* Sidebar Stepper */}
-        <aside className="flex w-full flex-col gap-6 border-r border-primary/10 bg-white p-6 dark:bg-background-dark/50 md:w-80">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-white">
-                <span className="material-symbols-outlined">description</span>
-              </div>
-              <div>
-                <h1 className="text-base font-bold text-primary dark:text-slate-100">
-                  Fact Find Form
-                </h1>
-                <p className="text-xs text-slate-500">Ref: UB-2024-8832</p>
-              </div>
-            </div>
-          </div>
-          <nav className="flex flex-col gap-1">
-            <div className="flex items-center gap-3 rounded-lg bg-primary px-4 py-3 text-white shadow-sm">
-              <span className="material-symbols-outlined text-[20px]">info</span>
-              <span className="text-sm font-semibold">Introduction</span>
-            </div>
-            <Link href="/applicants" className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
-              <span className="material-symbols-outlined text-[20px]">group</span>
-              <span className="text-sm font-medium">Applicants</span>
-            </Link>
-            <Link href="/personal-details" className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
-              <span className="material-symbols-outlined text-[20px]">person</span>
-              <span className="text-sm font-semibold">Personal Details</span>
-            </Link>
-            <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
-              <span className="material-symbols-outlined text-[20px]">work</span>
-              <span className="text-sm font-medium">Employment &amp; Income</span>
-            </div>
-            <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
-              <span className="material-symbols-outlined text-[20px]">account_balance</span>
-              <span className="text-sm font-medium">Assets</span>
-            </div>
-            <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
-              <span className="material-symbols-outlined text-[20px]">credit_card</span>
-              <span className="text-sm font-medium">Liabilities</span>
-            </div>
-            <div className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400">
-              <span className="material-symbols-outlined text-[20px]">account_balance_wallet</span>
-              <span className="text-sm font-medium">Living Expenses</span>
-            </div>
-          </nav>
-          <div className="mt-auto border-t border-primary/5 pt-6">
-            <div className="mb-2 flex justify-between items-end">
-              <span className="text-xs font-bold text-primary dark:text-slate-300">Form Progress</span>
-              <span className="text-xs font-bold text-primary dark:text-slate-300">0%</span>
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-              <div className="h-full w-0 bg-primary text-white"></div>
-            </div>
-            <p className="mt-4 text-[11px] italic leading-relaxed text-slate-500">
-              Begin your fact find to start saving progress.
-            </p>
-          </div>
-        </aside>
+        <SidebarNav />
 
         {/* Form Content */}
         <section className="flex-1 overflow-y-auto bg-background-light p-6 dark:bg-background-dark md:p-12">
