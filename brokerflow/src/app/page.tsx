@@ -38,7 +38,7 @@ export default function IntroductionPage() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[1440px] flex-grow flex-col md:flex-row">
+      <main className="flex w-full flex-grow flex-col md:flex-row">
         {/* Sidebar Stepper */}
         <aside className="flex w-full flex-col gap-6 border-r border-primary/10 bg-white p-6 dark:bg-background-dark/50 md:w-80">
           <div className="flex flex-col gap-2">
