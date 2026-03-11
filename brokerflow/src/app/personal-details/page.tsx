@@ -1,7 +1,6 @@
+/* eslint-disable @next/next/no-img-element */
 import { SidebarNav } from "@/components/SidebarNav";
-import Link from "next/link";
-import Image from "next/image";
-export default function PersonalDetailsPage() {
+import Link from "next/link";export default function PersonalDetailsPage() {
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
       {/* Header / Navigation */}
