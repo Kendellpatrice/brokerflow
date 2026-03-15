@@ -37,6 +37,16 @@ export default function AssetsPage() {
     setVehicles(vehicles.filter((v) => v.id !== idToRemove));
   };
 
+  const [superFunds, setSuperFunds] = useState([{ id: 1 }]);
+
+  const addSuperFund = () => {
+    setSuperFunds([...superFunds, { id: Date.now() }]);
+  };
+
+  const removeSuperFund = (idToRemove: number) => {
+    setSuperFunds(superFunds.filter((s) => s.id !== idToRemove));
+  };
+
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
       {/* Header / Navigation */}
@@ -328,8 +338,6 @@ export default function AssetsPage() {
               </div>
             </div>
 
-
-
             {/* Bank Accounts Section */}
             <div className="mb-8">
               <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
@@ -529,6 +537,136 @@ export default function AssetsPage() {
               </div>
             </div>
 
+            {/* Superannuation Section */}
+            <div className="mb-8">
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="bg-cyan-500 px-6 py-3">
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Superannuation</h2>
+                </div>
+
+                <div className="p-6 md:p-8 space-y-6">
+                  {superFunds.map((s, index) => (
+                    <div key={s.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-5">
+                      {/* Card Header */}
+                      <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-200 dark:border-slate-700">
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-cyan-500 text-[22px]">savings</span>
+                          <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base">Superannuation Fund {index + 1}</h3>
+                        </div>
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => removeSuperFund(s.id)}
+                            className="flex items-center gap-1 text-sm font-semibold text-red-500 hover:text-red-600 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                            Remove
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Fields Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                        <div className="flex flex-col gap-1.5 md:col-span-2">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Fund Name / Institution</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Australian Super"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Member Number</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 123456789"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Balance</label>
+                          <CurrencyInput placeholder="$0.00" className="text-sm" />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                          <div className="flex gap-4 items-center h-[38px]">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 1</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 2</span>
+                            </label>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add Super Fund Button */}
+                  <button
+                    type="button"
+                    onClick={addSuperFund}
+                    className="text-primary font-semibold hover:bg-primary/10 bg-primary/5 px-4 py-3 rounded-xl transition-colors inline-flex items-center justify-center w-full gap-2 text-sm border-2 border-dashed border-primary/20 hover:border-primary/40"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                    Add Another Fund
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Shares / Investments Section */}
+            <div className="mb-8">
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="bg-cyan-500 px-6 py-3">
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Shares &amp; Investments</h2>
+                </div>
+
+                <div className="p-6 md:p-8">
+                  {/* Fields Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                    <div className="flex flex-col gap-1.5 md:col-span-2">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. ASX shares, managed funds, ETFs"
+                        className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
+                      <CurrencyInput placeholder="$0.00" className="text-sm" />
+                    </div>
+
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                      <div className="flex gap-4 items-center h-[38px]">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                          <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 1</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                          <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 2</span>
+                        </label>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
             {/* Current Assets */}
             <div className="mb-12">
               <div className="bg-white border text-sm border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
@@ -548,61 +686,6 @@ export default function AssetsPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-
-                      {/* Shares / Investments */}
-                      <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                        <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
-                          Shares / Investments
-                        </td>
-                        <td className="py-4 px-6 bg-slate-50/50 dark:bg-slate-800/10"></td>
-                        <td className="py-4 px-6 align-top">
-                          <CurrencyInput className="h-10 text-sm" />
-                        </td>
-                        <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
-                        <td className="py-4 px-6 align-top">
-                          <div className="flex flex-col gap-2">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                              <span className="text-sm">App 1</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                              <span className="text-sm">App 2</span>
-                            </label>
-                          </div>
-                        </td>
-                      </tr>
-
-                      {/* Superannuation 1 - 2 */}
-                      {[1, 2].map((num) => (
-                        <tr key={`super-${num}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                          <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
-                            Superannuation
-                          </td>
-                          <td className="py-4 px-6">
-                            <div className="flex items-center gap-3">
-                              <span className="font-semibold text-slate-500 text-xs">Institution</span>
-                              <input type="text" className="w-full h-10 rounded border-slate-300 bg-transparent px-3 text-sm focus:border-primary focus:ring-1 dark:border-slate-700 dark:bg-slate-800" />
-                            </div>
-                          </td>
-                          <td className="py-4 px-6 align-top">
-                            <CurrencyInput className="h-10 text-sm" />
-                          </td>
-                          <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
-                          <td className="py-4 px-6 align-top">
-                            <div className="flex flex-col gap-2">
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                <span className="text-sm">App 1</span>
-                              </label>
-                              <label className="flex items-center gap-2 cursor-pointer">
-                                <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                <span className="text-sm">App 2</span>
-                              </label>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
 
                       {/* Home Contents */}
                       <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
