@@ -3,9 +3,40 @@
 import { SidebarNav } from "@/components/SidebarNav";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import Link from "next/link";
+import { useState } from "react";
 /* eslint-disable @next/next/no-img-element */
 
 export default function AssetsPage() {
+  const [properties, setProperties] = useState([{ id: 1 }]);
+
+  const addProperty = () => {
+    setProperties([...properties, { id: Date.now() }]);
+  };
+
+  const removeProperty = (idToRemove: number) => {
+    setProperties(properties.filter((prop) => prop.id !== idToRemove));
+  };
+
+  const [bankAccounts, setBankAccounts] = useState([{ id: 1 }]);
+
+  const addBankAccount = () => {
+    setBankAccounts([...bankAccounts, { id: Date.now() }]);
+  };
+
+  const removeBankAccount = (idToRemove: number) => {
+    setBankAccounts(bankAccounts.filter((acc) => acc.id !== idToRemove));
+  };
+
+  const [vehicles, setVehicles] = useState([{ id: 1 }]);
+
+  const addVehicle = () => {
+    setVehicles([...vehicles, { id: Date.now() }]);
+  };
+
+  const removeVehicle = (idToRemove: number) => {
+    setVehicles(vehicles.filter((v) => v.id !== idToRemove));
+  };
+
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
       {/* Header / Navigation */}
@@ -67,13 +98,13 @@ export default function AssetsPage() {
                   <h2 className="font-bold text-white uppercase tracking-wider text-base">Solicitor / Conveyancer Details</h2>
                   <span className="text-white/80 text-xs italic">If known</span>
                 </div>
-                
+
                 <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-1.5 md:col-span-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Conveyancing Firm / Solicitor Company</label>
                     <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
                   </div>
-                  
+
                   <div className="flex flex-col gap-1.5 md:col-span-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Name</label>
                     <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
@@ -98,12 +129,12 @@ export default function AssetsPage() {
                 <div className="bg-cyan-500 px-6 py-3">
                   <h2 className="font-bold text-white uppercase tracking-wider text-base">Valuation Contact</h2>
                 </div>
-                
+
                 <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-[1fr_2fr_1fr] gap-x-8 gap-y-6 items-center">
-                  
+
                   {/* Row 1 */}
                   <div className="font-semibold text-slate-800 dark:text-slate-200">Owner/Occ / Refinances</div>
-                  
+
                   <div className="flex gap-6">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
@@ -114,7 +145,7 @@ export default function AssetsPage() {
                       <span className="text-slate-700 dark:text-slate-300">Applicant 2</span>
                     </label>
                   </div>
-                  
+
                   <div className="flex flex-col md:flex-row md:items-center gap-2">
                     <label className="text-sm font-semibold text-slate-700 md:min-w-max dark:text-slate-300">Contact Number</label>
                     <input className="rounded w-full border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel" />
@@ -122,7 +153,7 @@ export default function AssetsPage() {
 
                   {/* Row 2 */}
                   <div className="font-semibold text-slate-800 dark:text-slate-200">Purchases</div>
-                  
+
                   <div className="flex flex-wrap gap-4 items-center">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
@@ -153,9 +184,9 @@ export default function AssetsPage() {
                   <h2 className="font-bold text-white uppercase tracking-wider text-base">Funds to Complete</h2>
                   <span className="text-white/80 text-xs italic hidden md:block">Where are you obtaining the funds that you are contributing to the transaction?</span>
                 </div>
-                
+
                 <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
-                  
+
                   <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
                     <label className="font-semibold text-slate-800 dark:text-slate-200">Proceeds of Property Sale</label>
                     <CurrencyInput />
@@ -177,11 +208,323 @@ export default function AssetsPage() {
                   <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
                     <label className="font-semibold text-slate-800 dark:text-slate-200">Other</label>
                     <div className="flex gap-2">
-                       <CurrencyInput className="flex-1 min-w-0" />
-                       <input type="text" placeholder="Detail" className="w-1/2 rounded border-slate-300 min-w-0 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" />
+                      <CurrencyInput className="flex-1 min-w-0" />
+                      <input type="text" placeholder="Detail" className="w-1/2 rounded border-slate-300 min-w-0 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" />
                     </div>
                   </div>
 
+                </div>
+              </div>
+            </div>
+
+            {/* Properties Section */}
+            <div className="mb-8">
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="bg-cyan-500 px-6 py-3">
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Properties</h2>
+                </div>
+
+                <div className="p-6 md:p-8 space-y-6">
+                  {properties.map((prop, index) => (
+                    <div key={prop.id} className={`rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-5 ${index > 0 ? "mt-2" : ""}`}>
+                      {/* Card Header */}
+                      <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-200 dark:border-slate-700">
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-cyan-500 text-[22px]">home</span>
+                          <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base">Property {index + 1}</h3>
+                        </div>
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => removeProperty(prop.id)}
+                            className="flex items-center gap-1 text-sm font-semibold text-red-500 hover:text-red-600 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                            Remove
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Fields Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                        <div className="flex flex-col gap-1.5 md:col-span-2">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Property Address</label>
+                          <input
+                            type="text"
+                            placeholder="Enter full address..."
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Property Type</label>
+                          <select className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm">
+                            <option value="">Select type...</option>
+                            <option value="house">House</option>
+                            <option value="unit">Unit</option>
+                            <option value="townhouse">Townhouse</option>
+                            <option value="duplex">Duplex</option>
+                            <option value="land">Land</option>
+                          </select>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
+                          <CurrencyInput placeholder="$0.00" className="text-sm" />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Rental Income (p/m)</label>
+                          <CurrencyInput placeholder="$0.00" className="text-sm" />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lender</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. CommBank"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Applicable Mortgage #</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 1"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                          <div className="flex gap-4 items-center h-[38px]">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 1</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 2</span>
+                            </label>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add Property Button */}
+                  <button
+                    type="button"
+                    onClick={addProperty}
+                    className="text-primary font-semibold hover:bg-primary/10 bg-primary/5 px-4 py-3 rounded-xl transition-colors inline-flex items-center justify-center w-full gap-2 text-sm border-2 border-dashed border-primary/20 hover:border-primary/40"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                    Add Another Property
+                  </button>
+                </div>
+              </div>
+            </div>
+
+
+
+            {/* Bank Accounts Section */}
+            <div className="mb-8">
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="bg-cyan-500 px-6 py-3">
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Bank Accounts</h2>
+                </div>
+
+                <div className="p-6 md:p-8 space-y-6">
+                  {bankAccounts.map((acc, index) => (
+                    <div key={acc.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-5">
+                      {/* Card Header */}
+                      <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-200 dark:border-slate-700">
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-cyan-500 text-[22px]">account_balance</span>
+                          <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base">Bank Account {index + 1}</h3>
+                        </div>
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => removeBankAccount(acc.id)}
+                            className="flex items-center gap-1 text-sm font-semibold text-red-500 hover:text-red-600 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                            Remove
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Fields Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Financial Institution</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. CommBank"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Account Type</label>
+                          <select className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm">
+                            <option value="">Select type...</option>
+                            <option value="transaction">Transaction</option>
+                            <option value="saving">Saving</option>
+                            <option value="pension">Pension</option>
+                            <option value="term_deposit">Term Deposit</option>
+                          </select>
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Balance</label>
+                          <CurrencyInput placeholder="$0.00" className="text-sm" />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">BSB</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 062-000"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Account Number</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 12345678"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                          <div className="flex gap-4 items-center h-[38px]">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 1</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 2</span>
+                            </label>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add Bank Account Button */}
+                  <button
+                    type="button"
+                    onClick={addBankAccount}
+                    className="text-primary font-semibold hover:bg-primary/10 bg-primary/5 px-4 py-3 rounded-xl transition-colors inline-flex items-center justify-center w-full gap-2 text-sm border-2 border-dashed border-primary/20 hover:border-primary/40"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                    Add Another Bank Account
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Vehicles Section */}
+            <div className="mb-8">
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="bg-cyan-500 px-6 py-3">
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Vehicles</h2>
+                </div>
+
+                <div className="p-6 md:p-8 space-y-6">
+                  {vehicles.map((v, index) => (
+                    <div key={v.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 p-5">
+                      {/* Card Header */}
+                      <div className="flex items-center justify-between mb-5 pb-3 border-b border-slate-200 dark:border-slate-700">
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-cyan-500 text-[22px]">directions_car</span>
+                          <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base">Vehicle {index + 1}</h3>
+                        </div>
+                        {index > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => removeVehicle(v.id)}
+                            className="flex items-center gap-1 text-sm font-semibold text-red-500 hover:text-red-600 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-[16px]">delete</span>
+                            Remove
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Fields Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+
+                        <div className="flex flex-col gap-1.5 md:col-span-2">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Make &amp; Model</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Toyota Camry"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Year</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 2021"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
+                          <CurrencyInput placeholder="$0.00" className="text-sm" />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lender</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. CommBank"
+                            className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1.5">
+                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                          <div className="flex gap-4 items-center h-[38px]">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 1</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm text-slate-700 dark:text-slate-300">Applicant 2</span>
+                            </label>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add Vehicle Button */}
+                  <button
+                    type="button"
+                    onClick={addVehicle}
+                    className="text-primary font-semibold hover:bg-primary/10 bg-primary/5 px-4 py-3 rounded-xl transition-colors inline-flex items-center justify-center w-full gap-2 text-sm border-2 border-dashed border-primary/20 hover:border-primary/40"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                    Add Another Vehicle
+                  </button>
                 </div>
               </div>
             </div>
@@ -192,253 +535,127 @@ export default function AssetsPage() {
                 <div className="bg-cyan-500 px-6 py-3">
                   <h2 className="font-bold text-white uppercase tracking-wider text-base">Current Assets</h2>
                 </div>
-                
+
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left min-w-[800px]">
-                      <thead>
-                        <tr className="border-b border-slate-200 bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 text-slate-600 dark:text-slate-300">
-                          <th className="font-bold py-4 px-6 w-[20%]">Asset</th>
-                          <th className="font-bold py-4 px-6 w-[35%] text-center">Address / Description</th>
-                          <th className="font-bold py-4 px-6 w-[20%] text-center">Value</th>
-                          <th className="font-bold py-4 px-6 w-[10%] text-center">Lender</th>
-                          <th className="font-bold py-4 px-6 w-[15%] text-center">Ownership</th>
+                  <table className="w-full text-left min-w-[800px]">
+                    <thead>
+                      <tr className="border-b border-slate-200 bg-slate-50 dark:bg-slate-800/50 dark:border-slate-700 text-slate-600 dark:text-slate-300">
+                        <th className="font-bold py-4 px-6 w-[20%]">Asset</th>
+                        <th className="font-bold py-4 px-6 w-[35%] text-center">Address / Description</th>
+                        <th className="font-bold py-4 px-6 w-[20%] text-center">Value</th>
+                        <th className="font-bold py-4 px-6 w-[10%] text-center">Lender</th>
+                        <th className="font-bold py-4 px-6 w-[15%] text-center">Ownership</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
+
+                      {/* Shares / Investments */}
+                      <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                        <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
+                          Shares / Investments
+                        </td>
+                        <td className="py-4 px-6 bg-slate-50/50 dark:bg-slate-800/10"></td>
+                        <td className="py-4 px-6 align-top">
+                          <CurrencyInput className="h-10 text-sm" />
+                        </td>
+                        <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
+                        <td className="py-4 px-6 align-top">
+                          <div className="flex flex-col gap-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm">App 1</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm">App 2</span>
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
+
+                      {/* Superannuation 1 - 2 */}
+                      {[1, 2].map((num) => (
+                        <tr key={`super-${num}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                          <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
+                            Superannuation
+                          </td>
+                          <td className="py-4 px-6">
+                            <div className="flex items-center gap-3">
+                              <span className="font-semibold text-slate-500 text-xs">Institution</span>
+                              <input type="text" className="w-full h-10 rounded border-slate-300 bg-transparent px-3 text-sm focus:border-primary focus:ring-1 dark:border-slate-700 dark:bg-slate-800" />
+                            </div>
+                          </td>
+                          <td className="py-4 px-6 align-top">
+                            <CurrencyInput className="h-10 text-sm" />
+                          </td>
+                          <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
+                          <td className="py-4 px-6 align-top">
+                            <div className="flex flex-col gap-2">
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                                <span className="text-sm">App 1</span>
+                              </label>
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                                <span className="text-sm">App 2</span>
+                              </label>
+                            </div>
+                          </td>
                         </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-                        
-                        {/* Property 1 - 3 */}
-                        {[1, 2, 3].map((num) => (
-                          <tr key={`prop-${num}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                            <td className="py-4 px-6 align-top">
-                              <div className="font-bold text-slate-800 dark:text-slate-200 mb-2">Property {num}</div>
-                              <div className="text-xs text-slate-500 mb-1">Applicable Mortgage #_</div>
-                              <input type="text" className="w-full h-8 text-xs border-b border-slate-300 bg-transparent px-1 focus:border-primary focus:ring-0 dark:border-slate-700" />
-                            </td>
-                            <td className="py-4 px-6">
-                              <input type="text" placeholder="Address" className="w-full h-10 rounded border-slate-300 mb-3 bg-transparent px-3 text-sm focus:border-primary focus:ring-1 dark:border-slate-700 dark:bg-slate-800" />
-                              <div className="flex flex-wrap gap-2 text-xs">
-                                {['House', 'Unit', 'Townhouse', 'Duplex', 'Land'].map((type) => (
-                                  <label key={`prop${num}-${type}`} className="flex items-center gap-1 cursor-pointer">
-                                    <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300 size-3" />
-                                    <span>{type}</span>
-                                  </label>
-                                ))}
-                              </div>
-                            </td>
-                            <td className="py-4 px-6 align-top space-y-3">
-                                <CurrencyInput placeholder="Value" className="h-10 text-sm" />
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs whitespace-nowrap text-slate-500">Income p/m</span>
-                                  <CurrencyInput className="h-8 text-xs placeholder:text-transparent" />
-                                </div>
-                            </td>
-                            <td className="py-4 px-6 align-top">
-                                <input type="text" className="w-full h-10 rounded border-slate-300 bg-transparent px-3 text-sm focus:border-primary focus:ring-1 dark:border-slate-700 dark:bg-slate-800" />
-                            </td>
-                            <td className="py-4 px-6 align-top">
-                              <div className="flex flex-col gap-2">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 1</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 2</span>
-                                </label>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                      ))}
 
-                        {/* Bank Accounts 1 - 5 */}
-                        {[1, 2, 3, 4, 5].map((num) => (
-                          <tr key={`bank-${num}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                            <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
-                              Bank Account {num}
-                            </td>
-                            <td className="py-4 px-6">
-                              <div className="flex gap-4 mb-3">
-                                <div className="flex items-center gap-2 text-xs w-1/3">
-                                  <span className="font-semibold text-slate-500">BSB</span>
-                                  <input type="text" className="w-full h-8 border-b border-slate-300 bg-transparent px-1 focus:border-primary focus:ring-0 dark:border-slate-700" />
-                                </div>
-                                <div className="flex items-center gap-2 text-xs w-2/3">
-                                  <span className="font-semibold text-slate-500">Account</span>
-                                  <input type="text" className="w-full h-8 border-b border-slate-300 bg-transparent px-1 focus:border-primary focus:ring-0 dark:border-slate-700" />
-                                </div>
-                              </div>
-                              <div className="flex flex-wrap gap-2 text-xs">
-                                {['Transaction', 'Saving', 'Pension', 'Term Deposit'].map((type) => (
-                                  <label key={`bank${num}-${type}`} className="flex items-center gap-1 cursor-pointer">
-                                    <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300 size-3" />
-                                    <span>{type}</span>
-                                  </label>
-                                ))}
-                              </div>
-                            </td>
-                            <td className="py-4 px-6 align-top">
-                                <CurrencyInput className="h-10 text-sm" />
-                            </td>
-                            <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
-                            <td className="py-4 px-6 align-top">
-                              <div className="flex flex-col gap-2">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 1</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 2</span>
-                                </label>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                      {/* Home Contents */}
+                      <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                        <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
+                          Home Contents
+                        </td>
+                        <td className="py-4 px-6 bg-slate-50/50 dark:bg-slate-800/10"></td>
+                        <td className="py-4 px-6 align-top">
+                          <CurrencyInput className="h-10 text-sm" />
+                        </td>
+                        <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
+                        <td className="py-4 px-6 align-top">
+                          <div className="flex flex-col gap-2">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm">App 1</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                              <span className="text-sm">App 2</span>
+                            </label>
+                          </div>
+                        </td>
+                      </tr>
 
-                        {/* Vehicles 1 - 2 */}
-                        {[1, 2].map((num) => (
-                          <tr key={`veh-${num}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                            <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
-                              Vehicle {num}
-                            </td>
-                            <td className="py-4 px-6">
-                              <div className="flex gap-4">
-                                <div className="flex items-center gap-2 text-xs w-2/3">
-                                  <span className="font-semibold text-slate-500">Model</span>
-                                  <input type="text" className="w-full h-8 border-b border-slate-300 bg-transparent px-1 focus:border-primary focus:ring-0 dark:border-slate-700" />
-                                </div>
-                                <div className="flex items-center gap-2 text-xs w-1/3">
-                                  <span className="font-semibold text-slate-500">Year</span>
-                                  <input type="text" className="w-full h-8 border-b border-slate-300 bg-transparent px-1 focus:border-primary focus:ring-0 dark:border-slate-700" />
-                                </div>
-                              </div>
-                            </td>
-                            <td className="py-4 px-6 align-top">
-                                <CurrencyInput className="h-10 text-sm" />
-                            </td>
-                            <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
-                            <td className="py-4 px-6 align-top">
-                              <div className="flex flex-col gap-2">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 1</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 2</span>
-                                </label>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
-
-                        {/* Shares / Investments */}
-                        <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                            <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
-                              Shares / Investments
-                            </td>
-                            <td className="py-4 px-6 bg-slate-50/50 dark:bg-slate-800/10"></td>
-                            <td className="py-4 px-6 align-top">
-                                <CurrencyInput className="h-10 text-sm" />
-                            </td>
-                            <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
-                            <td className="py-4 px-6 align-top">
-                              <div className="flex flex-col gap-2">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 1</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 2</span>
-                                </label>
-                              </div>
-                            </td>
+                      {/* Other 1 - 2 */}
+                      {[1, 2].map((num) => (
+                        <tr key={`other-${num}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
+                          <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
+                            Other
+                          </td>
+                          <td className="py-4 px-6 bg-slate-50/50 dark:bg-slate-800/10"></td>
+                          <td className="py-4 px-6 align-top">
+                            <CurrencyInput className="h-10 text-sm" />
+                          </td>
+                          <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
+                          <td className="py-4 px-6 align-top">
+                            <div className="flex flex-col gap-2">
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                                <span className="text-sm">App 1</span>
+                              </label>
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
+                                <span className="text-sm">App 2</span>
+                              </label>
+                            </div>
+                          </td>
                         </tr>
+                      ))}
 
-                        {/* Superannuation 1 - 2 */}
-                        {[1, 2].map((num) => (
-                           <tr key={`super-${num}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                             <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
-                               Superannuation
-                             </td>
-                             <td className="py-4 px-6">
-                               <div className="flex items-center gap-3">
-                                  <span className="font-semibold text-slate-500 text-xs">Institution</span>
-                                  <input type="text" className="w-full h-10 rounded border-slate-300 bg-transparent px-3 text-sm focus:border-primary focus:ring-1 dark:border-slate-700 dark:bg-slate-800" />
-                               </div>
-                             </td>
-                             <td className="py-4 px-6 align-top">
-                                 <CurrencyInput className="h-10 text-sm" />
-                             </td>
-                             <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
-                             <td className="py-4 px-6 align-top">
-                               <div className="flex flex-col gap-2">
-                                 <label className="flex items-center gap-2 cursor-pointer">
-                                   <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                   <span className="text-sm">App 1</span>
-                                 </label>
-                                 <label className="flex items-center gap-2 cursor-pointer">
-                                   <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                   <span className="text-sm">App 2</span>
-                                 </label>
-                               </div>
-                             </td>
-                         </tr>
-                        ))}
-
-                        {/* Home Contents */}
-                        <tr className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                            <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
-                               Home Contents
-                            </td>
-                            <td className="py-4 px-6 bg-slate-50/50 dark:bg-slate-800/10"></td>
-                            <td className="py-4 px-6 align-top">
-                                <CurrencyInput className="h-10 text-sm" />
-                            </td>
-                            <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
-                            <td className="py-4 px-6 align-top">
-                              <div className="flex flex-col gap-2">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 1</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                  <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                  <span className="text-sm">App 2</span>
-                                </label>
-                              </div>
-                            </td>
-                        </tr>
-
-                        {/* Other 1 - 2 */}
-                        {[1, 2].map((num) => (
-                           <tr key={`other-${num}`} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/20 transition-colors">
-                             <td className="py-4 px-6 align-top font-bold text-slate-800 dark:text-slate-200">
-                               Other
-                             </td>
-                             <td className="py-4 px-6 bg-slate-50/50 dark:bg-slate-800/10"></td>
-                             <td className="py-4 px-6 align-top">
-                                 <CurrencyInput className="h-10 text-sm" />
-                             </td>
-                             <td className="py-4 px-6 align-top bg-slate-50/50 dark:bg-slate-800/10"></td>
-                             <td className="py-4 px-6 align-top">
-                               <div className="flex flex-col gap-2">
-                                 <label className="flex items-center gap-2 cursor-pointer">
-                                   <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                   <span className="text-sm">App 1</span>
-                                 </label>
-                                 <label className="flex items-center gap-2 cursor-pointer">
-                                   <input type="checkbox" className="rounded text-primary focus:ring-primary border-slate-300" />
-                                   <span className="text-sm">App 2</span>
-                                 </label>
-                               </div>
-                             </td>
-                         </tr>
-                        ))}
-
-                      </tbody>
-                    </table>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
