@@ -3,7 +3,7 @@ import { SidebarNav } from "@/components/SidebarNav";
 import Link from "next/link";
 export default function ApplicantsPage() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
       {/* Header / Navigation */}
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-primary/10 bg-white px-6 py-4 dark:bg-background-dark md:px-20">
         <div className="flex items-center gap-3">

@@ -10,8 +10,8 @@ export function SidebarNav() {
     { href: "/", icon: "info", label: "Introduction" },
     { href: "/applicants", icon: "group", label: "Applicants" },
     { href: "/personal-details", icon: "person", label: "Personal Details" },
-    { href: "#", icon: "work", label: "Employment & Income" },
-    { href: "#", icon: "account_balance", label: "Assets" },
+    { href: "/employment-income", icon: "work", label: "Employment & Income" },
+    { href: "/assets", icon: "account_balance", label: "Assets" },
     { href: "#", icon: "credit_card", label: "Liabilities" },
     { href: "#", icon: "account_balance_wallet", label: "Living Expenses" },
   ];
@@ -24,6 +24,10 @@ export function SidebarNav() {
         return 16;
       case "/personal-details":
         return 33;
+      case "/employment-income":
+        return 50;
+      case "/assets":
+        return 66;
       default:
         return 0;
     }
@@ -32,8 +36,8 @@ export function SidebarNav() {
   const currentProgress = calculateProgress();
 
   return (
-    <aside className="flex w-full flex-col gap-6 border-r border-primary/10 bg-white p-6 dark:bg-background-dark/50 md:w-80 shrink-0">
-      <div className="flex flex-col gap-2">
+    <aside className="flex w-full flex-col gap-6 border-b border-primary/10 bg-white p-6 dark:bg-background-dark/50 md:w-80 shrink-0 md:border-b-0 md:border-r md:sticky md:top-[73px] md:h-[calc(100vh-73px)]">
+      <div className="flex flex-col gap-2 shrink-0">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-lg bg-primary text-white">
             <span className="material-symbols-outlined">description</span>
@@ -46,7 +50,7 @@ export function SidebarNav() {
           </div>
         </div>
       </div>
-      <nav className="flex flex-col gap-1">
+      <nav className="flex flex-col gap-1 overflow-y-auto pr-2 shrink-0 md:shrink md:flex-1">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
 
@@ -54,7 +58,7 @@ export function SidebarNav() {
             return (
               <div
                 key={item.label}
-                className="flex items-center gap-3 rounded-lg bg-primary px-4 py-3 text-white shadow-sm"
+                className="flex items-center gap-3 rounded-lg bg-primary px-4 py-3 text-white shadow-sm shrink-0"
               >
                 <span className="material-symbols-outlined text-[20px]">
                   {item.icon}
@@ -68,7 +72,7 @@ export function SidebarNav() {
               return (
                 <div
                   key={item.label}
-                  className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400"
+                  className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400 shrink-0"
                 >
                   <span className="material-symbols-outlined text-[20px]">
                     {item.icon}
@@ -82,7 +86,7 @@ export function SidebarNav() {
             <Link
               key={item.label}
               href={item.href}
-              className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400"
+              className="flex items-center gap-3 rounded-lg px-4 py-3 text-slate-600 hover:bg-primary/5 dark:text-slate-400 shrink-0"
             >
               <span className="material-symbols-outlined text-[20px]">
                 {item.icon}
@@ -92,7 +96,7 @@ export function SidebarNav() {
           );
         })}
       </nav>
-      <div className="mt-auto border-t border-primary/5 pt-6">
+      <div className="mt-auto border-t border-primary/10 pt-6 shrink-0 md:bg-white md:dark:bg-transparent">
         <div className="mb-2 flex justify-between items-end">
           <span className="text-xs font-bold text-primary dark:text-slate-300">
             Form Progress

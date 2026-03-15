@@ -3,7 +3,7 @@ import { SidebarNav } from "@/components/SidebarNav";
 import Link from "next/link";
 export default function IntroductionPage() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
       {/* Header / Navigation */}
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-primary/10 bg-white px-6 py-4 dark:bg-background-dark md:px-20">
         <div className="flex items-center gap-3">
@@ -49,13 +49,13 @@ export default function IntroductionPage() {
                 Welcome to uBroker
               </span>
               <h1 className="mb-4 text-4xl font-extrabold text-primary dark:text-slate-100">
-                Digital Fact Find
+                Fact Find Form
               </h1>
               <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-3xl">
                 Hi James &amp; Sarah, this digital fact find helps us understand your current financial situation, goals, and requirements so we can find the best mortgage solution for you.
               </p>
             </header>
-            
+
             <div className="rounded-2xl border-2 border-primary/10 bg-white p-8 dark:bg-slate-900 dark:border-slate-800 shadow-sm mb-12">
               <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">What you will need</h2>
               <div className="grid gap-6 md:grid-cols-2">
@@ -100,8 +100,8 @@ export default function IntroductionPage() {
 
             <div className="flex flex-col items-center justify-center rounded-2xl bg-primary/5 py-12 px-6 text-center border border-dashed border-primary/20">
               <h3 className="text-2xl font-bold text-primary mb-3">Ready to get started?</h3>
-              <p className="text-slate-600 mb-8 max-w-md">It should take approximately 10-15 minutes to complete. You can always save your progress and return later.</p>
-              
+              <p className="text-slate-600 mb-8 max-w-md">It should take approximately 10-15 minutes to complete. If you&apos;re unsure about any details, you can save your progress and return later. Your mortgage broker will also review all information during your consultation.</p>
+
               <Link href="/applicants" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-4 font-bold text-white shadow-xl transition-all hover:bg-primary/90 hover:scale-[1.02]">
                 Start Fact Find
                 <span className="material-symbols-outlined">arrow_forward</span>
@@ -123,6 +123,6 @@ export default function IntroductionPage() {
           © 2024 uBroker Mortgage Solutions. All sensitive data is encrypted with bank-grade security.
         </p>
       </footer>
-    </div>
+    </div >
   );
 }

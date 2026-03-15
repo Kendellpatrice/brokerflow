@@ -2,7 +2,7 @@
 import { SidebarNav } from "@/components/SidebarNav";
 import Link from "next/link";export default function PersonalDetailsPage() {
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+    <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
       {/* Header / Navigation */}
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-primary/10 bg-white px-6 py-4 dark:bg-background-dark md:px-20">
         <div className="flex items-center gap-3">
@@ -302,10 +302,10 @@ import Link from "next/link";export default function PersonalDetailsPage() {
               </Link>
               <div className="flex items-center gap-6">
                 <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
-                <button className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
+                <Link href="/employment-income" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
                   Next Step
                   <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-                </button>
+                </Link>
               </div>
             </div>
 
