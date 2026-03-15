@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { SidebarNav } from "@/components/SidebarNav";
-import Link from "next/link";export default function PersonalDetailsPage() {
+import Link from "next/link"; export default function PersonalDetailsPage() {
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
       {/* Header / Navigation */}
@@ -42,7 +42,7 @@ import Link from "next/link";export default function PersonalDetailsPage() {
 
         {/* Form Content */}
         <section className="flex-1 overflow-y-auto bg-background-light p-6 dark:bg-background-dark md:p-12">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-5xl">
             <header className="mb-10">
               <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
                 Step 2 of 6
@@ -63,102 +63,102 @@ import Link from "next/link";export default function PersonalDetailsPage() {
                   <span className="material-symbols-outlined text-primary">looks_one</span>
                   <h2 className="text-xl font-bold text-primary dark:text-slate-100">Applicant Details</h2>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Title</label>
-                  <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
-                    <option>Select...</option>
-                    <option>Mr</option>
-                    <option>Mrs</option>
-                    <option>Ms</option>
-                    <option>Miss</option>
-                    <option>Dr</option>
-                    <option>Other</option>
-                  </select>
-                </div>
-                <div className="hidden md:block"></div> {/* Spacer */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Title</label>
+                    <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
+                      <option>Select...</option>
+                      <option>Mr</option>
+                      <option>Mrs</option>
+                      <option>Ms</option>
+                      <option>Miss</option>
+                      <option>Dr</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div className="hidden md:block"></div> {/* Spacer */}
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Given Name/s</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="e.g. James" type="text"/>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Surname</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="e.g. Smith" type="text"/>
-                </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Given Name/s</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="e.g. James" type="text" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Surname</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="e.g. Smith" type="text" />
+                  </div>
 
-                <div className="flex flex-col gap-1.5 md:col-span-2">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Also Known As / Preferred Name</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                </div>
+                  <div className="flex flex-col gap-1.5 md:col-span-2">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Also Known As / Preferred Name</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                  </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Date of Birth</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date"/>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Town of Birth</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Date of Birth</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Town of Birth</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                  </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Marital Status</label>
-                  <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
-                    <option>Select...</option>
-                    <option>Single</option>
-                    <option>Married</option>
-                    <option>De Facto</option>
-                    <option>Divorced</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Gender</label>
-                  <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
-                    <option>Select...</option>
-                    <option>Male</option>
-                    <option>Female</option>
-                    <option>Other</option>
-                  </select>
-                </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Marital Status</label>
+                    <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
+                      <option>Select...</option>
+                      <option>Single</option>
+                      <option>Married</option>
+                      <option>De Facto</option>
+                      <option>Divorced</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Gender</label>
+                    <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
+                      <option>Select...</option>
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Permanent in Australia?</label>
-                  <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
-                    <option>Select...</option>
-                    <option>Yes</option>
-                    <option>No</option>
-                  </select>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Visa Type <span className="text-xs font-normal italic text-slate-500">(if applicable)</span></label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Permanent in Australia?</label>
+                    <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
+                      <option>Select...</option>
+                      <option>Yes</option>
+                      <option>No</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Visa Type <span className="text-xs font-normal italic text-slate-500">(if applicable)</span></label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                  </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Driver Licence Number</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                   <div className="flex flex-col gap-1.5">
-                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">State</label>
-                     <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                   </div>
-                   <div className="flex flex-col gap-1.5">
-                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Expiry Date</label>
-                     <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date"/>
-                   </div>
-                </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Driver Licence Number</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">State</label>
+                      <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Expiry Date</label>
+                      <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date" />
+                    </div>
+                  </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ages of Dependents</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="e.g. 5, 8" type="text"/>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ages of Dependents</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="e.g. 5, 8" type="text" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Mother&apos;s Maiden Name</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                  </div>
                 </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Mother&apos;s Maiden Name</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                </div>
-              </div>
               </div>
 
               <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
@@ -167,130 +167,127 @@ import Link from "next/link";export default function PersonalDetailsPage() {
                   <h3 className="text-lg font-bold text-primary dark:text-slate-100">Contact Details</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="james.smith@example.com" type="email"/>
-                </div>
-                <div className="hidden md:block"></div> {/* Spacer */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="james.smith@example.com" type="email" />
+                  </div>
+                  <div className="hidden md:block"></div> {/* Spacer */}
 
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Mobile Phone</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="0400 000 000" type="tel"/>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Home Phone</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel"/>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Work Phone</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel"/>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Mobile Phone</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="0400 000 000" type="tel" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Home Phone</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Work Phone</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel" />
+                  </div>
                 </div>
               </div>
-              </div>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
                 <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
                   <span className="material-symbols-outlined text-primary">group</span>
                   <h3 className="text-lg font-bold text-primary dark:text-slate-100">Nearest Relative <span className="text-sm font-normal italic text-slate-500">*Not living with you</span></h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Name</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Relationship to You</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Phone Number</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel"/>
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Address Details</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Name</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Relationship to You</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Phone Number</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel" />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Address Details</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                  </div>
                 </div>
               </div>
-              </div>
-            </div>
 
-            {/* Address Details */}
-            <div className="mb-12">
               <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
                   <span className="material-symbols-outlined text-primary">home_pin</span>
                   <h2 className="text-xl font-bold text-primary dark:text-slate-100">Address Details</h2>
                 </div>
-                
+
                 <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200">Current Residential Address</h3>
-              <div className="grid grid-cols-1 gap-6 mb-8">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Address Finder</label>
-                  <div className="relative">
-                    <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-                    <input className="w-full pl-10 rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="Start typing your address..." type="text"/>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="flex flex-col gap-1.5 col-span-2">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Suburb</label>
-                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
-                  </div>
+                <div className="grid grid-cols-1 gap-6 mb-8">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">State</label>
-                    <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
-                      <option>NSW</option>
-                      <option>VIC</option>
-                      <option>QLD</option>
-                      <option>WA</option>
-                      <option>SA</option>
-                      <option>TAS</option>
-                      <option>ACT</option>
-                      <option>NT</option>
-                    </select>
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Address Finder</label>
+                    <div className="relative">
+                      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+                      <input className="w-full pl-10 rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="Start typing your address..." type="text" />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Postcode</label>
-                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text"/>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="flex flex-col gap-1.5 col-span-2">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Suburb</label>
+                      <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">State</label>
+                      <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
+                        <option>NSW</option>
+                        <option>VIC</option>
+                        <option>QLD</option>
+                        <option>WA</option>
+                        <option>SA</option>
+                        <option>TAS</option>
+                        <option>ACT</option>
+                        <option>NT</option>
+                      </select>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Postcode</label>
+                      <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Start date at current address</label>
+                      <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date" />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Address Status</label>
+                      <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
+                        <option>Select...</option>
+                        <option>Mortgage</option>
+                        <option>Own</option>
+                        <option>Rent</option>
+                        <option>Other</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
+                <div className="border-t border-slate-200 dark:border-slate-700 my-8"></div>
+                <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200">Previous Address <span className="text-sm font-normal italic text-slate-500">(if at current address &lt; 3 years)</span></h3>
+                <div className="grid grid-cols-1 gap-6">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Start date at current address</label>
-                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date"/>
+                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Previous Address</label>
+                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="Enter previous address manually..." type="text" />
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Address Status</label>
-                    <select className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary">
-                      <option>Select...</option>
-                      <option>Mortgage</option>
-                      <option>Own</option>
-                      <option>Rent</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border-t border-slate-200 dark:border-slate-700 my-8"></div>
-              <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200">Previous Address <span className="text-sm font-normal italic text-slate-500">(if at current address &lt; 3 years)</span></h3>
-              <div className="grid grid-cols-1 gap-6">
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Previous Address</label>
-                  <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" placeholder="Enter previous address manually..." type="text"/>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">From Date</label>
-                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date"/>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">To Date</label>
-                    <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date"/>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">From Date</label>
+                      <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date" />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">To Date</label>
+                      <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date" />
+                    </div>
                   </div>
                 </div>
-              </div>
               </div>
             </div>
 

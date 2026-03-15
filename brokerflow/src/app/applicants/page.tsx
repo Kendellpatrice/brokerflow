@@ -43,7 +43,7 @@ export default function ApplicantsPage() {
 
         {/* Form Content */}
         <section className="flex-1 overflow-y-auto bg-background-light p-6 dark:bg-background-dark md:p-12">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto max-w-5xl">
             <header className="mb-10">
               <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
                 Step 1 of 6
