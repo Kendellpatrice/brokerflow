@@ -6,15 +6,33 @@ import { useState } from "react";
 import { CurrencyInput } from "@/components/CurrencyInput";
 
 export default function EmploymentIncomePage() {
-  const [employments, setEmployments] = useState([{ id: 1 }]);
+  const [employments, setEmployments] = useState<{ id: number, startDate?: string }[]>([{ id: 1, startDate: "" }]);
 
   const addEmployment = () => {
-    setEmployments([...employments, { id: Date.now() }]);
+    setEmployments([...employments, { id: Date.now(), startDate: "" }]);
   };
 
   const removeEmployment = (idToRemove: number) => {
     setEmployments(employments.filter((emp) => emp.id !== idToRemove));
   };
+
+  const updateEmploymentDate = (id: number, date: string) => {
+    setEmployments(employments.map(emp => emp.id === id ? { ...emp, startDate: date } : emp));
+  };
+
+  const getOldestStartDate = () => {
+    const dates = employments
+      .map(e => e.startDate)
+      .filter(Boolean)
+      .map(d => new Date(d!).getTime())
+      .filter(t => !isNaN(t));
+
+    if (dates.length === 0) return null;
+    return new Date(Math.min(...dates));
+  };
+
+  const oldestDate = getOldestStartDate();
+  const hasLessThan3Years = oldestDate ? (new Date().getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25) < 3 : false;
 
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
@@ -75,7 +93,7 @@ export default function EmploymentIncomePage() {
               <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
                   <span className="material-symbols-outlined text-primary">work</span>
-                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Employment Details</h2>
+                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Employment History</h2>
                   <span className="ml-2 text-xs font-normal italic text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">Min. 3 years required</span>
                 </div>
 
@@ -147,7 +165,12 @@ export default function EmploymentIncomePage() {
 
                       <div className="flex flex-col gap-1.5">
                         <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Start Date with Company</label>
-                        <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date" />
+                        <input
+                          className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
+                          type="date"
+                          value={emp.startDate || ""}
+                          onChange={(e) => updateEmploymentDate(emp.id, e.target.value)}
+                        />
                       </div>
 
                       <div className="flex flex-col gap-1.5">
@@ -169,16 +192,27 @@ export default function EmploymentIncomePage() {
                   </div>
                 ))}
 
-                <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-                  <button
-                    type="button"
-                    onClick={addEmployment}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/20 bg-primary/5 px-4 py-4 font-semibold text-primary transition-colors hover:border-primary/40 hover:bg-primary/10"
-                  >
-                    <span className="material-symbols-outlined">add_circle</span>
-                    Add Another Job
-                  </button>
-                </div>
+                {hasLessThan3Years && (
+                  <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+                    <div className="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4 text-blue-800 dark:border-blue-800/30 dark:bg-blue-900/20 dark:text-blue-200">
+                      <div className="flex items-center gap-2 font-bold mb-1">
+                        <span className="material-symbols-outlined text-[20px]">info</span>
+                        Additional Job History Required
+                      </div>
+                      <p className="text-sm opacity-90 ml-7">
+                        Lenders require a minimum of 3 years continuous employment history. Because your earliest stated start date is within the last 3 years, please provide your previous employment details.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={addEmployment}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/20 bg-primary/5 px-4 py-4 font-semibold text-primary transition-colors hover:border-primary/40 hover:bg-primary/10"
+                    >
+                      <span className="material-symbols-outlined">add_circle</span>
+                      Add Previous Job
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
