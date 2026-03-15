@@ -168,6 +168,7 @@ export default function EmploymentIncomePage() {
                         <input
                           className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
                           type="date"
+                          max={new Date().toISOString().split('T')[0]}
                           value={emp.startDate || ""}
                           onChange={(e) => updateEmploymentDate(emp.id, e.target.value)}
                         />
