@@ -100,7 +100,7 @@ export default function IntroductionPage() {
 
             <div className="flex flex-col items-center justify-center rounded-2xl bg-primary/5 py-12 px-6 text-center border border-dashed border-primary/20">
               <h3 className="text-2xl font-bold text-primary mb-3">Ready to get started?</h3>
-              <p className="text-slate-600 mb-8 max-w-md">It should take approximately 10-15 minutes to complete. If you&apos;re unsure about any details, you can save your progress and return later. Your mortgage broker will also review all information during your consultation.</p>
+              <p className="text-slate-600 mb-8">It should take approximately 10-15 minutes to complete. If you&apos;re unsure about any details, you can save your progress and return later. Your mortgage broker will also review all information during your consultation.</p>
 
               <Link href="/applicants" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-4 font-bold text-white shadow-xl transition-all hover:bg-primary/90 hover:scale-[1.02]">
                 Start Fact Find
