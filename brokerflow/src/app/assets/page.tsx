@@ -88,12 +88,7 @@ function PhaseDivider({
 }) {
   return (
     <div className="flex items-start gap-4 mb-4 mt-2">
-      <div className="flex-shrink-0 flex flex-col items-center">
-        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-xs font-bold">
-          {phase}
-        </div>
-        <div className="w-px flex-1 bg-primary/20 mt-2 min-h-[16px]" />
-      </div>
+
       <div className="pt-1">
         <h3 className="font-bold text-primary text-base uppercase tracking-wider">
           {title}
@@ -325,7 +320,7 @@ export default function AssetsPage() {
               description="Contact and funding information for this transaction"
             />
 
-            <div className="space-y-4 mb-10 pl-12">
+            <div className="space-y-4 mb-10">
 
               {/* Solicitor / Conveyancer Details */}
               <CollapsibleSection
@@ -501,7 +496,7 @@ export default function AssetsPage() {
               description="Properties, accounts, vehicles, and other assets you own"
             />
 
-            <div className="space-y-4 mb-12 pl-12">
+            <div className="space-y-4 mb-12">
 
               {/* Properties */}
               <CollapsibleSection
@@ -551,8 +546,8 @@ export default function AssetsPage() {
                               <tr
                                 key={prop.id}
                                 className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${editingPropertyId === prop.id
-                                    ? "bg-primary/5 dark:bg-primary/10"
-                                    : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                                  ? "bg-primary/5 dark:bg-primary/10"
+                                  : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
                                   }`}
                               >
                                 <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100 capitalize">
@@ -583,8 +578,8 @@ export default function AssetsPage() {
                                         setEditingPropertyId(editingPropertyId === prop.id ? null : prop.id)
                                       }
                                       className={`flex items-center justify-center rounded-lg p-1.5 transition-colors ${editingPropertyId === prop.id
-                                          ? "bg-primary text-white"
-                                          : "text-slate-400 hover:text-primary hover:bg-primary/10"
+                                        ? "bg-primary text-white"
+                                        : "text-slate-400 hover:text-primary hover:bg-primary/10"
                                         }`}
                                     >
                                       <span className="material-symbols-outlined text-[16px]">
