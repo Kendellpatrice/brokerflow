@@ -13,7 +13,7 @@ export function SidebarNav() {
     { href: "/employment-income", icon: "work", label: "Employment & Income" },
     { href: "/assets", icon: "account_balance", label: "Assets" },
     { href: "/liabilities", icon: "credit_card", label: "Liabilities" },
-    { href: "#", icon: "account_balance_wallet", label: "Living Expenses" },
+    { href: "/living-expenses", icon: "account_balance_wallet", label: "Living Expenses" },
   ];
 
   const calculateProgress = () => {
@@ -30,6 +30,8 @@ export function SidebarNav() {
         return 66;
       case "/liabilities":
         return 83;
+      case "/living-expenses":
+        return 100;
       default:
         return 0;
     }

@@ -881,13 +881,13 @@ export default function LiabilitiesPage() {
           <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
             Save Draft
           </span>
-          <button
-            type="button"
+          <Link
+            href="/living-expenses"
             className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90"
           >
             Next Step
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-          </button>
+          </Link>
         </div>
       </div>
 
