@@ -1,54 +1,162 @@
 "use client";
 
 import { PageShell } from "@/components/PageShell";
+import { ApplicantTabs, CompletionStatus } from "@/components/ApplicantTabs";
+import { useApplicants } from "@/context/applicants";
 import Link from "next/link";
 import { useState } from "react";
 import { CurrencyInput } from "@/components/CurrencyInput";
 
+// ── Per-applicant data shapes ─────────────────────────────────────────────
+interface EmploymentRecord {
+  id: number;
+  startDate: string;
+  type: string;
+}
+
+interface IncomeData {
+  baseSalary: string;
+  incomeFrequency: string;
+  overtime: string;
+  commission: string;
+  allowancesAmount: string;
+  allowancesType: string;
+  rentalExisting: string;
+  rentalProposed: string;
+  investmentIncome: string;
+  govtAmount: string;
+  govtType: string;
+}
+
+interface SelfEmployedData {
+  businessName: string;
+  entityType: string;
+  trustee: string;
+  beneficiaries: string;
+  website: string;
+  abnAcn: string;
+  industry: string;
+  netProfitCurrent: string;
+  netProfitPrevious: string;
+  addBacksCurrent: string;
+  addBacksPrevious: string;
+  accountantName: string;
+  accountantPhone: string;
+}
+
+interface ApplicantEmploymentData {
+  employments: EmploymentRecord[];
+  income: IncomeData;
+  selfEmployed: SelfEmployedData;
+}
+
+const BLANK_INCOME: IncomeData = {
+  baseSalary: "", incomeFrequency: "", overtime: "", commission: "",
+  allowancesAmount: "", allowancesType: "", rentalExisting: "", rentalProposed: "",
+  investmentIncome: "", govtAmount: "", govtType: "",
+};
+
+const BLANK_SE: SelfEmployedData = {
+  businessName: "", entityType: "", trustee: "", beneficiaries: "",
+  website: "", abnAcn: "", industry: "",
+  netProfitCurrent: "", netProfitPrevious: "", addBacksCurrent: "", addBacksPrevious: "",
+  accountantName: "", accountantPhone: "",
+};
+
+const blankApplicantData = (): ApplicantEmploymentData => ({
+  employments: [{ id: Date.now(), startDate: "", type: "" }],
+  income: { ...BLANK_INCOME },
+  selfEmployed: { ...BLANK_SE },
+});
+
+// ── Completion heuristic ──────────────────────────────────────────────────
+function completionStatus(data: ApplicantEmploymentData): CompletionStatus {
+  const hasType  = data.employments.some(e => e.type);
+  const hasDate  = data.employments.some(e => e.startDate);
+  const hasIncome = data.income.baseSalary !== "";
+  if (hasType && hasDate && hasIncome) return "complete";
+  if (hasType || hasDate || hasIncome)  return "partial";
+  return "empty";
+}
+
+// ── Input class ───────────────────────────────────────────────────────────
+const inputCls = "rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary";
+
+// ══════════════════════════════════════════════════════════════════════════
+// Page
+// ══════════════════════════════════════════════════════════════════════════
 export default function EmploymentIncomePage() {
-  const [employments, setEmployments] = useState<{
-    id: number;
-    startDate?: string;
-    type?: string;
-  }[]>([{ id: 1, startDate: "", type: "" }]);
+  const { applicants } = useApplicants();
+  const [activeId, setActiveId] = useState(() => applicants[0]?.id ?? "");
 
-  const addEmployment = () => {
-    setEmployments([...employments, { id: Date.now(), startDate: "", type: "" }]);
-  };
+  // All per-applicant state lives here, keyed by applicant ID
+  const [allData, setAllData] = useState<Record<string, ApplicantEmploymentData>>({});
 
-  const removeEmployment = (idToRemove: number) => {
-    setEmployments(employments.filter((emp) => emp.id !== idToRemove));
-  };
+  const getData = (id: string): ApplicantEmploymentData =>
+    allData[id] ?? blankApplicantData();
 
-  const updateEmploymentDate = (id: number, date: string) => {
-    setEmployments(employments.map((emp) => (emp.id === id ? { ...emp, startDate: date } : emp)));
-  };
+  const setData = (id: string, updater: (prev: ApplicantEmploymentData) => ApplicantEmploymentData) =>
+    setAllData(prev => ({ ...prev, [id]: updater(getData(id)) }));
 
-  const updateEmploymentType = (id: number, type: string) => {
-    setEmployments(employments.map((emp) => (emp.id === id ? { ...emp, type } : emp)));
-  };
+  // ── Employment helpers for active applicant ───────────────────────────
+  const { employments } = getData(activeId);
 
-  const getOldestStartDate = () => {
-    const dates = employments
-      .map((e) => e.startDate)
-      .filter(Boolean)
-      .map((d) => new Date(d!).getTime())
-      .filter((t) => !isNaN(t));
+  const addEmployment = () =>
+    setData(activeId, d => ({
+      ...d,
+      employments: [...d.employments, { id: Date.now(), startDate: "", type: "" }],
+    }));
 
-    if (dates.length === 0) return null;
-    return new Date(Math.min(...dates));
-  };
+  const removeEmployment = (empId: number) =>
+    setData(activeId, d => ({ ...d, employments: d.employments.filter(e => e.id !== empId) }));
 
-  const oldestDate = getOldestStartDate();
+  const updateEmploymentDate = (empId: number, date: string) =>
+    setData(activeId, d => ({
+      ...d,
+      employments: d.employments.map(e => e.id === empId ? { ...e, startDate: date } : e),
+    }));
+
+  const updateEmploymentType = (empId: number, type: string) =>
+    setData(activeId, d => ({
+      ...d,
+      employments: d.employments.map(e => e.id === empId ? { ...e, type } : e),
+    }));
+
+  // ── Derived values ────────────────────────────────────────────────────
+  const dates = employments
+    .map(e => e.startDate)
+    .filter(Boolean)
+    .map(d => new Date(d!).getTime())
+    .filter(t => !isNaN(t));
+
+  const oldestDate = dates.length > 0 ? new Date(Math.min(...dates)) : null;
+  const now = new Date();
   const hasLessThan3Years = oldestDate
-    ? (new Date().getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25) < 3
+    ? (now.getTime() - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25) < 3
     : false;
 
-  const hasSelfEmployed = employments.some((emp) => emp.type === "Self-Employed");
+  const hasSelfEmployed = employments.some(e => e.type === "Self-Employed");
+
+  // ── Income helpers ────────────────────────────────────────────────────
+  const income = getData(activeId).income;
+  const setIncome = (field: keyof IncomeData, value: string) =>
+    setData(activeId, d => ({ ...d, income: { ...d.income, [field]: value } }));
+
+  // ── Self-employed helpers ─────────────────────────────────────────────
+  const se = getData(activeId).selfEmployed;
+  const setSE = (field: keyof SelfEmployedData, value: string) =>
+    setData(activeId, d => ({ ...d, selfEmployed: { ...d.selfEmployed, [field]: value } }));
+
+  // ── Completion map for tabs ───────────────────────────────────────────
+  const completionMap = Object.fromEntries(
+    applicants.map(a => [a.id, completionStatus(getData(a.id))])
+  );
+
+  const sid = activeId; // short alias for id-suffixing
 
   return (
     <PageShell>
-      <header className="mb-10">
+      <header className="mb-8">
         <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
           Step 3 of 6
         </span>
@@ -56,10 +164,16 @@ export default function EmploymentIncomePage() {
           Employment &amp; Income
         </h1>
         <p className="text-slate-600 dark:text-slate-400">
-          Please provide details regarding your current employment, secondary jobs, previous
-          employment, and all income sources.
+          Please provide employment and income details for each applicant.
         </p>
       </header>
+
+      <ApplicantTabs
+        applicants={applicants}
+        activeId={activeId}
+        onSelect={setActiveId}
+        completionMap={completionMap}
+      />
 
       {/* Employment History */}
       <div className="mb-12">
@@ -92,14 +206,14 @@ export default function EmploymentIncomePage() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`ei-emp-type-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <label htmlFor={`ei-emp-type-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Type of Employment
                     </label>
                     <select
-                      id={`ei-emp-type-${emp.id}`}
-                      value={emp.type || ""}
-                      onChange={(e) => updateEmploymentType(emp.id, e.target.value)}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
+                      id={`ei-emp-type-${sid}-${emp.id}`}
+                      value={emp.type}
+                      onChange={e => updateEmploymentType(emp.id, e.target.value)}
+                      className={inputCls}
                     >
                       <option value="">Select...</option>
                       <option value="PAYG">PAYG</option>
@@ -109,111 +223,62 @@ export default function EmploymentIncomePage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`ei-emp-status-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Status
-                    </label>
-                    <select
-                      id={`ei-emp-status-${emp.id}`}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                    >
+                    <label htmlFor={`ei-emp-status-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Status</label>
+                    <select id={`ei-emp-status-${sid}-${emp.id}`} className={inputCls}>
                       <option>Select...</option>
-                      <option>Full Time</option>
-                      <option>Part Time</option>
-                      <option>Casual</option>
-                      <option>Contract</option>
+                      <option>Full Time</option><option>Part Time</option><option>Casual</option><option>Contract</option>
                     </select>
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`ei-emp-sector-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Sector
-                    </label>
-                    <select
-                      id={`ei-emp-sector-${emp.id}`}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                    >
-                      <option>Select...</option>
-                      <option>Public</option>
-                      <option>Private</option>
+                    <label htmlFor={`ei-emp-sector-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Sector</label>
+                    <select id={`ei-emp-sector-${sid}-${emp.id}`} className={inputCls}>
+                      <option>Select...</option><option>Public</option><option>Private</option>
                     </select>
                   </div>
 
-                  <div className="hidden md:block"></div>
+                  <div className="hidden md:block" />
 
                   <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label htmlFor={`ei-emp-company-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Company Name
-                    </label>
-                    <input
-                      id={`ei-emp-company-${emp.id}`}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                      type="text"
-                    />
+                    <label htmlFor={`ei-emp-company-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Company Name</label>
+                    <input id={`ei-emp-company-${sid}-${emp.id}`} className={inputCls} type="text" />
                   </div>
 
                   <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label htmlFor={`ei-emp-address-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Company Address
-                    </label>
-                    <input
-                      id={`ei-emp-address-${emp.id}`}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                      type="text"
-                    />
+                    <label htmlFor={`ei-emp-address-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Company Address</label>
+                    <input id={`ei-emp-address-${sid}-${emp.id}`} className={inputCls} type="text" />
                   </div>
 
                   <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label htmlFor={`ei-emp-occupation-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Occupation Role
-                    </label>
-                    <input
-                      id={`ei-emp-occupation-${emp.id}`}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                      type="text"
-                    />
+                    <label htmlFor={`ei-emp-occupation-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Occupation Role</label>
+                    <input id={`ei-emp-occupation-${sid}-${emp.id}`} className={inputCls} type="text" />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`ei-emp-start-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Start Date with Company
-                    </label>
+                    <label htmlFor={`ei-emp-start-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Start Date with Company</label>
                     <input
-                      id={`ei-emp-start-${emp.id}`}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
+                      id={`ei-emp-start-${sid}-${emp.id}`}
+                      className={inputCls}
                       type="date"
                       max={new Date().toISOString().split("T")[0]}
-                      value={emp.startDate || ""}
-                      onChange={(e) => updateEmploymentDate(emp.id, e.target.value)}
+                      value={emp.startDate}
+                      onChange={e => updateEmploymentDate(emp.id, e.target.value)}
                     />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`ei-gross-income-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Gross Annual Income
-                    </label>
-                    <CurrencyInput id={`ei-gross-income-${emp.id}`} />
+                    <label htmlFor={`ei-gross-income-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Gross Annual Income</label>
+                    <CurrencyInput id={`ei-gross-income-${sid}-${emp.id}`} />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`ei-emp-contact-name-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Employer Contact Name
-                    </label>
-                    <input
-                      id={`ei-emp-contact-name-${emp.id}`}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                      type="text"
-                    />
+                    <label htmlFor={`ei-emp-contact-name-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Employer Contact Name</label>
+                    <input id={`ei-emp-contact-name-${sid}-${emp.id}`} className={inputCls} type="text" />
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor={`ei-emp-contact-number-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                      Employer Contact Number
-                    </label>
-                    <input
-                      id={`ei-emp-contact-number-${emp.id}`}
-                      className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                      type="tel"
-                    />
+                    <label htmlFor={`ei-emp-contact-number-${sid}-${emp.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Employer Contact Number</label>
+                    <input id={`ei-emp-contact-number-${sid}-${emp.id}`} className={inputCls} type="tel" />
                   </div>
                 </div>
               </div>
@@ -227,9 +292,8 @@ export default function EmploymentIncomePage() {
                     Additional Job History Required
                   </div>
                   <p className="text-sm opacity-90 ml-7">
-                    Lenders require a minimum of 3 years continuous employment history. Because
-                    your earliest stated start date is within the last 3 years, please provide
-                    your previous employment details.
+                    Lenders require a minimum of 3 years continuous employment history. Because your
+                    earliest stated start date is within the last 3 years, please provide previous employment details.
                   </p>
                 </div>
                 <button
@@ -256,75 +320,59 @@ export default function EmploymentIncomePage() {
           <div className="p-6 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-base-salary" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Base Salary</label>
-                <CurrencyInput id="ei-base-salary" />
+                <label htmlFor={`ei-base-salary-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Base Salary</label>
+                <CurrencyInput id={`ei-base-salary-${sid}`} value={income.baseSalary} onChange={v => setIncome("baseSalary", v)} />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-income-frequency" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Income Frequency</label>
-                <select
-                  id="ei-income-frequency"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                >
-                  <option>Select...</option>
-                  <option>Weekly</option>
-                  <option>Fortnightly</option>
-                  <option>Monthly</option>
-                  <option>Yearly</option>
+                <label htmlFor={`ei-income-freq-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Income Frequency</label>
+                <select id={`ei-income-freq-${sid}`} value={income.incomeFrequency} onChange={e => setIncome("incomeFrequency", e.target.value)} className={inputCls}>
+                  <option value="">Select...</option>
+                  <option>Weekly</option><option>Fortnightly</option><option>Monthly</option><option>Yearly</option>
                 </select>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-overtime" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Regular Overtime</label>
-                <CurrencyInput id="ei-overtime" />
+                <label htmlFor={`ei-overtime-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Regular Overtime</label>
+                <CurrencyInput id={`ei-overtime-${sid}`} value={income.overtime} onChange={v => setIncome("overtime", v)} />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-commission" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Commission / Bonuses</label>
-                <CurrencyInput id="ei-commission" />
+                <label htmlFor={`ei-commission-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Commission / Bonuses</label>
+                <CurrencyInput id={`ei-commission-${sid}`} value={income.commission} onChange={v => setIncome("commission", v)} />
               </div>
 
               <div className="flex flex-col gap-1.5 md:col-span-2">
-                <label htmlFor="ei-allowances-amount" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Regular Allowances</label>
+                <label htmlFor={`ei-allowances-amount-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Regular Allowances</label>
                 <div className="grid grid-cols-2 gap-4">
-                  <CurrencyInput id="ei-allowances-amount" placeholder="Amount" />
-                  <input
-                    id="ei-allowances-type"
-                    className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                    type="text"
-                    placeholder="Type (e.g. Car)"
-                  />
+                  <CurrencyInput id={`ei-allowances-amount-${sid}`} placeholder="Amount" value={income.allowancesAmount} onChange={v => setIncome("allowancesAmount", v)} />
+                  <input id={`ei-allowances-type-${sid}`} className={inputCls} type="text" placeholder="Type (e.g. Car)"
+                    value={income.allowancesType} onChange={e => setIncome("allowancesType", e.target.value)} />
                 </div>
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-rental-existing" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Existing Rental Income</label>
-                <CurrencyInput id="ei-rental-existing" />
+                <label htmlFor={`ei-rental-existing-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Existing Rental Income</label>
+                <CurrencyInput id={`ei-rental-existing-${sid}`} value={income.rentalExisting} onChange={v => setIncome("rentalExisting", v)} />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-rental-proposed" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Proposed Rental Income</label>
-                <CurrencyInput id="ei-rental-proposed" />
+                <label htmlFor={`ei-rental-proposed-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Proposed Rental Income</label>
+                <CurrencyInput id={`ei-rental-proposed-${sid}`} value={income.rentalProposed} onChange={v => setIncome("rentalProposed", v)} />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-investment-income" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Investment Income (e.g. Share Dividends)</label>
-                <CurrencyInput id="ei-investment-income" />
+                <label htmlFor={`ei-investment-income-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Investment Income (e.g. Share Dividends)</label>
+                <CurrencyInput id={`ei-investment-income-${sid}`} value={income.investmentIncome} onChange={v => setIncome("investmentIncome", v)} />
               </div>
 
               <div className="flex flex-col gap-1.5 md:col-span-2">
-                <label htmlFor="ei-govt-amount" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Government Payments</label>
+                <label htmlFor={`ei-govt-amount-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Government Payments</label>
                 <div className="grid grid-cols-2 gap-4">
-                  <CurrencyInput id="ei-govt-amount" placeholder="Amount" />
-                  <select
-                    id="ei-govt-type"
-                    className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  >
-                    <option>Select Type...</option>
-                    <option>Family</option>
-                    <option>Pension</option>
-                    <option>Carer&apos;s</option>
-                    <option>Other</option>
+                  <CurrencyInput id={`ei-govt-amount-${sid}`} placeholder="Amount" value={income.govtAmount} onChange={v => setIncome("govtAmount", v)} />
+                  <select id={`ei-govt-type-${sid}`} value={income.govtType} onChange={e => setIncome("govtType", e.target.value)} className={inputCls}>
+                    <option value="">Select Type...</option>
+                    <option>Family</option><option>Pension</option><option>Carer&apos;s</option><option>Other</option>
                   </select>
                 </div>
               </div>
@@ -333,149 +381,105 @@ export default function EmploymentIncomePage() {
         </div>
       </div>
 
-      {/* Self-Employed Applicants — only shown when at least one employment type is Self-Employed */}
-      {hasSelfEmployed && <div className="mb-12">
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-          <div className="flex items-center gap-3 px-6 py-4 bg-primary">
-            <span className="material-symbols-outlined text-white text-[20px]">storefront</span>
-            <h2 className="font-bold text-white uppercase tracking-wider text-base">Self-Employed Applicants</h2>
-          </div>
-          <div className="p-6 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-1.5 md:col-span-2">
-                <label htmlFor="ei-business-name" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Business Name</label>
-                <input
-                  id="ei-business-name"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="text"
-                />
-              </div>
+      {/* Self-Employed — only when at least one employment record is Self-Employed */}
+      {hasSelfEmployed && (
+        <div className="mb-12">
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+            <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+              <span className="material-symbols-outlined text-white text-[20px]">storefront</span>
+              <h2 className="font-bold text-white uppercase tracking-wider text-base">Self-Employed Applicants</h2>
+            </div>
+            <div className="p-6 md:p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex flex-col gap-1.5 md:col-span-2">
+                  <label htmlFor={`ei-business-name-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Business Name</label>
+                  <input id={`ei-business-name-${sid}`} className={inputCls} type="text" value={se.businessName} onChange={e => setSE("businessName", e.target.value)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-entity-type" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Type of Entity</label>
-                <input
-                  id="ei-entity-type"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="text"
-                />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-entity-type-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Type of Entity</label>
+                  <input id={`ei-entity-type-${sid}`} className={inputCls} type="text" value={se.entityType} onChange={e => setSE("entityType", e.target.value)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-trustee" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Trustee (if applicable)</label>
-                <input
-                  id="ei-trustee"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="text"
-                />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-trustee-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Trustee (if applicable)</label>
+                  <input id={`ei-trustee-${sid}`} className={inputCls} type="text" value={se.trustee} onChange={e => setSE("trustee", e.target.value)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5 md:col-span-2">
-                <label htmlFor="ei-beneficiaries" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Beneficiaries</label>
-                <input
-                  id="ei-beneficiaries"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="text"
-                />
-              </div>
+                <div className="flex flex-col gap-1.5 md:col-span-2">
+                  <label htmlFor={`ei-beneficiaries-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Beneficiaries</label>
+                  <input id={`ei-beneficiaries-${sid}`} className={inputCls} type="text" value={se.beneficiaries} onChange={e => setSE("beneficiaries", e.target.value)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-website" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Website</label>
-                <input
-                  id="ei-website"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="url"
-                  placeholder="https://"
-                />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-website-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Website</label>
+                  <input id={`ei-website-${sid}`} className={inputCls} type="url" placeholder="https://" value={se.website} onChange={e => setSE("website", e.target.value)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-abn-acn" className="text-sm font-semibold text-slate-700 dark:text-slate-300">ABN / ACN</label>
-                <input
-                  id="ei-abn-acn"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="text"
-                />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-abn-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">ABN / ACN</label>
+                  <input id={`ei-abn-${sid}`} className={inputCls} type="text" value={se.abnAcn} onChange={e => setSE("abnAcn", e.target.value)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-industry" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Industry</label>
-                <input
-                  id="ei-industry"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="text"
-                />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-industry-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Industry</label>
+                  <input id={`ei-industry-${sid}`} className={inputCls} type="text" value={se.industry} onChange={e => setSE("industry", e.target.value)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-net-profit-current" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Net Profit (Current FY)</label>
-                <CurrencyInput id="ei-net-profit-current" />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-net-current-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Net Profit (Current FY)</label>
+                  <CurrencyInput id={`ei-net-current-${sid}`} value={se.netProfitCurrent} onChange={v => setSE("netProfitCurrent", v)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-net-profit-previous" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Net Profit (Previous FY)</label>
-                <CurrencyInput id="ei-net-profit-previous" />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-net-prev-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Net Profit (Previous FY)</label>
+                  <CurrencyInput id={`ei-net-prev-${sid}`} value={se.netProfitPrevious} onChange={v => setSE("netProfitPrevious", v)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-add-backs-current" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Add Backs (Current FY)</label>
-                <CurrencyInput id="ei-add-backs-current" />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-addbacks-current-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Add Backs (Current FY)</label>
+                  <CurrencyInput id={`ei-addbacks-current-${sid}`} value={se.addBacksCurrent} onChange={v => setSE("addBacksCurrent", v)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-add-backs-previous" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Add Backs (Previous FY)</label>
-                <CurrencyInput id="ei-add-backs-previous" />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-addbacks-prev-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Add Backs (Previous FY)</label>
+                  <CurrencyInput id={`ei-addbacks-prev-${sid}`} value={se.addBacksPrevious} onChange={v => setSE("addBacksPrevious", v)} />
+                </div>
 
-              <div className="col-span-1 md:col-span-2 pt-4 pb-2 border-b border-slate-200 dark:border-slate-700">
-                <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Accountant Details</h4>
-              </div>
+                <div className="col-span-1 md:col-span-2 pt-4 pb-2 border-b border-slate-200 dark:border-slate-700">
+                  <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Accountant Details</h4>
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-accountant-name" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Name</label>
-                <input
-                  id="ei-accountant-name"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="text"
-                />
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-accountant-name-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Name</label>
+                  <input id={`ei-accountant-name-${sid}`} className={inputCls} type="text" value={se.accountantName} onChange={e => setSE("accountantName", e.target.value)} />
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="ei-accountant-phone" className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Number</label>
-                <input
-                  id="ei-accountant-phone"
-                  className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
-                  type="tel"
-                />
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor={`ei-accountant-phone-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Number</label>
+                  <input id={`ei-accountant-phone-${sid}`} className={inputCls} type="tel" value={se.accountantPhone} onChange={e => setSE("accountantPhone", e.target.value)} />
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>}
+      )}
 
-      {/* Navigation Buttons */}
+      {/* Navigation */}
       <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
-        <Link
-          href="/personal-details"
-          className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5"
-        >
+        <Link href="/personal-details" className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5">
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           Back
         </Link>
         <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
-            Save Draft
-          </span>
-          <Link
-            href="/assets"
-            className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90"
-          >
+          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
+          <Link href="/assets" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
             Next Step
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
           </Link>
         </div>
       </div>
 
-      {/* Need Help Box */}
       <div className="mt-8 bg-slate-100 border border-slate-200 rounded-xl p-6 dark:bg-slate-800/50 dark:border-slate-700">
         <div className="flex gap-4">
           <span className="material-symbols-outlined text-primary mt-0.5">info</span>
