@@ -1,6 +1,6 @@
 "use client";
 
-import { InputHTMLAttributes, useState, ChangeEvent } from "react";
+import { InputHTMLAttributes, useState, useEffect, ChangeEvent } from "react";
 
 interface CurrencyInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
   value?: string | number;
@@ -11,6 +11,12 @@ export function CurrencyInput({ value, onChange, className, ...props }: Currency
   const [localValue, setLocalValue] = useState<string>(
     value ? formatCurrency(String(value)) : ""
   );
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setLocalValue(formatCurrency(String(value)));
+    }
+  }, [value]);
 
   function formatCurrency(val: string) {
     if (!val) return "";

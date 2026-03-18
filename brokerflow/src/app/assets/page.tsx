@@ -1,107 +1,11 @@
 "use client";
 
-import { SidebarNav } from "@/components/SidebarNav";
+import { PageShell } from "@/components/PageShell";
 import { CurrencyInput } from "@/components/CurrencyInput";
+import { CollapsibleSection } from "@/components/CollapsibleSection";
+import { PhaseDivider } from "@/components/PhaseDivider";
 import Link from "next/link";
-import { useState, ReactNode } from "react";
-/* eslint-disable @next/next/no-img-element */
-
-// ─── Collapsible Section Component ───────────────────────────────────────────
-
-interface CollapsibleSectionProps {
-  icon: string;
-  title: string;
-  badge?: string;
-  defaultOpen?: boolean;
-  optional?: boolean;
-  children: ReactNode;
-}
-
-function CollapsibleSection({
-  icon,
-  title,
-  badge,
-  defaultOpen = false,
-  optional = false,
-  children,
-}: CollapsibleSectionProps) {
-  const [isOpen, setIsOpen] = useState(defaultOpen);
-
-  return (
-    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-      {/* Clickable Header */}
-      <button
-        type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-primary hover:bg-primary/90 transition-colors text-left group"
-        aria-expanded={isOpen}
-      >
-        <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-white text-[20px]">
-            {icon}
-          </span>
-          <h2 className="font-bold text-white uppercase tracking-wider text-base">
-            {title}
-          </h2>
-          {optional && (
-            <span className="text-white/70 text-xs italic font-normal normal-case tracking-normal">
-              (if known)
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-3">
-          {badge && !isOpen && (
-            <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-xs font-semibold text-white">
-              {badge}
-            </span>
-          )}
-          <span
-            className={`material-symbols-outlined text-white text-[22px] transition-transform duration-300 ${isOpen ? "rotate-180" : ""
-              }`}
-          >
-            expand_more
-          </span>
-        </div>
-      </button>
-
-      {/* Collapsible Body */}
-      <div
-        className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-[9999px] opacity-100" : "max-h-0 opacity-0"
-          }`}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
-
-// ─── Phase Divider ────────────────────────────────────────────────────────────
-
-function PhaseDivider({
-  phase,
-  title,
-  description,
-}: {
-  phase: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="flex items-start gap-4 mb-4 mt-2">
-
-      <div className="pt-1">
-        <h3 className="font-bold text-primary text-base uppercase tracking-wider">
-          {title}
-        </h3>
-        <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
-          {description}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Page ────────────────────────────────────────────────────────────────
+import { useState } from "react";
 
 export default function AssetsPage() {
   // ── Properties ──────────────────────────────────────────────────────────
@@ -258,47 +162,7 @@ export default function AssetsPage() {
 
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
-      {/* ── Header / Navigation ──────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-primary/10 bg-white px-6 py-4 dark:bg-background-dark md:px-20">
-        <div className="flex items-center gap-3">
-          <div className="text-primary dark:text-slate-100">
-            <svg
-              className="size-8"
-              fill="none"
-              viewBox="0 0 48 48"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold uppercase tracking-tight text-primary dark:text-slate-100">
-            uBroker
-          </h2>
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="hidden text-sm font-medium text-slate-600 dark:text-slate-400 md:block">
-            Client: James &amp; Sarah Smith
-          </span>
-          <div className="flex size-10 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-primary/10">
-            <img
-              alt="Profile"
-              className="h-full w-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVTiH53nUWx2K08UJP04ET2KL0-kTlCzir8zZw3rNoV69RM2CUxestGhNa4A5ahcP819A5L4vFfKg1v6kPO58N0txgYEZ4mzHT4Tz_enrMUAug9t35ueraB-RtasfUOl7vHSF14QreLtZAfPIuEiwXikpuOGca7aU-qopaMCx8qOHXO_c3ancY66m-_tAwyDNZIfHP7hNypGTPsJ6lEUZDplwTXA8MVYXQao1Ifc7RiGm8_9ekTjbeGNlwtVzGCiF6fZ1_CajXQYRZ"
-            />
-          </div>
-        </div>
-      </header>
-
-      <main className="flex w-full flex-grow flex-col md:flex-row">
-        <SidebarNav />
-
-        {/* ── Form Content ─────────────────────────────────────────────── */}
-        <section className="flex-1 overflow-y-auto bg-background-light p-6 dark:bg-background-dark md:p-12">
-          <div className="mx-auto max-w-5xl">
+    <PageShell>
 
             {/* Page Header */}
             <header className="mb-10">
@@ -330,37 +194,41 @@ export default function AssetsPage() {
               >
                 <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                   <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <label htmlFor="sol-firm" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Conveyancing Firm / Solicitor Company
                     </label>
                     <input
+                      id="sol-firm"
                       className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
                       type="text"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5 md:col-span-2">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <label htmlFor="sol-contact-name" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Contact Name
                     </label>
                     <input
+                      id="sol-contact-name"
                       className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
                       type="text"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <label htmlFor="sol-contact-number" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Contact Number
                     </label>
                     <input
+                      id="sol-contact-number"
                       className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
                       type="tel"
                     />
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                    <label htmlFor="sol-email" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Email
                     </label>
                     <input
+                      id="sol-email"
                       className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
                       type="email"
                     />
@@ -391,10 +259,11 @@ export default function AssetsPage() {
                     </label>
                   </div>
                   <div className="flex flex-col md:flex-row md:items-center gap-2">
-                    <label className="text-sm font-semibold text-slate-700 md:min-w-max dark:text-slate-300">
+                    <label htmlFor="val-contact-ownocc" className="text-sm font-semibold text-slate-700 md:min-w-max dark:text-slate-300">
                       Contact Number
                     </label>
                     <input
+                      id="val-contact-ownocc"
                       className="rounded w-full border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
                       type="tel"
                     />
@@ -425,10 +294,11 @@ export default function AssetsPage() {
                     </div>
                   </div>
                   <div className="flex flex-col md:flex-row md:items-center gap-2">
-                    <label className="text-sm font-semibold text-slate-700 md:min-w-max dark:text-slate-300">
+                    <label htmlFor="val-contact-purchases" className="text-sm font-semibold text-slate-700 md:min-w-max dark:text-slate-300">
                       Contact Number
                     </label>
                     <input
+                      id="val-contact-purchases"
                       className="rounded w-full border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
                       type="tel"
                     />
@@ -447,24 +317,25 @@ export default function AssetsPage() {
                     Where are you obtaining the funds you are contributing to this transaction?
                   </p>
                   <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
-                    <label className="font-semibold text-slate-800 dark:text-slate-200">
+                    <label htmlFor="ftc-proceeds" className="font-semibold text-slate-800 dark:text-slate-200">
                       Proceeds of Property Sale
                     </label>
-                    <CurrencyInput />
+                    <CurrencyInput id="ftc-proceeds" />
                   </div>
                   <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
-                    <label className="font-semibold text-slate-800 dark:text-slate-200">
+                    <label htmlFor="ftc-savings" className="font-semibold text-slate-800 dark:text-slate-200">
                       Savings
                     </label>
-                    <CurrencyInput />
+                    <CurrencyInput id="ftc-savings" />
                   </div>
                   <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
-                    <label className="font-semibold text-slate-800 dark:text-slate-200">
+                    <label htmlFor="ftc-grant-amount" className="font-semibold text-slate-800 dark:text-slate-200">
                       Government Grant
                     </label>
                     <div className="flex gap-2">
-                      <CurrencyInput className="flex-1 min-w-0" />
+                      <CurrencyInput id="ftc-grant-amount" className="flex-1 min-w-0" />
                       <input
+                        id="ftc-grant-type"
                         type="text"
                         placeholder="Type"
                         className="w-1/2 rounded border-slate-300 min-w-0 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
@@ -472,12 +343,13 @@ export default function AssetsPage() {
                     </div>
                   </div>
                   <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
-                    <label className="font-semibold text-slate-800 dark:text-slate-200">
+                    <label htmlFor="ftc-other-amount" className="font-semibold text-slate-800 dark:text-slate-200">
                       Other
                     </label>
                     <div className="flex gap-2">
-                      <CurrencyInput className="flex-1 min-w-0" />
+                      <CurrencyInput id="ftc-other-amount" className="flex-1 min-w-0" />
                       <input
+                        id="ftc-other-detail"
                         type="text"
                         placeholder="Detail"
                         className="w-1/2 rounded border-slate-300 min-w-0 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary"
@@ -607,8 +479,9 @@ export default function AssetsPage() {
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
                                         <div className="flex flex-col gap-1.5 md:col-span-2">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Property Address</label>
+                                          <label htmlFor={`prop-address-${prop.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Property Address</label>
                                           <input
+                                            id={`prop-address-${prop.id}`}
                                             type="text"
                                             placeholder="Enter full address..."
                                             value={prop.address}
@@ -618,8 +491,9 @@ export default function AssetsPage() {
                                         </div>
 
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Property Type</label>
+                                          <label htmlFor={`prop-type-${prop.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Property Type</label>
                                           <select
+                                            id={`prop-type-${prop.id}`}
                                             value={prop.propertyType}
                                             onChange={(e) => updateProperty(prop.id, "propertyType", e.target.value)}
                                             className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
@@ -634,8 +508,9 @@ export default function AssetsPage() {
                                         </div>
 
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
+                                          <label htmlFor={`prop-value-${prop.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
                                           <input
+                                            id={`prop-value-${prop.id}`}
                                             type="text"
                                             placeholder="e.g. 750000"
                                             value={prop.estimatedValue}
@@ -645,8 +520,9 @@ export default function AssetsPage() {
                                         </div>
 
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Rental Income (p/m)</label>
+                                          <label htmlFor={`prop-rental-${prop.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Rental Income (p/m)</label>
                                           <input
+                                            id={`prop-rental-${prop.id}`}
                                             type="text"
                                             placeholder="e.g. 2500"
                                             value={prop.rentalIncome}
@@ -656,8 +532,9 @@ export default function AssetsPage() {
                                         </div>
 
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lender</label>
+                                          <label htmlFor={`prop-lender-${prop.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lender</label>
                                           <input
+                                            id={`prop-lender-${prop.id}`}
                                             type="text"
                                             placeholder="e.g. CommBank"
                                             value={prop.lender}
@@ -667,8 +544,9 @@ export default function AssetsPage() {
                                         </div>
 
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Applicable Mortgage #</label>
+                                          <label htmlFor={`prop-mortgage-${prop.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Applicable Mortgage #</label>
                                           <input
+                                            id={`prop-mortgage-${prop.id}`}
                                             type="text"
                                             placeholder="e.g. 1"
                                             value={prop.mortgageNumber}
@@ -798,12 +676,12 @@ export default function AssetsPage() {
                                     <div className="rounded-xl border border-primary/20 bg-primary/5 dark:bg-slate-800/50 p-5">
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Financial Institution</label>
-                                          <input type="text" placeholder="e.g. CommBank" value={acc.institution} onChange={(e) => updateBankAccount(acc.id, "institution", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`bank-institution-${acc.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Financial Institution</label>
+                                          <input id={`bank-institution-${acc.id}`} type="text" placeholder="e.g. CommBank" value={acc.institution} onChange={(e) => updateBankAccount(acc.id, "institution", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Account Type</label>
-                                          <select value={acc.accountType} onChange={(e) => updateBankAccount(acc.id, "accountType", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm">
+                                          <label htmlFor={`bank-type-${acc.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Account Type</label>
+                                          <select id={`bank-type-${acc.id}`} value={acc.accountType} onChange={(e) => updateBankAccount(acc.id, "accountType", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm">
                                             <option value="">Select type...</option>
                                             <option value="Transaction">Transaction</option>
                                             <option value="Saving">Saving</option>
@@ -812,16 +690,16 @@ export default function AssetsPage() {
                                           </select>
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Balance</label>
-                                          <input type="text" placeholder="$0.00" value={acc.balance} onChange={(e) => updateBankAccount(acc.id, "balance", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`bank-balance-${acc.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Balance</label>
+                                          <input id={`bank-balance-${acc.id}`} type="text" placeholder="$0.00" value={acc.balance} onChange={(e) => updateBankAccount(acc.id, "balance", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">BSB</label>
-                                          <input type="text" placeholder="e.g. 062-000" value={acc.bsb} onChange={(e) => updateBankAccount(acc.id, "bsb", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`bank-bsb-${acc.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">BSB</label>
+                                          <input id={`bank-bsb-${acc.id}`} type="text" placeholder="e.g. 062-000" value={acc.bsb} onChange={(e) => updateBankAccount(acc.id, "bsb", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Account Number</label>
-                                          <input type="text" placeholder="e.g. 12345678" value={acc.accountNumber} onChange={(e) => updateBankAccount(acc.id, "accountNumber", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`bank-account-num-${acc.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Account Number</label>
+                                          <input id={`bank-account-num-${acc.id}`} type="text" placeholder="e.g. 12345678" value={acc.accountNumber} onChange={(e) => updateBankAccount(acc.id, "accountNumber", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
                                           <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
@@ -910,20 +788,20 @@ export default function AssetsPage() {
                                     <div className="rounded-xl border border-primary/20 bg-primary/5 dark:bg-slate-800/50 p-5">
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         <div className="flex flex-col gap-1.5 md:col-span-2">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Make &amp; Model</label>
-                                          <input type="text" placeholder="e.g. Toyota Camry" value={v.makeModel} onChange={(e) => updateVehicle(v.id, "makeModel", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`vehicle-make-${v.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Make &amp; Model</label>
+                                          <input id={`vehicle-make-${v.id}`} type="text" placeholder="e.g. Toyota Camry" value={v.makeModel} onChange={(e) => updateVehicle(v.id, "makeModel", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Year</label>
-                                          <input type="text" placeholder="e.g. 2021" value={v.year} onChange={(e) => updateVehicle(v.id, "year", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`vehicle-year-${v.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Year</label>
+                                          <input id={`vehicle-year-${v.id}`} type="text" placeholder="e.g. 2021" value={v.year} onChange={(e) => updateVehicle(v.id, "year", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
-                                          <input type="text" placeholder="$0.00" value={v.estimatedValue} onChange={(e) => updateVehicle(v.id, "estimatedValue", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`vehicle-value-${v.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
+                                          <input id={`vehicle-value-${v.id}`} type="text" placeholder="$0.00" value={v.estimatedValue} onChange={(e) => updateVehicle(v.id, "estimatedValue", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lender</label>
-                                          <input type="text" placeholder="e.g. CommBank" value={v.lender} onChange={(e) => updateVehicle(v.id, "lender", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`vehicle-lender-${v.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lender</label>
+                                          <input id={`vehicle-lender-${v.id}`} type="text" placeholder="e.g. CommBank" value={v.lender} onChange={(e) => updateVehicle(v.id, "lender", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
                                           <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
@@ -1011,16 +889,16 @@ export default function AssetsPage() {
                                     <div className="rounded-xl border border-primary/20 bg-primary/5 dark:bg-slate-800/50 p-5">
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         <div className="flex flex-col gap-1.5 md:col-span-2">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Fund Name / Institution</label>
-                                          <input type="text" placeholder="e.g. Australian Super" value={s.fundName} onChange={(e) => updateSuperFund(s.id, "fundName", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`super-fund-${s.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Fund Name / Institution</label>
+                                          <input id={`super-fund-${s.id}`} type="text" placeholder="e.g. Australian Super" value={s.fundName} onChange={(e) => updateSuperFund(s.id, "fundName", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Member Number</label>
-                                          <input type="text" placeholder="e.g. 123456789" value={s.memberNumber} onChange={(e) => updateSuperFund(s.id, "memberNumber", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`super-member-${s.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Member Number</label>
+                                          <input id={`super-member-${s.id}`} type="text" placeholder="e.g. 123456789" value={s.memberNumber} onChange={(e) => updateSuperFund(s.id, "memberNumber", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Balance</label>
-                                          <input type="text" placeholder="$0.00" value={s.balance} onChange={(e) => updateSuperFund(s.id, "balance", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`super-balance-${s.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Balance</label>
+                                          <input id={`super-balance-${s.id}`} type="text" placeholder="$0.00" value={s.balance} onChange={(e) => updateSuperFund(s.id, "balance", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
                                           <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
@@ -1105,12 +983,12 @@ export default function AssetsPage() {
                                     <div className="rounded-xl border border-primary/20 bg-primary/5 dark:bg-slate-800/50 p-5">
                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         <div className="flex flex-col gap-1.5 md:col-span-2">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
-                                          <input type="text" placeholder="e.g. Jewellery, art, collectibles" value={o.description} onChange={(e) => updateOtherAsset(o.id, "description", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`other-desc-${o.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
+                                          <input id={`other-desc-${o.id}`} type="text" placeholder="e.g. Jewellery, art, collectibles" value={o.description} onChange={(e) => updateOtherAsset(o.id, "description", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
-                                          <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
-                                          <input type="text" placeholder="$0.00" value={o.estimatedValue} onChange={(e) => updateOtherAsset(o.id, "estimatedValue", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                          <label htmlFor={`other-value-${o.id}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Estimated Value</label>
+                                          <input id={`other-value-${o.id}`} type="text" placeholder="$0.00" value={o.estimatedValue} onChange={(e) => updateOtherAsset(o.id, "estimatedValue", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
                                         </div>
                                         <div className="flex flex-col gap-1.5">
                                           <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
@@ -1146,20 +1024,21 @@ export default function AssetsPage() {
                 <div className="p-6 md:p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="flex flex-col gap-1.5 md:col-span-2">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      <label htmlFor="shares-description" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Description
                       </label>
                       <input
+                        id="shares-description"
                         type="text"
                         placeholder="e.g. ASX shares, managed funds, ETFs"
                         className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      <label htmlFor="shares-value" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Estimated Value
                       </label>
-                      <CurrencyInput placeholder="$0.00" className="text-sm" />
+                      <CurrencyInput id="shares-value" placeholder="$0.00" className="text-sm" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -1195,20 +1074,21 @@ export default function AssetsPage() {
                 <div className="p-6 md:p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="flex flex-col gap-1.5 md:col-span-2">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      <label htmlFor="contents-description" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Description
                       </label>
                       <input
+                        id="contents-description"
                         type="text"
                         placeholder="e.g. Furniture, appliances, personal belongings"
                         className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                      <label htmlFor="contents-value" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                         Estimated Value
                       </label>
-                      <CurrencyInput placeholder="$0.00" className="text-sm" />
+                      <CurrencyInput id="contents-value" placeholder="$0.00" className="text-sm" />
                     </div>
                     <div className="flex flex-col gap-1.5">
                       <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -1281,14 +1161,6 @@ export default function AssetsPage() {
               </div>
             </div>
 
-          </div>
-        </section>
-      </main>
-
-      {/* Help Tooltip */}
-      <button className="fixed bottom-6 right-6 z-50 flex size-14 items-center justify-center rounded-full bg-primary text-white shadow-2xl transition-transform hover:scale-105">
-        <span className="material-symbols-outlined text-3xl">chat_bubble</span>
-      </button>
-    </div>
+    </PageShell>
   );
 }
