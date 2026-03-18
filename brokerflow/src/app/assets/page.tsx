@@ -1135,7 +1135,7 @@ export default function AssetsPage() {
                   Save Draft
                 </span>
                 <Link
-                  href="#"
+                  href="/liabilities"
                   className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90"
                 >
                   Next Step

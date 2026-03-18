@@ -12,7 +12,7 @@ export function SidebarNav() {
     { href: "/personal-details", icon: "person", label: "Personal Details" },
     { href: "/employment-income", icon: "work", label: "Employment & Income" },
     { href: "/assets", icon: "account_balance", label: "Assets" },
-    { href: "#", icon: "credit_card", label: "Liabilities" },
+    { href: "/liabilities", icon: "credit_card", label: "Liabilities" },
     { href: "#", icon: "account_balance_wallet", label: "Living Expenses" },
   ];
 
@@ -28,6 +28,8 @@ export function SidebarNav() {
         return 50;
       case "/assets":
         return 66;
+      case "/liabilities":
+        return 83;
       default:
         return 0;
     }
