@@ -90,13 +90,15 @@ export default function EmploymentIncomePage() {
   const [activeId, setActiveId] = useState(() => applicants[0]?.id ?? "");
 
   // All per-applicant state lives here, keyed by applicant ID
-  const [allData, setAllData] = useState<Record<string, ApplicantEmploymentData>>({});
+  const [allData, setAllData] = useState<Record<string, ApplicantEmploymentData>>(() =>
+    Object.fromEntries(applicants.map(a => [a.id, blankApplicantData()]))
+  );
 
   const getData = (id: string): ApplicantEmploymentData =>
     allData[id] ?? blankApplicantData();
 
   const setData = (id: string, updater: (prev: ApplicantEmploymentData) => ApplicantEmploymentData) =>
-    setAllData(prev => ({ ...prev, [id]: updater(getData(id)) }));
+    setAllData(prev => ({ ...prev, [id]: updater(prev[id] ?? blankApplicantData()) }));
 
   // ── Employment helpers for active applicant ───────────────────────────
   const { employments } = getData(activeId);

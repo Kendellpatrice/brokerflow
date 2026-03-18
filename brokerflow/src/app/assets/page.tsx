@@ -288,7 +288,7 @@ export default function AssetsPage() {
                         <span className="text-slate-700 dark:text-slate-300">Other</span>
                       </label>
                       <input
-                        className="rounded border-slate-300 border-b-2 border-t-0 border-x-0 bg-transparent px-2 py-1 max-w-[150px] focus:ring-0 dark:border-slate-700 focus:border-primary"
+                        className="rounded border-slate-300 border-b-2 border-t-0 border-x-0 bg-transparent px-2 py-1 max-w-37.5 focus:ring-0 dark:border-slate-700 focus:border-primary"
                         type="text"
                       />
                     </div>

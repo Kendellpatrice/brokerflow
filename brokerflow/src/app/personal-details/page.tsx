@@ -108,13 +108,6 @@ export default function PersonalDetailsPage() {
         completionMap={completionMap}
       />
 
-      {/* Active applicant label (single-applicant case) */}
-      {applicants.length <= 1 && applicants[0] && (
-        <div className="mb-6 flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-          <span className="material-symbols-outlined text-[16px]">person</span>
-          {[applicants[0].firstName, applicants[0].lastName].filter(Boolean).join(" ") || "Primary Applicant"}
-        </div>
-      )}
 
       <div className="mb-12 flex flex-col gap-8">
 
