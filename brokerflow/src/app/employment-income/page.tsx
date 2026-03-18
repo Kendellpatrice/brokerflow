@@ -90,12 +90,13 @@ export default function EmploymentIncomePage() {
 
             {/* Current Employment Section */}
             <div className="mb-12">
-              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                  <span className="material-symbols-outlined text-primary">work</span>
-                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Employment History</h2>
-                  <span className="ml-2 text-xs font-normal italic text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">Min. 3 years required</span>
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+                  <span className="material-symbols-outlined text-white text-[20px]">work</span>
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Employment History</h2>
+                  <span className="text-white/70 text-xs italic font-normal normal-case tracking-normal">(Min. 3 years required)</span>
                 </div>
+                <div className="p-6 md:p-8">
 
                 {employments.map((emp, index) => (
                   <div key={emp.id} className={index > 0 ? "mt-8 border-t border-slate-200 dark:border-slate-700 pt-8" : ""}>
@@ -214,16 +215,18 @@ export default function EmploymentIncomePage() {
                     </button>
                   </div>
                 )}
+                </div>
               </div>
             </div>
 
             {/* Income Section */}
             <div className="mb-12">
-              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                  <span className="material-symbols-outlined text-primary">attach_money</span>
-                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Income Details</h2>
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+                  <span className="material-symbols-outlined text-white text-[20px]">attach_money</span>
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Income Details</h2>
                 </div>
+                <div className="p-6 md:p-8">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -291,16 +294,18 @@ export default function EmploymentIncomePage() {
                   </div>
 
                 </div>
+                </div>
               </div>
             </div>
 
             {/* Self Employed Applicants Section */}
             <div className="mb-12">
-              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                  <span className="material-symbols-outlined text-primary">storefront</span>
-                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Self-Employed Applicants</h2>
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+                  <span className="material-symbols-outlined text-white text-[20px]">storefront</span>
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Self-Employed Applicants</h2>
                 </div>
+                <div className="p-6 md:p-8">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -373,6 +378,7 @@ export default function EmploymentIncomePage() {
                     <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel" />
                   </div>
 
+                </div>
                 </div>
               </div>
             </div>

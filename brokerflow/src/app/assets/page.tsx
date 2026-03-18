@@ -33,7 +33,7 @@ function CollapsibleSection({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-cyan-500 hover:bg-cyan-600 transition-colors text-left group"
+        className="w-full flex items-center justify-between px-6 py-4 bg-primary hover:bg-primary/90 transition-colors text-left group"
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-3">

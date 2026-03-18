@@ -58,11 +58,12 @@ import Link from "next/link"; export default function PersonalDetailsPage() {
 
             {/* Applicant 1 Section */}
             <div className="mb-12">
-              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                  <span className="material-symbols-outlined text-primary">looks_one</span>
-                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Applicant Details</h2>
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
+                <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+                  <span className="material-symbols-outlined text-white text-[20px]">badge</span>
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Applicant Details</h2>
                 </div>
+                <div className="p-6 md:p-8">
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-1.5">
@@ -159,13 +160,15 @@ import Link from "next/link"; export default function PersonalDetailsPage() {
                     <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
                   </div>
                 </div>
+                </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                  <span className="material-symbols-outlined text-primary">contact_phone</span>
-                  <h3 className="text-lg font-bold text-primary dark:text-slate-100">Contact Details</h3>
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
+                <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+                  <span className="material-symbols-outlined text-white text-[20px]">contact_phone</span>
+                  <h3 className="font-bold text-white uppercase tracking-wider text-base">Contact Details</h3>
                 </div>
+                <div className="p-6 md:p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Email Address</label>
@@ -186,13 +189,15 @@ import Link from "next/link"; export default function PersonalDetailsPage() {
                     <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="tel" />
                   </div>
                 </div>
+                </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                  <span className="material-symbols-outlined text-primary">group</span>
-                  <h3 className="text-lg font-bold text-primary dark:text-slate-100">Nearest Relative <span className="text-sm font-normal italic text-slate-500">*Not living with you</span></h3>
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 mb-8 shadow-sm">
+                <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+                  <span className="material-symbols-outlined text-white text-[20px]">group</span>
+                  <h3 className="font-bold text-white uppercase tracking-wider text-base">Nearest Relative <span className="text-white/70 text-xs font-normal normal-case tracking-normal italic">*Not living with you</span></h3>
                 </div>
+                <div className="p-6 md:p-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Name</label>
@@ -211,13 +216,15 @@ import Link from "next/link"; export default function PersonalDetailsPage() {
                     <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="text" />
                   </div>
                 </div>
+                </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-                <div className="flex items-center gap-2 mb-6 pb-2 border-b border-primary/10">
-                  <span className="material-symbols-outlined text-primary">home_pin</span>
-                  <h2 className="text-xl font-bold text-primary dark:text-slate-100">Address Details</h2>
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+                <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+                  <span className="material-symbols-outlined text-white text-[20px]">home_pin</span>
+                  <h2 className="font-bold text-white uppercase tracking-wider text-base">Address Details</h2>
                 </div>
+                <div className="p-6 md:p-8">
 
                 <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200">Current Residential Address</h3>
                 <div className="grid grid-cols-1 gap-6 mb-8">
@@ -287,6 +294,7 @@ import Link from "next/link"; export default function PersonalDetailsPage() {
                       <input className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary" type="date" />
                     </div>
                   </div>
+                </div>
                 </div>
               </div>
             </div>
