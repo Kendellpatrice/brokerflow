@@ -8,7 +8,7 @@ export default function IntroductionPage() {
         <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
           Welcome to uBroker
         </span>
-        <h1 className="mb-4 text-4xl font-extrabold text-primary dark:text-slate-100">
+        <h1 className="mb-4 text-2xl font-extrabold text-primary md:text-4xl dark:text-slate-100">
           Fact Find Form
         </h1>
         <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 max-w-3xl">
@@ -17,7 +17,7 @@ export default function IntroductionPage() {
         </p>
       </header>
 
-      <div className="rounded-2xl border-2 border-primary/10 bg-white p-8 dark:bg-slate-900 dark:border-slate-800 shadow-sm mb-12">
+      <div className="rounded-2xl border-2 border-primary/10 bg-white p-5 md:p-8 dark:bg-slate-900 dark:border-slate-800 shadow-sm mb-12">
         <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-6">What you will need</h2>
         <div className="grid gap-6 md:grid-cols-2">
           <div className="flex items-start gap-4">
@@ -59,7 +59,7 @@ export default function IntroductionPage() {
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-center rounded-2xl bg-primary/5 py-12 px-6 text-center border border-dashed border-primary/20">
+      <div className="flex flex-col items-center justify-center rounded-2xl bg-primary/5 py-8 px-4 md:py-12 md:px-6 text-center border border-dashed border-primary/20">
         <h3 className="text-2xl font-bold text-primary mb-3">Ready to get started?</h3>
         <p className="text-slate-600 mb-8">
           It should take approximately 10-15 minutes to complete. If you&apos;re unsure about any
@@ -68,7 +68,7 @@ export default function IntroductionPage() {
         </p>
         <Link
           href="/applicants"
-          className="flex items-center gap-2 rounded-lg bg-primary px-10 py-4 font-bold text-white shadow-xl transition-all hover:bg-primary/90 hover:scale-[1.02]"
+          className="flex items-center gap-2 rounded-lg bg-primary px-6 py-4 md:px-10 font-bold text-white shadow-xl transition-all hover:bg-primary/90 hover:scale-[1.02]"
         >
           Start Fact Find
           <span className="material-symbols-outlined">arrow_forward</span>

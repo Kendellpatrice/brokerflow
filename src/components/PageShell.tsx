@@ -14,7 +14,7 @@ export function PageShell({ children }: { children: ReactNode }) {
       </main>
       <button
         type="button"
-        className="fixed bottom-6 right-6 z-50 flex size-14 items-center justify-center rounded-full bg-primary text-white shadow-2xl transition-transform hover:scale-105"
+        className="fixed bottom-20 right-4 z-50 flex size-14 items-center justify-center rounded-full bg-primary text-white shadow-2xl transition-transform hover:scale-105 md:bottom-6 md:right-6"
         aria-label="Get help"
       >
         <span className="material-symbols-outlined text-3xl">chat_bubble</span>
