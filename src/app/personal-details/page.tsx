@@ -93,7 +93,7 @@ export default function PersonalDetailsPage() {
         <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
           Step 2 of 6
         </span>
-        <h1 className="mb-4 text-4xl font-extrabold text-primary dark:text-slate-100">
+        <h1 className="mb-4 text-3xl sm:text-4xl font-extrabold text-primary dark:text-slate-100">
           Personal Details
         </h1>
         <p className="text-slate-600 dark:text-slate-400">
@@ -117,7 +117,7 @@ export default function PersonalDetailsPage() {
             <span className="material-symbols-outlined text-white text-[20px]">badge</span>
             <h2 className="font-bold text-white uppercase tracking-wider text-base">Applicant Details</h2>
           </div>
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
               <div className="flex flex-col gap-1.5">
@@ -189,19 +189,17 @@ export default function PersonalDetailsPage() {
                 <input id={`pd-visa-${activeId}`} type="text" value={d.visaType} onChange={up("visaType")} className={inputCls} />
               </div>
 
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col gap-1.5 md:col-span-2">
                 <label htmlFor={`pd-licence-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Driver Licence Number</label>
                 <input id={`pd-licence-${activeId}`} type="text" value={d.licenceNumber} onChange={up("licenceNumber")} className={inputCls} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor={`pd-lic-state-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">State</label>
-                  <input id={`pd-lic-state-${activeId}`} type="text" value={d.licenceState} onChange={up("licenceState")} className={inputCls} />
-                </div>
-                <div className="flex flex-col gap-1.5">
-                  <label htmlFor={`pd-lic-expiry-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Expiry Date</label>
-                  <input id={`pd-lic-expiry-${activeId}`} type="date" value={d.licenceExpiry} onChange={up("licenceExpiry")} className={inputCls} />
-                </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor={`pd-lic-state-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Licence State</label>
+                <input id={`pd-lic-state-${activeId}`} type="text" value={d.licenceState} onChange={up("licenceState")} className={inputCls} />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor={`pd-lic-expiry-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Licence Expiry Date</label>
+                <input id={`pd-lic-expiry-${activeId}`} type="date" value={d.licenceExpiry} onChange={up("licenceExpiry")} className={inputCls} />
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -223,7 +221,7 @@ export default function PersonalDetailsPage() {
             <span className="material-symbols-outlined text-white text-[20px]">contact_phone</span>
             <h2 className="font-bold text-white uppercase tracking-wider text-base">Contact Details</h2>
           </div>
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor={`pd-email-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -262,7 +260,7 @@ export default function PersonalDetailsPage() {
               <span className="text-white/70 text-xs font-normal normal-case tracking-normal italic">*Not living with you</span>
             </h2>
           </div>
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor={`pd-rel-name-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Name</label>
@@ -290,7 +288,7 @@ export default function PersonalDetailsPage() {
             <span className="material-symbols-outlined text-white text-[20px]">home_pin</span>
             <h2 className="font-bold text-white uppercase tracking-wider text-base">Address Details</h2>
           </div>
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             <h3 className="mb-4 font-bold text-slate-800 dark:text-slate-200">Current Residential Address</h3>
             <div className="grid grid-cols-1 gap-6 mb-8">
               <div className="flex flex-col gap-1.5">
@@ -301,7 +299,7 @@ export default function PersonalDetailsPage() {
                     className={`w-full pl-10 ${inputCls}`} placeholder="Start typing your address..." />
                 </div>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5 col-span-2">
                   <label htmlFor={`pd-suburb-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Suburb</label>
                   <input id={`pd-suburb-${activeId}`} type="text" value={d.suburb} onChange={up("suburb")} className={inputCls} />
@@ -360,13 +358,13 @@ export default function PersonalDetailsPage() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
+      <div className="sticky bottom-0 z-10 mt-12 flex items-center justify-between border-t border-primary/10 bg-background-light py-4 dark:bg-background-dark md:static md:pt-8 md:pb-0 md:bg-transparent dark:md:bg-transparent">
         <Link href="/applicants" className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5">
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           Back
         </Link>
-        <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
+        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-6">
+          <span className="hidden sm:block text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
           <Link href="/employment-income" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
             Next Step
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>

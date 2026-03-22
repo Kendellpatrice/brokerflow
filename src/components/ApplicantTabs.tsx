@@ -49,7 +49,7 @@ export function ApplicantTabs({ applicants, activeId, onSelect, completionMap = 
             role="tab"
             aria-selected={isActive}
             onClick={() => onSelect(a.id)}
-            className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3 text-left transition-all ${
+            className={`flex flex-1 min-w-0 items-center gap-3 rounded-xl border-2 px-4 py-3 text-left transition-all ${
               isActive
                 ? "border-primary bg-primary text-white shadow-md"
                 : "border-slate-200 bg-white text-slate-700 hover:border-primary/50 hover:bg-primary/5 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
