@@ -160,7 +160,6 @@ const COL = "w-36 sm:w-44";
 // ══════════════════════════════════════════════════════════════════════════
 export default function LivingExpensesPage() {
   const [rows, setRows] = useState<Record<string, ExpenseRow>>({});
-  const [hemExplanation, setHemExplanation] = useState("");
 
   const getRow = (id: string): ExpenseRow => rows[id] ?? "";
 
@@ -185,7 +184,7 @@ export default function LivingExpensesPage() {
       </header>
 
       {/* ── Expenses table ──────────────────────────────────────────────── */}
-      <div className="mb-8 bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
+      <div className="mb-12 bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
 
         {/* Table header */}
         <div className="flex items-center bg-primary px-4 sm:px-6 py-4 gap-4">
@@ -240,46 +239,6 @@ export default function LivingExpensesPage() {
             <span className="font-bold text-primary dark:text-white text-sm">
               {formatTotal(total)}
             </span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── HEM explanation ──────────────────────────────────────────────── */}
-      <div className="mb-12 bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-        <div className="flex items-center gap-3 px-4 sm:px-6 py-4 bg-primary">
-          <span className="material-symbols-outlined text-white text-[20px]">help_outline</span>
-          <h2 className="font-bold text-white uppercase tracking-wider text-base">HEM Comparison</h2>
-          <span className="text-white/70 text-xs italic font-normal normal-case tracking-normal">
-            (if applicable)
-          </span>
-        </div>
-        <div className="p-4 md:p-8">
-          <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800/30 dark:bg-amber-900/20">
-            <div className="flex items-start gap-3">
-              <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[20px] mt-0.5 shrink-0">info</span>
-              <div>
-                <p className="font-bold text-amber-800 dark:text-amber-300 text-sm">
-                  Why are total monthly expenses equal to or less than HEM?
-                </p>
-                <p className="text-amber-700 dark:text-amber-400 text-xs mt-1">
-                  If your declared expenses are at or below the Household Expenditure Measure
-                  benchmark, lenders require an explanation. Please provide details below.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="le-hem-explanation" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-              Explanation
-            </label>
-            <textarea
-              id="le-hem-explanation"
-              rows={4}
-              value={hemExplanation}
-              onChange={e => setHemExplanation(e.target.value)}
-              placeholder="e.g. Low expenses are due to living with family with minimal personal outgoings, employer covers majority of costs…"
-              className="rounded border-slate-300 dark:bg-slate-800 dark:border-slate-700 focus:ring-primary focus:border-primary resize-none"
-            />
           </div>
         </div>
       </div>
