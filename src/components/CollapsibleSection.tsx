@@ -26,12 +26,12 @@ export function CollapsibleSection({
       <button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-6 py-4 bg-primary hover:bg-primary/90 transition-colors text-left group"
+        className="w-full flex items-center justify-between px-4 sm:px-6 py-4 bg-primary hover:bg-primary/90 transition-colors text-left group"
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <span className="material-symbols-outlined text-white text-[20px] shrink-0">{icon}</span>
-          <h2 className="font-bold text-white uppercase tracking-wider text-base truncate">{title}</h2>
+          <h2 className="font-bold text-white uppercase tracking-wider text-base sm:truncate">{title}</h2>
           {optional && (
             <span className="text-white/70 text-xs italic font-normal normal-case tracking-normal">
               (if known)

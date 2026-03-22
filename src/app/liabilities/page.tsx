@@ -113,7 +113,7 @@ function RowActions({
         type="button"
         title="Edit"
         onClick={() => onToggleEdit(id)}
-        className={`flex items-center justify-center rounded-lg p-1.5 transition-colors ${
+        className={`flex items-center justify-center rounded-lg p-2.5 transition-colors ${
           editingId === id ? "bg-primary text-white" : "text-slate-400 hover:text-primary hover:bg-primary/10"
         }`}
       >
@@ -123,10 +123,42 @@ function RowActions({
         type="button"
         title="Delete"
         onClick={() => onRemove(id)}
-        className="flex items-center justify-center rounded-lg p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+        className="flex items-center justify-center rounded-lg p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
       >
         <span className="material-symbols-outlined text-[16px]">delete</span>
       </button>
+    </div>
+  );
+}
+
+function MobileCard({
+  id, editingId, onToggleEdit, onRemove, primary, secondary, badge, editForm,
+}: {
+  id: number; editingId: number | null;
+  onToggleEdit: (id: number) => void; onRemove: (id: number) => void;
+  primary: React.ReactNode; secondary?: string; badge?: React.ReactNode; editForm?: React.ReactNode;
+}) {
+  const isEditing = editingId === id;
+  return (
+    <div className={`rounded-xl border transition-colors ${isEditing ? "border-primary/30 bg-primary/5 dark:bg-primary/10" : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50"}`}>
+      <div className="flex items-start justify-between gap-3 p-4">
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm leading-snug">{primary}</p>
+          {secondary && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">{secondary}</p>}
+          {badge && <div className="mt-2">{badge}</div>}
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button type="button" title="Edit" onClick={() => onToggleEdit(id)}
+            className={`flex items-center justify-center rounded-lg p-2.5 transition-colors ${isEditing ? "bg-primary text-white" : "text-slate-400 hover:text-primary hover:bg-primary/10"}`}>
+            <span className="material-symbols-outlined text-[16px]">{isEditing ? "close" : "edit"}</span>
+          </button>
+          <button type="button" title="Delete" onClick={() => onRemove(id)}
+            className="flex items-center justify-center rounded-lg p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+            <span className="material-symbols-outlined text-[16px]">delete</span>
+          </button>
+        </div>
+      </div>
+      {isEditing && editForm && <div className="px-4 pb-4">{editForm}</div>}
     </div>
   );
 }
@@ -245,7 +277,7 @@ function InsuranceRow({ label, name, value, onChange }: {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <span className="text-sm text-slate-700 dark:text-slate-300 flex-1">{label}</span>
-      <div className="flex items-center gap-5 shrink-0">
+      <div className="flex items-center gap-3 sm:gap-5 shrink-0">
         {(["yes", "no", "not-sure"] as const).map(opt => (
           <label key={opt} className="flex items-center gap-1.5 text-sm cursor-pointer select-none">
             <input type="radio" name={name} value={opt} checked={value === opt}
@@ -354,7 +386,7 @@ export default function LiabilitiesPage() {
         <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
           Step 5 of 6
         </span>
-        <h1 className="mb-4 text-4xl font-extrabold text-primary dark:text-slate-100">
+        <h1 className="mb-4 text-3xl md:text-4xl font-extrabold text-primary dark:text-slate-100">
           Liabilities
         </h1>
         <p className="text-slate-600 dark:text-slate-400 max-w-3xl">
@@ -378,46 +410,72 @@ export default function LiabilitiesPage() {
           badge={mortgages.items.length > 0 ? `${mortgages.items.length} added` : undefined}
           defaultOpen
         >
-          <div className="p-6 md:p-8">
+          <div className="p-4 md:p-8">
             {mortgages.items.length === 0 ? (
               <EmptyState icon="home" label="Mortgage" onAdd={mortgages.add} />
             ) : (
               <>
-                <SummaryTable headers={["Property Ref", "Lender", "Amount Owing", "Monthly", "Rate", "Ownership", ""]}>
-                  {mortgages.items.map(e => (
-                    <>
-                      <tr
-                        key={e.id}
-                        className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
-                          mortgages.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
-                        }`}
-                      >
-                        <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{dash(e.propertyRef)}</td>
-                        <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.lender)}</td>
-                        <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{e.rate ? `${e.rate}%` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
-                        <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={mortgages.editingId} onToggleEdit={mortgages.toggleEdit} onRemove={mortgages.remove} /></td>
-                      </tr>
-                      {mortgages.editingId === e.id && (
-                        <tr key={`${e.id}-edit`}>
-                          <td colSpan={7} className="pb-4 pt-1">
-                            <LiabilityEditForm entry={e} list={mortgages}
-                              extraFields={
-                                <Field label="Property Reference">
-                                  <input type="text" value={e.propertyRef}
-                                    onChange={ev => mortgages.update(e.id, "propertyRef", ev.target.value)}
-                                    className={inputCls} placeholder="e.g. 123 Smith St" />
-                                </Field>
-                              }
-                            />
-                          </td>
+                {/* Desktop table */}
+                <div className="hidden sm:block">
+                  <SummaryTable headers={["Property Ref", "Lender", "Amount Owing", "Monthly", "Rate", "Ownership", ""]}>
+                    {mortgages.items.map(e => (
+                      <>
+                        <tr
+                          key={e.id}
+                          className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
+                            mortgages.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                          }`}
+                        >
+                          <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{dash(e.propertyRef)}</td>
+                          <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.lender)}</td>
+                          <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{e.rate ? `${e.rate}%` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
+                          <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={mortgages.editingId} onToggleEdit={mortgages.toggleEdit} onRemove={mortgages.remove} /></td>
                         </tr>
-                      )}
-                    </>
+                        {mortgages.editingId === e.id && (
+                          <tr key={`${e.id}-edit`}>
+                            <td colSpan={7} className="pb-4 pt-1">
+                              <LiabilityEditForm entry={e} list={mortgages}
+                                extraFields={
+                                  <Field label="Property Reference">
+                                    <input type="text" value={e.propertyRef}
+                                      onChange={ev => mortgages.update(e.id, "propertyRef", ev.target.value)}
+                                      className={inputCls} placeholder="e.g. 123 Smith St" />
+                                  </Field>
+                                }
+                              />
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    ))}
+                  </SummaryTable>
+                </div>
+                {/* Mobile cards */}
+                <div className="sm:hidden space-y-3">
+                  {mortgages.items.map(e => (
+                    <MobileCard
+                      key={e.id} id={e.id} editingId={mortgages.editingId}
+                      onToggleEdit={mortgages.toggleEdit} onRemove={mortgages.remove}
+                      primary={e.propertyRef || e.lender || "Mortgage"}
+                      secondary={[e.lender, e.amountOwing && `$${e.amountOwing} owing`, e.rate && `${e.rate}%`, e.monthlyRepayment && `$${e.monthlyRepayment}/mo`].filter(Boolean).join(" · ")}
+                      badge={<OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} />}
+                      editForm={
+                        <LiabilityEditForm entry={e} list={mortgages}
+                          extraFields={
+                            <Field label="Property Reference">
+                              <input type="text" value={e.propertyRef}
+                                onChange={ev => mortgages.update(e.id, "propertyRef", ev.target.value)}
+                                className={inputCls} placeholder="e.g. 123 Smith St" />
+                            </Field>
+                          }
+                        />
+                      }
+                    />
                   ))}
-                </SummaryTable>
+                </div>
                 <AddButton label="Mortgage" onAdd={mortgages.add} />
               </>
             )}
@@ -430,36 +488,52 @@ export default function LiabilitiesPage() {
           title="Personal Loans"
           badge={personalLoans.items.length > 0 ? `${personalLoans.items.length} added` : undefined}
         >
-          <div className="p-6 md:p-8">
+          <div className="p-4 md:p-8">
             {personalLoans.items.length === 0 ? (
               <EmptyState icon="account_balance" label="Personal Loan" onAdd={personalLoans.add} />
             ) : (
               <>
-                <SummaryTable headers={["Lender", "Amount Owing", "Monthly", "Rate", "Remaining Term", "Ownership", ""]}>
+                {/* Desktop table */}
+                <div className="hidden sm:block">
+                  <SummaryTable headers={["Lender", "Amount Owing", "Monthly", "Rate", "Remaining Term", "Ownership", ""]}>
+                    {personalLoans.items.map(e => (
+                      <>
+                        <tr
+                          key={e.id}
+                          className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
+                            personalLoans.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                          }`}
+                        >
+                          <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{dash(e.lender)}</td>
+                          <td className="py-3.5 pr-4">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4">{e.rate ? `${e.rate}%` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.remainingTerm)}</td>
+                          <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
+                          <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={personalLoans.editingId} onToggleEdit={personalLoans.toggleEdit} onRemove={personalLoans.remove} /></td>
+                        </tr>
+                        {personalLoans.editingId === e.id && (
+                          <tr key={`${e.id}-edit`}><td colSpan={7} className="pb-4 pt-1">
+                            <LiabilityEditForm entry={e} list={personalLoans} />
+                          </td></tr>
+                        )}
+                      </>
+                    ))}
+                  </SummaryTable>
+                </div>
+                {/* Mobile cards */}
+                <div className="sm:hidden space-y-3">
                   {personalLoans.items.map(e => (
-                    <>
-                      <tr
-                        key={e.id}
-                        className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
-                          personalLoans.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
-                        }`}
-                      >
-                        <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{dash(e.lender)}</td>
-                        <td className="py-3.5 pr-4">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4">{e.rate ? `${e.rate}%` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.remainingTerm)}</td>
-                        <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
-                        <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={personalLoans.editingId} onToggleEdit={personalLoans.toggleEdit} onRemove={personalLoans.remove} /></td>
-                      </tr>
-                      {personalLoans.editingId === e.id && (
-                        <tr key={`${e.id}-edit`}><td colSpan={7} className="pb-4 pt-1">
-                          <LiabilityEditForm entry={e} list={personalLoans} />
-                        </td></tr>
-                      )}
-                    </>
+                    <MobileCard
+                      key={e.id} id={e.id} editingId={personalLoans.editingId}
+                      onToggleEdit={personalLoans.toggleEdit} onRemove={personalLoans.remove}
+                      primary={e.lender || "Personal Loan"}
+                      secondary={[e.amountOwing && `$${e.amountOwing} owing`, e.rate && `${e.rate}%`, e.monthlyRepayment && `$${e.monthlyRepayment}/mo`, e.remainingTerm].filter(Boolean).join(" · ")}
+                      badge={<OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} />}
+                      editForm={<LiabilityEditForm entry={e} list={personalLoans} />}
+                    />
                   ))}
-                </SummaryTable>
+                </div>
                 <AddButton label="Personal Loan" onAdd={personalLoans.add} />
               </>
             )}
@@ -472,36 +546,52 @@ export default function LiabilitiesPage() {
           title="Car Finance"
           badge={carFinance.items.length > 0 ? `${carFinance.items.length} added` : undefined}
         >
-          <div className="p-6 md:p-8">
+          <div className="p-4 md:p-8">
             {carFinance.items.length === 0 ? (
               <EmptyState icon="directions_car" label="Car Finance" onAdd={carFinance.add} />
             ) : (
               <>
-                <SummaryTable headers={["Lender", "Amount Owing", "Monthly", "Rate", "Remaining Term", "Ownership", ""]}>
+                {/* Desktop table */}
+                <div className="hidden sm:block">
+                  <SummaryTable headers={["Lender", "Amount Owing", "Monthly", "Rate", "Remaining Term", "Ownership", ""]}>
+                    {carFinance.items.map(e => (
+                      <>
+                        <tr
+                          key={e.id}
+                          className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
+                            carFinance.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                          }`}
+                        >
+                          <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{dash(e.lender)}</td>
+                          <td className="py-3.5 pr-4">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4">{e.rate ? `${e.rate}%` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.remainingTerm)}</td>
+                          <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
+                          <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={carFinance.editingId} onToggleEdit={carFinance.toggleEdit} onRemove={carFinance.remove} /></td>
+                        </tr>
+                        {carFinance.editingId === e.id && (
+                          <tr key={`${e.id}-edit`}><td colSpan={7} className="pb-4 pt-1">
+                            <LiabilityEditForm entry={e} list={carFinance} />
+                          </td></tr>
+                        )}
+                      </>
+                    ))}
+                  </SummaryTable>
+                </div>
+                {/* Mobile cards */}
+                <div className="sm:hidden space-y-3">
                   {carFinance.items.map(e => (
-                    <>
-                      <tr
-                        key={e.id}
-                        className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
-                          carFinance.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
-                        }`}
-                      >
-                        <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{dash(e.lender)}</td>
-                        <td className="py-3.5 pr-4">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4">{e.rate ? `${e.rate}%` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.remainingTerm)}</td>
-                        <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
-                        <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={carFinance.editingId} onToggleEdit={carFinance.toggleEdit} onRemove={carFinance.remove} /></td>
-                      </tr>
-                      {carFinance.editingId === e.id && (
-                        <tr key={`${e.id}-edit`}><td colSpan={7} className="pb-4 pt-1">
-                          <LiabilityEditForm entry={e} list={carFinance} />
-                        </td></tr>
-                      )}
-                    </>
+                    <MobileCard
+                      key={e.id} id={e.id} editingId={carFinance.editingId}
+                      onToggleEdit={carFinance.toggleEdit} onRemove={carFinance.remove}
+                      primary={e.lender || "Car Finance"}
+                      secondary={[e.amountOwing && `$${e.amountOwing} owing`, e.rate && `${e.rate}%`, e.monthlyRepayment && `$${e.monthlyRepayment}/mo`, e.remainingTerm].filter(Boolean).join(" · ")}
+                      badge={<OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} />}
+                      editForm={<LiabilityEditForm entry={e} list={carFinance} />}
+                    />
                   ))}
-                </SummaryTable>
+                </div>
                 <AddButton label="Car Finance" onAdd={carFinance.add} />
               </>
             )}
@@ -514,83 +604,132 @@ export default function LiabilitiesPage() {
           title="Credit Cards"
           badge={creditCards.items.length > 0 ? `${creditCards.items.length} added` : undefined}
         >
-          <div className="p-6 md:p-8">
+          <div className="p-4 md:p-8">
             {creditCards.items.length === 0 ? (
               <EmptyState icon="credit_card" label="Credit Card" onAdd={creditCards.add} />
             ) : (
               <>
-                <SummaryTable headers={["Lender", "Last 4 Digits", "Limit", "Amount Owing", "Monthly", "Ownership", ""]}>
-                  {creditCards.items.map(e => (
-                    <>
-                      <tr
-                        key={e.id}
-                        className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
-                          creditCards.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
-                        }`}
-                      >
-                        <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{dash(e.lender)}</td>
-                        <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.bsb)}</td>
-                        <td className="py-3.5 pr-4">{e.limit ? `$${e.limit}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
-                        <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={creditCards.editingId} onToggleEdit={creditCards.toggleEdit} onRemove={creditCards.remove} /></td>
-                      </tr>
-                      {creditCards.editingId === e.id && (
-                        <tr key={`${e.id}-edit`}>
-                          <td colSpan={7} className="pb-4 pt-1">
-                            <EditFormWrapper onDone={() => creditCards.toggleEdit(e.id)}>
-                              <Field label="Lender / Card Type">
-                                <input type="text" value={e.lender}
-                                  onChange={ev => creditCards.update(e.id, "lender", ev.target.value)}
-                                  className={inputCls} placeholder="e.g. Visa – CommBank" />
-                              </Field>
-                              <Field label="Last 4 Digits">
-                                <input type="text" maxLength={4} value={e.bsb}
-                                  onChange={ev => creditCards.update(e.id, "bsb", ev.target.value)}
-                                  className={inputCls} placeholder="e.g. 1234" />
-                              </Field>
-                              <Field label="Account #">
-                                <input type="text" value={e.acct}
-                                  onChange={ev => creditCards.update(e.id, "acct", ev.target.value)}
-                                  className={inputCls} />
-                              </Field>
-                              <Field label="Credit Limit">
-                                <CurrencyInput value={e.limit} onChange={v => creditCards.update(e.id, "limit", v)} />
-                              </Field>
-                              <Field label="Amount Owing">
-                                <CurrencyInput value={e.amountOwing} onChange={v => creditCards.update(e.id, "amountOwing", v)} />
-                              </Field>
-                              <Field label="Monthly Repayment">
-                                <CurrencyInput value={e.monthlyRepayment} onChange={v => creditCards.update(e.id, "monthlyRepayment", v)} />
-                              </Field>
-                              <Field label="Clearing / Refinance">
-                                <ClearingField value={e.clearing} onChange={v => creditCards.update(e.id, "clearing", v)} />
-                              </Field>
-                              <Field label="Interest Rate (%)">
-                                <input type="text" value={e.rate}
-                                  onChange={ev => creditCards.update(e.id, "rate", ev.target.value)}
-                                  className={inputCls} placeholder="e.g. 19.99" />
-                              </Field>
-                              <Field label="Expiry Date">
-                                <input type="text" value={e.remainingTerm}
-                                  onChange={ev => creditCards.update(e.id, "remainingTerm", ev.target.value)}
-                                  className={inputCls} placeholder="e.g. 09/27" />
-                              </Field>
-                              <Field label="Ownership">
-                                <OwnershipField
-                                  app1={e.ownerApp1} app2={e.ownerApp2}
-                                  onChangeApp1={v => creditCards.update(e.id, "ownerApp1", v)}
-                                  onChangeApp2={v => creditCards.update(e.id, "ownerApp2", v)}
-                                />
-                              </Field>
-                            </EditFormWrapper>
-                          </td>
+                {/* Desktop table */}
+                <div className="hidden sm:block">
+                  <SummaryTable headers={["Lender", "Last 4 Digits", "Limit", "Amount Owing", "Monthly", "Ownership", ""]}>
+                    {creditCards.items.map(e => (
+                      <>
+                        <tr
+                          key={e.id}
+                          className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
+                            creditCards.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                          }`}
+                        >
+                          <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{dash(e.lender)}</td>
+                          <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.bsb)}</td>
+                          <td className="py-3.5 pr-4">{e.limit ? `$${e.limit}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
+                          <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={creditCards.editingId} onToggleEdit={creditCards.toggleEdit} onRemove={creditCards.remove} /></td>
                         </tr>
-                      )}
-                    </>
+                        {creditCards.editingId === e.id && (
+                          <tr key={`${e.id}-edit`}>
+                            <td colSpan={7} className="pb-4 pt-1">
+                              <EditFormWrapper onDone={() => creditCards.toggleEdit(e.id)}>
+                                <Field label="Lender / Card Type">
+                                  <input type="text" value={e.lender}
+                                    onChange={ev => creditCards.update(e.id, "lender", ev.target.value)}
+                                    className={inputCls} placeholder="e.g. Visa – CommBank" />
+                                </Field>
+                                <Field label="Last 4 Digits">
+                                  <input type="text" maxLength={4} value={e.bsb}
+                                    onChange={ev => creditCards.update(e.id, "bsb", ev.target.value)}
+                                    className={inputCls} placeholder="e.g. 1234" />
+                                </Field>
+                                <Field label="Account #">
+                                  <input type="text" value={e.acct}
+                                    onChange={ev => creditCards.update(e.id, "acct", ev.target.value)}
+                                    className={inputCls} />
+                                </Field>
+                                <Field label="Credit Limit">
+                                  <CurrencyInput value={e.limit} onChange={v => creditCards.update(e.id, "limit", v)} />
+                                </Field>
+                                <Field label="Amount Owing">
+                                  <CurrencyInput value={e.amountOwing} onChange={v => creditCards.update(e.id, "amountOwing", v)} />
+                                </Field>
+                                <Field label="Monthly Repayment">
+                                  <CurrencyInput value={e.monthlyRepayment} onChange={v => creditCards.update(e.id, "monthlyRepayment", v)} />
+                                </Field>
+                                <Field label="Clearing / Refinance">
+                                  <ClearingField value={e.clearing} onChange={v => creditCards.update(e.id, "clearing", v)} />
+                                </Field>
+                                <Field label="Interest Rate (%)">
+                                  <input type="text" value={e.rate}
+                                    onChange={ev => creditCards.update(e.id, "rate", ev.target.value)}
+                                    className={inputCls} placeholder="e.g. 19.99" />
+                                </Field>
+                                <Field label="Expiry Date">
+                                  <input type="text" value={e.remainingTerm}
+                                    onChange={ev => creditCards.update(e.id, "remainingTerm", ev.target.value)}
+                                    className={inputCls} placeholder="e.g. 09/27" />
+                                </Field>
+                                <Field label="Ownership">
+                                  <OwnershipField
+                                    app1={e.ownerApp1} app2={e.ownerApp2}
+                                    onChangeApp1={v => creditCards.update(e.id, "ownerApp1", v)}
+                                    onChangeApp2={v => creditCards.update(e.id, "ownerApp2", v)}
+                                  />
+                                </Field>
+                              </EditFormWrapper>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    ))}
+                  </SummaryTable>
+                </div>
+                {/* Mobile cards */}
+                <div className="sm:hidden space-y-3">
+                  {creditCards.items.map(e => (
+                    <MobileCard
+                      key={e.id} id={e.id} editingId={creditCards.editingId}
+                      onToggleEdit={creditCards.toggleEdit} onRemove={creditCards.remove}
+                      primary={e.lender || "Credit Card"}
+                      secondary={[e.bsb && `···${e.bsb}`, e.limit && `Limit $${e.limit}`, e.amountOwing && `$${e.amountOwing} owing`, e.monthlyRepayment && `$${e.monthlyRepayment}/mo`].filter(Boolean).join(" · ")}
+                      badge={<OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} />}
+                      editForm={
+                        <EditFormWrapper onDone={() => creditCards.toggleEdit(e.id)}>
+                          <Field label="Lender / Card Type">
+                            <input type="text" value={e.lender} onChange={ev => creditCards.update(e.id, "lender", ev.target.value)} className={inputCls} placeholder="e.g. Visa – CommBank" />
+                          </Field>
+                          <Field label="Last 4 Digits">
+                            <input type="text" maxLength={4} value={e.bsb} onChange={ev => creditCards.update(e.id, "bsb", ev.target.value)} className={inputCls} placeholder="e.g. 1234" />
+                          </Field>
+                          <Field label="Account #">
+                            <input type="text" value={e.acct} onChange={ev => creditCards.update(e.id, "acct", ev.target.value)} className={inputCls} />
+                          </Field>
+                          <Field label="Credit Limit">
+                            <CurrencyInput value={e.limit} onChange={v => creditCards.update(e.id, "limit", v)} />
+                          </Field>
+                          <Field label="Amount Owing">
+                            <CurrencyInput value={e.amountOwing} onChange={v => creditCards.update(e.id, "amountOwing", v)} />
+                          </Field>
+                          <Field label="Monthly Repayment">
+                            <CurrencyInput value={e.monthlyRepayment} onChange={v => creditCards.update(e.id, "monthlyRepayment", v)} />
+                          </Field>
+                          <Field label="Clearing / Refinance">
+                            <ClearingField value={e.clearing} onChange={v => creditCards.update(e.id, "clearing", v)} />
+                          </Field>
+                          <Field label="Interest Rate (%)">
+                            <input type="text" value={e.rate} onChange={ev => creditCards.update(e.id, "rate", ev.target.value)} className={inputCls} placeholder="e.g. 19.99" />
+                          </Field>
+                          <Field label="Expiry Date">
+                            <input type="text" value={e.remainingTerm} onChange={ev => creditCards.update(e.id, "remainingTerm", ev.target.value)} className={inputCls} placeholder="e.g. 09/27" />
+                          </Field>
+                          <Field label="Ownership">
+                            <OwnershipField app1={e.ownerApp1} app2={e.ownerApp2} onChangeApp1={v => creditCards.update(e.id, "ownerApp1", v)} onChangeApp2={v => creditCards.update(e.id, "ownerApp2", v)} />
+                          </Field>
+                        </EditFormWrapper>
+                      }
+                    />
                   ))}
-                </SummaryTable>
+                </div>
                 <AddButton label="Credit Card" onAdd={creditCards.add} />
               </>
             )}
@@ -604,49 +743,77 @@ export default function LiabilitiesPage() {
           badge={hecsHelp.items.length > 0 ? `${hecsHelp.items.length} added` : undefined}
           optional
         >
-          <div className="p-6 md:p-8">
+          <div className="p-4 md:p-8">
             {hecsHelp.items.length === 0 ? (
               <EmptyState icon="school" label="HECS / HELP debt" onAdd={hecsHelp.add} />
             ) : (
               <>
-                <SummaryTable headers={["Amount Owing", "Monthly Repayment", "Ownership", ""]}>
-                  {hecsHelp.items.map(e => (
-                    <>
-                      <tr
-                        key={e.id}
-                        className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
-                          hecsHelp.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
-                        }`}
-                      >
-                        <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
-                        <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={hecsHelp.editingId} onToggleEdit={hecsHelp.toggleEdit} onRemove={hecsHelp.remove} /></td>
-                      </tr>
-                      {hecsHelp.editingId === e.id && (
-                        <tr key={`${e.id}-edit`}>
-                          <td colSpan={4} className="pb-4 pt-1">
-                            <EditFormWrapper onDone={() => hecsHelp.toggleEdit(e.id)}>
-                              <Field label="Amount Owing">
-                                <CurrencyInput value={e.amountOwing} onChange={v => hecsHelp.update(e.id, "amountOwing", v)} />
-                              </Field>
-                              <Field label="Monthly Repayment">
-                                <CurrencyInput value={e.monthlyRepayment} onChange={v => hecsHelp.update(e.id, "monthlyRepayment", v)} />
-                              </Field>
-                              <Field label="Ownership">
-                                <OwnershipField
-                                  app1={e.ownerApp1} app2={e.ownerApp2}
-                                  onChangeApp1={v => hecsHelp.update(e.id, "ownerApp1", v)}
-                                  onChangeApp2={v => hecsHelp.update(e.id, "ownerApp2", v)}
-                                />
-                              </Field>
-                            </EditFormWrapper>
-                          </td>
+                {/* Desktop table */}
+                <div className="hidden sm:block">
+                  <SummaryTable headers={["Amount Owing", "Monthly Repayment", "Ownership", ""]}>
+                    {hecsHelp.items.map(e => (
+                      <>
+                        <tr
+                          key={e.id}
+                          className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
+                            hecsHelp.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                          }`}
+                        >
+                          <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
+                          <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={hecsHelp.editingId} onToggleEdit={hecsHelp.toggleEdit} onRemove={hecsHelp.remove} /></td>
                         </tr>
-                      )}
-                    </>
+                        {hecsHelp.editingId === e.id && (
+                          <tr key={`${e.id}-edit`}>
+                            <td colSpan={4} className="pb-4 pt-1">
+                              <EditFormWrapper onDone={() => hecsHelp.toggleEdit(e.id)}>
+                                <Field label="Amount Owing">
+                                  <CurrencyInput value={e.amountOwing} onChange={v => hecsHelp.update(e.id, "amountOwing", v)} />
+                                </Field>
+                                <Field label="Monthly Repayment">
+                                  <CurrencyInput value={e.monthlyRepayment} onChange={v => hecsHelp.update(e.id, "monthlyRepayment", v)} />
+                                </Field>
+                                <Field label="Ownership">
+                                  <OwnershipField
+                                    app1={e.ownerApp1} app2={e.ownerApp2}
+                                    onChangeApp1={v => hecsHelp.update(e.id, "ownerApp1", v)}
+                                    onChangeApp2={v => hecsHelp.update(e.id, "ownerApp2", v)}
+                                  />
+                                </Field>
+                              </EditFormWrapper>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    ))}
+                  </SummaryTable>
+                </div>
+                {/* Mobile cards */}
+                <div className="sm:hidden space-y-3">
+                  {hecsHelp.items.map(e => (
+                    <MobileCard
+                      key={e.id} id={e.id} editingId={hecsHelp.editingId}
+                      onToggleEdit={hecsHelp.toggleEdit} onRemove={hecsHelp.remove}
+                      primary={e.amountOwing ? `$${e.amountOwing} owing` : "HECS / HELP"}
+                      secondary={e.monthlyRepayment ? `$${e.monthlyRepayment}/mo` : undefined}
+                      badge={<OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} />}
+                      editForm={
+                        <EditFormWrapper onDone={() => hecsHelp.toggleEdit(e.id)}>
+                          <Field label="Amount Owing">
+                            <CurrencyInput value={e.amountOwing} onChange={v => hecsHelp.update(e.id, "amountOwing", v)} />
+                          </Field>
+                          <Field label="Monthly Repayment">
+                            <CurrencyInput value={e.monthlyRepayment} onChange={v => hecsHelp.update(e.id, "monthlyRepayment", v)} />
+                          </Field>
+                          <Field label="Ownership">
+                            <OwnershipField app1={e.ownerApp1} app2={e.ownerApp2} onChangeApp1={v => hecsHelp.update(e.id, "ownerApp1", v)} onChangeApp2={v => hecsHelp.update(e.id, "ownerApp2", v)} />
+                          </Field>
+                        </EditFormWrapper>
+                      }
+                    />
                   ))}
-                </SummaryTable>
+                </div>
                 <AddButton label="HECS / HELP Debt" onAdd={hecsHelp.add} />
               </>
             )}
@@ -660,45 +827,71 @@ export default function LiabilitiesPage() {
           badge={otherLiabs.items.length > 0 ? `${otherLiabs.items.length} added` : undefined}
           optional
         >
-          <div className="p-6 md:p-8">
+          <div className="p-4 md:p-8">
             {otherLiabs.items.length === 0 ? (
               <EmptyState icon="receipt_long" label="Other Liability" onAdd={otherLiabs.add} />
             ) : (
               <>
-                <SummaryTable headers={["Description", "Lender", "Amount Owing", "Monthly", "Ownership", ""]}>
-                  {otherLiabs.items.map(e => (
-                    <>
-                      <tr
-                        key={e.id}
-                        className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
-                          otherLiabs.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
-                        }`}
-                      >
-                        <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100 max-w-40 truncate">{dash(e.description)}</td>
-                        <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.lender)}</td>
-                        <td className="py-3.5 pr-4">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
-                        <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
-                        <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={otherLiabs.editingId} onToggleEdit={otherLiabs.toggleEdit} onRemove={otherLiabs.remove} /></td>
-                      </tr>
-                      {otherLiabs.editingId === e.id && (
-                        <tr key={`${e.id}-edit`}>
-                          <td colSpan={6} className="pb-4 pt-1">
-                            <LiabilityEditForm entry={e} list={otherLiabs}
-                              extraFields={
-                                <Field label="Description">
-                                  <input type="text" value={e.description}
-                                    onChange={ev => otherLiabs.update(e.id, "description", ev.target.value)}
-                                    className={inputCls} placeholder="e.g. Tax debt" />
-                                </Field>
-                              }
-                            />
-                          </td>
+                {/* Desktop table */}
+                <div className="hidden sm:block">
+                  <SummaryTable headers={["Description", "Lender", "Amount Owing", "Monthly", "Ownership", ""]}>
+                    {otherLiabs.items.map(e => (
+                      <>
+                        <tr
+                          key={e.id}
+                          className={`border-b border-slate-100 dark:border-slate-700/60 transition-colors ${
+                            otherLiabs.editingId === e.id ? "bg-primary/5 dark:bg-primary/10" : "hover:bg-slate-50 dark:hover:bg-slate-700/30"
+                          }`}
+                        >
+                          <td className="py-3.5 pr-4 font-semibold text-slate-800 dark:text-slate-100 max-w-40 truncate">{dash(e.description)}</td>
+                          <td className="py-3.5 pr-4 text-slate-600 dark:text-slate-300">{dash(e.lender)}</td>
+                          <td className="py-3.5 pr-4">{e.amountOwing ? `$${e.amountOwing}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4">{e.monthlyRepayment ? `$${e.monthlyRepayment}` : <span className="text-slate-400 italic">—</span>}</td>
+                          <td className="py-3.5 pr-4"><OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} /></td>
+                          <td className="py-3.5 pl-2"><RowActions id={e.id} editingId={otherLiabs.editingId} onToggleEdit={otherLiabs.toggleEdit} onRemove={otherLiabs.remove} /></td>
                         </tr>
-                      )}
-                    </>
+                        {otherLiabs.editingId === e.id && (
+                          <tr key={`${e.id}-edit`}>
+                            <td colSpan={6} className="pb-4 pt-1">
+                              <LiabilityEditForm entry={e} list={otherLiabs}
+                                extraFields={
+                                  <Field label="Description">
+                                    <input type="text" value={e.description}
+                                      onChange={ev => otherLiabs.update(e.id, "description", ev.target.value)}
+                                      className={inputCls} placeholder="e.g. Tax debt" />
+                                  </Field>
+                                }
+                              />
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    ))}
+                  </SummaryTable>
+                </div>
+                {/* Mobile cards */}
+                <div className="sm:hidden space-y-3">
+                  {otherLiabs.items.map(e => (
+                    <MobileCard
+                      key={e.id} id={e.id} editingId={otherLiabs.editingId}
+                      onToggleEdit={otherLiabs.toggleEdit} onRemove={otherLiabs.remove}
+                      primary={e.description || e.lender || "Other Liability"}
+                      secondary={[e.lender, e.amountOwing && `$${e.amountOwing} owing`, e.monthlyRepayment && `$${e.monthlyRepayment}/mo`].filter(Boolean).join(" · ")}
+                      badge={<OwnershipBadge app1={e.ownerApp1} app2={e.ownerApp2} />}
+                      editForm={
+                        <LiabilityEditForm entry={e} list={otherLiabs}
+                          extraFields={
+                            <Field label="Description">
+                              <input type="text" value={e.description}
+                                onChange={ev => otherLiabs.update(e.id, "description", ev.target.value)}
+                                className={inputCls} placeholder="e.g. Tax debt" />
+                            </Field>
+                          }
+                        />
+                      }
+                    />
                   ))}
-                </SummaryTable>
+                </div>
                 <AddButton label="Other Liability" onAdd={otherLiabs.add} />
               </>
             )}
@@ -715,7 +908,7 @@ export default function LiabilitiesPage() {
 
       <div className="space-y-4 mb-10">
         <CollapsibleSection icon="lock" title="Retirement &amp; Exit Strategy" defaultOpen>
-          <div className="p-6 md:p-8">
+          <div className="p-4 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor="li-retirement-app1" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -772,9 +965,36 @@ export default function LiabilitiesPage() {
 
       <div className="space-y-4 mb-10">
         <CollapsibleSection icon="history" title="Credit History" defaultOpen>
-          <div className="p-6 md:p-8">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-120">
+          <div className="p-4 md:p-8">
+            {/* Mobile stacked layout */}
+            <div className="sm:hidden space-y-4">
+              {[
+                { field: "defaults"   as const, label: "Have you ever had any defaults, financial judgments, or legal proceedings against you?" },
+                { field: "difficulty" as const, label: "Are you having difficulty meeting your financial commitments?" },
+                { field: "arrears"    as const, label: "Are any existing debts currently in arrears?" },
+              ].map((q, i, arr) => (
+                <div key={q.field} className={i < arr.length - 1 ? "pb-4 border-b border-slate-100 dark:border-slate-700" : ""}>
+                  <p className="text-sm text-slate-700 dark:text-slate-300 leading-snug mb-3">{q.label}</p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">App. 1</p>
+                      <RadioGroup name={`credit-${q.field}-app1`} value={credit[q.field][0]}
+                        onChange={v => updateCredit(q.field, 0, v as YesNoNA)}
+                        options={[{ label: "Yes", value: "yes" }, { label: "No", value: "no" }, { label: "N/A", value: "na" }]} />
+                    </div>
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">App. 2</p>
+                      <RadioGroup name={`credit-${q.field}-app2`} value={credit[q.field][1]}
+                        onChange={v => updateCredit(q.field, 1, v as YesNoNA)}
+                        options={[{ label: "Yes", value: "yes" }, { label: "No", value: "no" }, { label: "N/A", value: "na" }]} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-200 dark:border-slate-700">
                     <th className="text-left pb-3 pr-6 font-semibold text-slate-700 dark:text-slate-300 text-sm">Question</th>
@@ -830,7 +1050,7 @@ export default function LiabilitiesPage() {
 
       <div className="space-y-4 mb-12">
         <CollapsibleSection icon="security" title="Insurance Review" defaultOpen>
-          <div className="p-6 md:p-8 space-y-5">
+          <div className="p-4 md:p-8 space-y-5">
             {[
               { key: "reviewedInsurance", label: "Have you reviewed your personal risk insurance requirements in the last 12 months?" },
               { key: "sufficientLife",    label: "Do you have sufficient life insurance to cover, as a minimum, your existing and proposed debts?" },
@@ -844,7 +1064,7 @@ export default function LiabilitiesPage() {
               <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                 Are you sure your existing insurance is adequate for:
               </p>
-              <div className="ml-5 space-y-3 border-l-2 border-slate-100 dark:border-slate-700 pl-4">
+              <div className="ml-2 sm:ml-5 space-y-3 border-l-2 border-slate-100 dark:border-slate-700 pl-3 sm:pl-4">
                 {[
                   { key: "homeBuilding", label: "Home building and contents" },
                   { key: "motorVehicle", label: "Motor vehicle" },
@@ -869,7 +1089,7 @@ export default function LiabilitiesPage() {
       </div>
 
       {/* ── Navigation ──────────────────────────────────────────────────── */}
-      <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
+      <div className="sticky bottom-0 z-10 mt-12 flex items-center justify-between border-t border-primary/10 bg-background-light py-4 dark:bg-background-dark md:static md:pt-8 md:pb-0 md:bg-transparent dark:md:bg-transparent">
         <Link
           href="/assets"
           className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5"
@@ -877,8 +1097,8 @@ export default function LiabilitiesPage() {
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           Back
         </Link>
-        <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
+        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-6">
+          <span className="hidden sm:block text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
             Save Draft
           </span>
           <Link

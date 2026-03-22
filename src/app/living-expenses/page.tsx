@@ -156,7 +156,7 @@ function formatTotal(n: number): string {
 }
 
 // ── Column header widths (must match input widths below) ──────────────────
-const COL = "w-36";
+const COL = "w-28 sm:w-36";
 
 // ══════════════════════════════════════════════════════════════════════════
 // Page
@@ -191,7 +191,7 @@ export default function LivingExpensesPage() {
         <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
           Step 6 of 6
         </span>
-        <h1 className="mb-4 text-4xl font-extrabold text-primary dark:text-slate-100">
+        <h1 className="mb-4 text-3xl md:text-4xl font-extrabold text-primary dark:text-slate-100">
           Living Expenses
         </h1>
         <p className="text-slate-600 dark:text-slate-400 max-w-3xl">
@@ -204,7 +204,7 @@ export default function LivingExpensesPage() {
       <div className="mb-8 bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
 
         {/* Table header */}
-        <div className="flex items-center bg-primary px-6 py-4 gap-4">
+        <div className="flex items-center bg-primary px-4 sm:px-6 py-4 gap-4">
           <span className="material-symbols-outlined text-white text-[20px]">account_balance_wallet</span>
           <h2 className="font-bold text-white uppercase tracking-wider text-base flex-1">
             Monthly Living Expenses
@@ -218,7 +218,7 @@ export default function LivingExpensesPage() {
         </div>
 
         {/* Column labels visible on mobile */}
-        <div className="flex justify-end gap-3 px-6 py-2 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 md:hidden">
+        <div className="flex justify-end gap-3 px-4 sm:px-6 py-2 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 md:hidden">
           <span className={`${COL} text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center`}>Current</span>
           <span className={`${COL} text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center`}>Post-Settlement</span>
         </div>
@@ -230,7 +230,7 @@ export default function LivingExpensesPage() {
             return (
               <div
                 key={item.id}
-                className={`flex flex-col md:flex-row md:items-center gap-3 px-6 py-4 transition-colors ${
+                className={`flex flex-col md:flex-row md:items-center gap-3 px-4 sm:px-6 py-4 transition-colors ${
                   i % 2 !== 0 ? "bg-slate-50/60 dark:bg-slate-700/20" : ""
                 }`}
               >
@@ -250,7 +250,7 @@ export default function LivingExpensesPage() {
                 </div>
 
                 {/* Inputs */}
-                <div className="flex gap-3 shrink-0">
+                <div className="flex gap-3 shrink-0 self-end md:self-center">
                   <div className={COL}>
                     <CurrencyInput
                       value={row.current}
@@ -272,11 +272,11 @@ export default function LivingExpensesPage() {
         </div>
 
         {/* Total row */}
-        <div className="flex flex-col md:flex-row md:items-center gap-3 px-6 py-5 bg-primary/5 dark:bg-primary/10 border-t-2 border-primary/20">
+        <div className="flex flex-col md:flex-row md:items-center gap-3 px-4 sm:px-6 py-5 bg-primary/5 dark:bg-primary/10 border-t-2 border-primary/20">
           <div className="flex-1 font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider text-sm text-right md:text-left">
             Total Monthly Expenses
           </div>
-          <div className="flex gap-3 shrink-0">
+          <div className="flex gap-3 shrink-0 self-end md:self-center">
             <div className={`${COL} flex items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 px-3 py-2.5`}>
               <span className="font-bold text-primary dark:text-white text-sm">
                 {formatTotal(totals.current)}
@@ -300,7 +300,7 @@ export default function LivingExpensesPage() {
             (if applicable)
           </span>
         </div>
-        <div className="p-6 md:p-8">
+        <div className="p-4 md:p-8">
           <div className="mb-5 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800/30 dark:bg-amber-900/20">
             <div className="flex items-start gap-3">
               <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[20px] mt-0.5 shrink-0">info</span>
@@ -332,7 +332,7 @@ export default function LivingExpensesPage() {
       </div>
 
       {/* ── Navigation ──────────────────────────────────────────────────── */}
-      <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
+      <div className="sticky bottom-0 z-10 mt-12 flex items-center justify-between border-t border-primary/10 bg-background-light py-4 dark:bg-background-dark md:static md:pt-8 md:pb-0 md:bg-transparent dark:md:bg-transparent">
         <Link
           href="/liabilities"
           className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5"
@@ -340,13 +340,13 @@ export default function LivingExpensesPage() {
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           Back
         </Link>
-        <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
+        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-6">
+          <span className="hidden sm:block text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
             Save Draft
           </span>
           <button
             type="button"
-            className="flex items-center gap-2 rounded-lg bg-emerald-600 px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-emerald-700"
+            className="flex items-center gap-2 rounded-lg bg-emerald-600 px-6 sm:px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-emerald-700"
           >
             <span className="material-symbols-outlined text-[20px]">check_circle</span>
             Submit Fact Find
