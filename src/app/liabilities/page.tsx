@@ -1089,7 +1089,23 @@ export default function LiabilitiesPage() {
       </div>
 
       {/* ── Navigation ──────────────────────────────────────────────────── */}
-      <div className="sticky bottom-0 z-10 mt-12 flex items-center justify-between border-t border-primary/10 bg-background-light py-4 dark:bg-background-dark md:static md:pt-8 md:pb-0 md:bg-transparent dark:md:bg-transparent">
+      {/* Mobile */}
+      <div className="sticky bottom-0 z-10 mt-12 flex flex-col gap-3 border-t border-primary/10 bg-background-light px-4 py-4 dark:bg-background-dark md:hidden">
+        <Link href="/living-expenses" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90">
+          Next: Living Expenses
+          <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+        </Link>
+        <div className="grid grid-cols-2 gap-3">
+          <Link href="/assets" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+            Previous Step
+          </Link>
+          <button type="button" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+            Save Draft
+          </button>
+        </div>
+      </div>
+      {/* Desktop */}
+      <div className="mt-12 hidden items-center justify-between border-t border-primary/10 pt-8 md:flex">
         <Link
           href="/assets"
           className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5"
@@ -1097,8 +1113,8 @@ export default function LiabilitiesPage() {
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           Back
         </Link>
-        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-6">
-          <span className="hidden sm:block text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
+        <div className="flex items-center gap-6">
+          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
             Save Draft
           </span>
           <Link
