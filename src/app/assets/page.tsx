@@ -169,7 +169,7 @@ export default function AssetsPage() {
               <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
                 Step 4 of 6
               </span>
-              <h1 className="mb-4 text-4xl font-extrabold text-primary dark:text-slate-100">
+              <h1 className="mb-4 text-3xl sm:text-4xl font-extrabold text-primary dark:text-slate-100">
                 Assets
               </h1>
               <p className="text-slate-600 dark:text-slate-400 max-w-3xl">
@@ -316,19 +316,19 @@ export default function AssetsPage() {
                   <p className="md:col-span-2 text-slate-500 dark:text-slate-400 text-sm -mt-2">
                     Where are you obtaining the funds you are contributing to this transaction?
                   </p>
-                  <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
+                  <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-[1fr_1fr] sm:items-center sm:gap-4">
                     <label htmlFor="ftc-proceeds" className="font-semibold text-slate-800 dark:text-slate-200">
                       Proceeds of Property Sale
                     </label>
                     <CurrencyInput id="ftc-proceeds" />
                   </div>
-                  <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
+                  <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-[1fr_1fr] sm:items-center sm:gap-4">
                     <label htmlFor="ftc-savings" className="font-semibold text-slate-800 dark:text-slate-200">
                       Savings
                     </label>
                     <CurrencyInput id="ftc-savings" />
                   </div>
-                  <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
+                  <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-[1fr_1fr] sm:items-center sm:gap-4">
                     <label htmlFor="ftc-grant-amount" className="font-semibold text-slate-800 dark:text-slate-200">
                       Government Grant
                     </label>
@@ -342,7 +342,7 @@ export default function AssetsPage() {
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-[1fr_1fr] items-center gap-4">
+                  <div className="flex flex-col gap-1.5 sm:grid sm:grid-cols-[1fr_1fr] sm:items-center sm:gap-4">
                     <label htmlFor="ftc-other-amount" className="font-semibold text-slate-800 dark:text-slate-200">
                       Other
                     </label>
@@ -377,7 +377,7 @@ export default function AssetsPage() {
                 badge={properties.length > 0 ? `${properties.length} added` : undefined}
                 defaultOpen
               >
-                <div className="p-6 md:p-8">
+                <div className="p-4 sm:p-6 md:p-8">
 
                   {/* ── Empty state ── */}
                   {properties.length === 0 && (
@@ -397,9 +397,88 @@ export default function AssetsPage() {
                     </div>
                   )}
 
-                  {/* ── Table of saved entries ── */}
+                  {/* ── Saved entries ── */}
                   {properties.length > 0 && (
-                    <div className="overflow-x-auto">
+                    <div>
+                      {/* Mobile card list */}
+                      <div className="sm:hidden flex flex-col gap-3 mb-4">
+                        {properties.map((prop) => (
+                          <div key={prop.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3">
+                              <div className="min-w-0">
+                                <p className="font-semibold text-slate-800 dark:text-slate-100 truncate capitalize">{prop.propertyType || <span className="text-slate-400 font-normal italic">No type</span>}</p>
+                                <p className="text-sm text-slate-500 truncate">{prop.address || <span className="italic">No address</span>}</p>
+                                <p className="text-sm text-slate-500">{prop.estimatedValue ? `$${prop.estimatedValue}` : ""}{prop.lender ? ` · ${prop.lender}` : ""}</p>
+                              </div>
+                              <div className="flex items-center gap-2 ml-3 shrink-0">
+                                <button type="button" title="Edit" onClick={() => setEditingPropertyId(editingPropertyId === prop.id ? null : prop.id)}
+                                  className={`flex size-9 items-center justify-center rounded-lg transition-colors ${editingPropertyId === prop.id ? "bg-primary text-white" : "text-slate-400 hover:text-primary hover:bg-primary/10"}`}>
+                                  <span className="material-symbols-outlined text-[18px]">{editingPropertyId === prop.id ? "close" : "edit"}</span>
+                                </button>
+                                <button type="button" title="Delete" onClick={() => removeProperty(prop.id)}
+                                  className="flex size-9 items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                              </div>
+                            </div>
+                            {editingPropertyId === prop.id && (
+                              <div className="border-t border-primary/20 bg-primary/5 dark:bg-primary/10 p-4">
+                                <p className="text-xs font-bold uppercase tracking-wider text-primary mb-4">Edit Property Details</p>
+                                <div className="grid grid-cols-1 gap-4">
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Property Address</label>
+                                    <input type="text" placeholder="Enter full address..." value={prop.address} onChange={(e) => updateProperty(prop.id, "address", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Property Type</label>
+                                      <select value={prop.propertyType} onChange={(e) => updateProperty(prop.id, "propertyType", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm">
+                                        <option value="">Select...</option>
+                                        <option value="house">House</option><option value="unit">Unit</option><option value="townhouse">Townhouse</option><option value="duplex">Duplex</option><option value="land">Land</option>
+                                      </select>
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Est. Value</label>
+                                      <input type="text" placeholder="e.g. 750000" value={prop.estimatedValue} onChange={(e) => updateProperty(prop.id, "estimatedValue", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Rental (p/m)</label>
+                                      <input type="text" placeholder="e.g. 2500" value={prop.rentalIncome} onChange={(e) => updateProperty(prop.id, "rentalIncome", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lender</label>
+                                      <input type="text" placeholder="e.g. CommBank" value={prop.lender} onChange={(e) => updateProperty(prop.id, "lender", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Mortgage #</label>
+                                      <input type="text" placeholder="e.g. 1" value={prop.mortgageNumber} onChange={(e) => updateProperty(prop.id, "mortgageNumber", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                                      <div className="flex gap-3 items-center h-[38px]">
+                                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={prop.ownerApp1} onChange={(e) => updateProperty(prop.id, "ownerApp1", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm text-slate-700 dark:text-slate-300">App. 1</span></label>
+                                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={prop.ownerApp2} onChange={(e) => updateProperty(prop.id, "ownerApp2", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm text-slate-700 dark:text-slate-300">App. 2</span></label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                  <button type="button" onClick={() => setEditingPropertyId(null)} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors">
+                                    <span className="material-symbols-outlined text-[16px]">check</span>Done
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop table */}
+                      <div className="hidden sm:block overflow-x-auto">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-slate-200 dark:border-slate-700">
@@ -599,6 +678,8 @@ export default function AssetsPage() {
                         </tbody>
                       </table>
 
+                    </div>
+
                       {/* Add another button */}
                       <button
                         type="button"
@@ -621,7 +702,7 @@ export default function AssetsPage() {
                 badge={bankAccounts.length > 0 ? `${bankAccounts.length} added` : undefined}
                 defaultOpen
               >
-                <div className="p-6 md:p-8">
+                <div className="p-4 sm:p-6 md:p-8">
                   {bankAccounts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-10 text-slate-400 gap-3">
                       <span className="material-symbols-outlined text-[48px] text-slate-300">account_balance</span>
@@ -637,6 +718,79 @@ export default function AssetsPage() {
                     </div>
                   ) : (
                     <div>
+                      {/* Mobile card list */}
+                      <div className="sm:hidden flex flex-col gap-3 mb-4">
+                        {bankAccounts.map((acc) => (
+                          <div key={acc.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3">
+                              <div className="min-w-0">
+                                <p className="font-semibold text-slate-800 dark:text-slate-100 truncate">{acc.institution || <span className="text-slate-400 font-normal italic">No institution</span>}</p>
+                                <p className="text-sm text-slate-500">{acc.accountType || <span className="italic">No type</span>}{acc.balance ? ` · $${acc.balance}` : ""}</p>
+                              </div>
+                              <div className="flex items-center gap-2 ml-3 shrink-0">
+                                <button type="button" onClick={() => setEditingBankAccountId(editingBankAccountId === acc.id ? null : acc.id)}
+                                  className={`flex size-9 items-center justify-center rounded-lg transition-colors ${editingBankAccountId === acc.id ? "bg-primary text-white" : "text-slate-400 hover:text-primary hover:bg-primary/10"}`}>
+                                  <span className="material-symbols-outlined text-[18px]">{editingBankAccountId === acc.id ? "close" : "edit"}</span>
+                                </button>
+                                <button type="button" onClick={() => removeBankAccount(acc.id)}
+                                  className="flex size-9 items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                              </div>
+                            </div>
+                            {editingBankAccountId === acc.id && (
+                              <div className="border-t border-primary/20 bg-primary/5 dark:bg-primary/10 p-4">
+                                <div className="grid grid-cols-1 gap-4">
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Institution</label>
+                                      <input type="text" placeholder="e.g. CommBank" value={acc.institution} onChange={(e) => updateBankAccount(acc.id, "institution", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Type</label>
+                                      <select value={acc.accountType} onChange={(e) => updateBankAccount(acc.id, "accountType", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm">
+                                        <option value="">Select...</option>
+                                        <option>Transaction</option><option>Saving</option><option>Pension</option><option>Term Deposit</option>
+                                      </select>
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Balance</label>
+                                      <input type="text" placeholder="$0.00" value={acc.balance} onChange={(e) => updateBankAccount(acc.id, "balance", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">BSB</label>
+                                      <input type="text" placeholder="e.g. 062-000" value={acc.bsb} onChange={(e) => updateBankAccount(acc.id, "bsb", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Account Number</label>
+                                      <input type="text" placeholder="e.g. 12345678" value={acc.accountNumber} onChange={(e) => updateBankAccount(acc.id, "accountNumber", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                                      <div className="flex gap-3 items-center h-[38px]">
+                                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={acc.ownerApp1} onChange={(e) => updateBankAccount(acc.id, "ownerApp1", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm">App. 1</span></label>
+                                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={acc.ownerApp2} onChange={(e) => updateBankAccount(acc.id, "ownerApp2", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm">App. 2</span></label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                  <button type="button" onClick={() => setEditingBankAccountId(null)} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors">
+                                    <span className="material-symbols-outlined text-[16px]">check</span>Done
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop table */}
+                      <div className="hidden sm:block">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-200 dark:border-slate-700">
@@ -722,6 +876,8 @@ export default function AssetsPage() {
                           ))}
                         </tbody>
                       </table>
+                      </div>
+
                       <button type="button" onClick={addBankAccount} className="mt-4 text-primary font-semibold hover:bg-primary/10 bg-primary/5 px-4 py-3 rounded-xl transition-colors inline-flex items-center justify-center w-full gap-2 text-sm border-2 border-dashed border-primary/20 hover:border-primary/40">
                         <span className="material-symbols-outlined text-[20px]">add_circle</span>Add Another Bank Account
                       </button>
@@ -736,7 +892,7 @@ export default function AssetsPage() {
                 title="Vehicles"
                 badge={vehicles.length > 0 ? `${vehicles.length} added` : undefined}
               >
-                <div className="p-6 md:p-8">
+                <div className="p-4 sm:p-6 md:p-8">
                   {vehicles.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-10 text-slate-400 gap-3">
                       <span className="material-symbols-outlined text-[48px] text-slate-300">directions_car</span>
@@ -747,6 +903,70 @@ export default function AssetsPage() {
                     </div>
                   ) : (
                     <div>
+                      {/* Mobile card list */}
+                      <div className="sm:hidden flex flex-col gap-3 mb-4">
+                        {vehicles.map((v) => (
+                          <div key={v.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3">
+                              <div className="min-w-0">
+                                <p className="font-semibold text-slate-800 dark:text-slate-100 truncate">{v.makeModel || <span className="text-slate-400 font-normal italic">No vehicle</span>}</p>
+                                <p className="text-sm text-slate-500">{v.year || "—"}{v.estimatedValue ? ` · $${v.estimatedValue}` : ""}{v.lender ? ` · ${v.lender}` : ""}</p>
+                              </div>
+                              <div className="flex items-center gap-2 ml-3 shrink-0">
+                                <button type="button" onClick={() => setEditingVehicleId(editingVehicleId === v.id ? null : v.id)}
+                                  className={`flex size-9 items-center justify-center rounded-lg transition-colors ${editingVehicleId === v.id ? "bg-primary text-white" : "text-slate-400 hover:text-primary hover:bg-primary/10"}`}>
+                                  <span className="material-symbols-outlined text-[18px]">{editingVehicleId === v.id ? "close" : "edit"}</span>
+                                </button>
+                                <button type="button" onClick={() => removeVehicle(v.id)}
+                                  className="flex size-9 items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                              </div>
+                            </div>
+                            {editingVehicleId === v.id && (
+                              <div className="border-t border-primary/20 bg-primary/5 dark:bg-primary/10 p-4">
+                                <div className="grid grid-cols-1 gap-4">
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Make &amp; Model</label>
+                                    <input type="text" placeholder="e.g. Toyota Camry" value={v.makeModel} onChange={(e) => updateVehicle(v.id, "makeModel", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Year</label>
+                                      <input type="text" placeholder="e.g. 2021" value={v.year} onChange={(e) => updateVehicle(v.id, "year", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Est. Value</label>
+                                      <input type="text" placeholder="$0.00" value={v.estimatedValue} onChange={(e) => updateVehicle(v.id, "estimatedValue", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Lender</label>
+                                      <input type="text" placeholder="e.g. CommBank" value={v.lender} onChange={(e) => updateVehicle(v.id, "lender", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                                      <div className="flex gap-3 items-center h-[38px]">
+                                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={v.ownerApp1} onChange={(e) => updateVehicle(v.id, "ownerApp1", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm">App. 1</span></label>
+                                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={v.ownerApp2} onChange={(e) => updateVehicle(v.id, "ownerApp2", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm">App. 2</span></label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                  <button type="button" onClick={() => setEditingVehicleId(null)} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors">
+                                    <span className="material-symbols-outlined text-[16px]">check</span>Done
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop table */}
+                      <div className="hidden sm:block">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-200 dark:border-slate-700">
@@ -824,6 +1044,8 @@ export default function AssetsPage() {
                           ))}
                         </tbody>
                       </table>
+                      </div>
+
                       <button type="button" onClick={addVehicle} className="mt-4 text-primary font-semibold hover:bg-primary/10 bg-primary/5 px-4 py-3 rounded-xl transition-colors inline-flex items-center justify-center w-full gap-2 text-sm border-2 border-dashed border-primary/20 hover:border-primary/40">
                         <span className="material-symbols-outlined text-[20px]">add_circle</span>Add Another Vehicle
                       </button>
@@ -839,7 +1061,7 @@ export default function AssetsPage() {
                 title="Superannuation"
                 badge={superFunds.length > 0 ? `${superFunds.length} added` : undefined}
               >
-                <div className="p-6 md:p-8">
+                <div className="p-4 sm:p-6 md:p-8">
                   {superFunds.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-10 text-slate-400 gap-3">
                       <span className="material-symbols-outlined text-[48px] text-slate-300">savings</span>
@@ -850,6 +1072,64 @@ export default function AssetsPage() {
                     </div>
                   ) : (
                     <div>
+                      {/* Mobile card list */}
+                      <div className="sm:hidden flex flex-col gap-3 mb-4">
+                        {superFunds.map((s) => (
+                          <div key={s.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3">
+                              <div className="min-w-0">
+                                <p className="font-semibold text-slate-800 dark:text-slate-100 truncate">{s.fundName || <span className="text-slate-400 font-normal italic">No fund</span>}</p>
+                                <p className="text-sm text-slate-500">{s.memberNumber ? `Member #${s.memberNumber}` : "—"}{s.balance ? ` · $${s.balance}` : ""}</p>
+                              </div>
+                              <div className="flex items-center gap-2 ml-3 shrink-0">
+                                <button type="button" onClick={() => setEditingSuperFundId(editingSuperFundId === s.id ? null : s.id)}
+                                  className={`flex size-9 items-center justify-center rounded-lg transition-colors ${editingSuperFundId === s.id ? "bg-primary text-white" : "text-slate-400 hover:text-primary hover:bg-primary/10"}`}>
+                                  <span className="material-symbols-outlined text-[18px]">{editingSuperFundId === s.id ? "close" : "edit"}</span>
+                                </button>
+                                <button type="button" onClick={() => removeSuperFund(s.id)}
+                                  className="flex size-9 items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                              </div>
+                            </div>
+                            {editingSuperFundId === s.id && (
+                              <div className="border-t border-primary/20 bg-primary/5 dark:bg-primary/10 p-4">
+                                <div className="grid grid-cols-1 gap-4">
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Fund Name</label>
+                                    <input type="text" placeholder="e.g. Australian Super" value={s.fundName} onChange={(e) => updateSuperFund(s.id, "fundName", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Member Number</label>
+                                      <input type="text" placeholder="e.g. 123456789" value={s.memberNumber} onChange={(e) => updateSuperFund(s.id, "memberNumber", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Balance</label>
+                                      <input type="text" placeholder="$0.00" value={s.balance} onChange={(e) => updateSuperFund(s.id, "balance", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                  </div>
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                                    <div className="flex gap-3 items-center">
+                                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={s.ownerApp1} onChange={(e) => updateSuperFund(s.id, "ownerApp1", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm">App. 1</span></label>
+                                      <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={s.ownerApp2} onChange={(e) => updateSuperFund(s.id, "ownerApp2", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm">App. 2</span></label>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                  <button type="button" onClick={() => setEditingSuperFundId(null)} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors">
+                                    <span className="material-symbols-outlined text-[16px]">check</span>Done
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop table */}
+                      <div className="hidden sm:block">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-200 dark:border-slate-700">
@@ -921,6 +1201,8 @@ export default function AssetsPage() {
                           ))}
                         </tbody>
                       </table>
+                      </div>
+
                       <button type="button" onClick={addSuperFund} className="mt-4 text-primary font-semibold hover:bg-primary/10 bg-primary/5 px-4 py-3 rounded-xl transition-colors inline-flex items-center justify-center w-full gap-2 text-sm border-2 border-dashed border-primary/20 hover:border-primary/40">
                         <span className="material-symbols-outlined text-[20px]">add_circle</span>Add Another Fund
                       </button>
@@ -935,7 +1217,7 @@ export default function AssetsPage() {
                 title="Other Assets"
                 badge={otherAssets.length > 0 ? `${otherAssets.length} added` : undefined}
               >
-                <div className="p-6 md:p-8">
+                <div className="p-4 sm:p-6 md:p-8">
                   {otherAssets.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-10 text-slate-400 gap-3">
                       <span className="material-symbols-outlined text-[48px] text-slate-300">category</span>
@@ -946,6 +1228,60 @@ export default function AssetsPage() {
                     </div>
                   ) : (
                     <div>
+                      {/* Mobile card list */}
+                      <div className="sm:hidden flex flex-col gap-3 mb-4">
+                        {otherAssets.map((o) => (
+                          <div key={o.id} className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+                            <div className="flex items-center justify-between px-4 py-3">
+                              <div className="min-w-0">
+                                <p className="font-semibold text-slate-800 dark:text-slate-100 truncate">{o.description || <span className="text-slate-400 font-normal italic">No description</span>}</p>
+                                <p className="text-sm text-slate-500">{o.estimatedValue ? `$${o.estimatedValue}` : "—"}</p>
+                              </div>
+                              <div className="flex items-center gap-2 ml-3 shrink-0">
+                                <button type="button" onClick={() => setEditingOtherAssetId(editingOtherAssetId === o.id ? null : o.id)}
+                                  className={`flex size-9 items-center justify-center rounded-lg transition-colors ${editingOtherAssetId === o.id ? "bg-primary text-white" : "text-slate-400 hover:text-primary hover:bg-primary/10"}`}>
+                                  <span className="material-symbols-outlined text-[18px]">{editingOtherAssetId === o.id ? "close" : "edit"}</span>
+                                </button>
+                                <button type="button" onClick={() => removeOtherAsset(o.id)}
+                                  className="flex size-9 items-center justify-center rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
+                                  <span className="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                              </div>
+                            </div>
+                            {editingOtherAssetId === o.id && (
+                              <div className="border-t border-primary/20 bg-primary/5 dark:bg-primary/10 p-4">
+                                <div className="grid grid-cols-1 gap-4">
+                                  <div className="flex flex-col gap-1.5">
+                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
+                                    <input type="text" placeholder="e.g. Jewellery, art, collectibles" value={o.description} onChange={(e) => updateOtherAsset(o.id, "description", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-4">
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Est. Value</label>
+                                      <input type="text" placeholder="$0.00" value={o.estimatedValue} onChange={(e) => updateOtherAsset(o.id, "estimatedValue", e.target.value)} className="rounded border-slate-300 dark:bg-slate-700 dark:border-slate-600 focus:ring-primary focus:border-primary text-sm" />
+                                    </div>
+                                    <div className="flex flex-col gap-1.5">
+                                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Ownership</label>
+                                      <div className="flex gap-3 items-center h-[38px]">
+                                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={o.ownerApp1} onChange={(e) => updateOtherAsset(o.id, "ownerApp1", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm">App. 1</span></label>
+                                        <label className="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" checked={o.ownerApp2} onChange={(e) => updateOtherAsset(o.id, "ownerApp2", e.target.checked)} className="rounded text-primary focus:ring-primary border-slate-300" /><span className="text-sm">App. 2</span></label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="mt-4 flex justify-end">
+                                  <button type="button" onClick={() => setEditingOtherAssetId(null)} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white hover:bg-primary/90 transition-colors">
+                                    <span className="material-symbols-outlined text-[16px]">check</span>Done
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Desktop table */}
+                      <div className="hidden sm:block">
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-200 dark:border-slate-700">
@@ -1011,6 +1347,8 @@ export default function AssetsPage() {
                           ))}
                         </tbody>
                       </table>
+                      </div>
+
                       <button type="button" onClick={addOtherAsset} className="mt-4 text-primary font-semibold hover:bg-primary/10 bg-primary/5 px-4 py-3 rounded-xl transition-colors inline-flex items-center justify-center w-full gap-2 text-sm border-2 border-dashed border-primary/20 hover:border-primary/40">
                         <span className="material-symbols-outlined text-[20px]">add_circle</span>Add Another Asset
                       </button>
@@ -1021,7 +1359,7 @@ export default function AssetsPage() {
 
               {/* Shares & Investments */}
               <CollapsibleSection icon="show_chart" title="Shares &amp; Investments">
-                <div className="p-6 md:p-8">
+                <div className="p-4 sm:p-6 md:p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="flex flex-col gap-1.5 md:col-span-2">
                       <label htmlFor="shares-description" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -1071,7 +1409,7 @@ export default function AssetsPage() {
 
               {/* Home Contents */}
               <CollapsibleSection icon="chair" title="Home Contents">
-                <div className="p-6 md:p-8">
+                <div className="p-4 sm:p-6 md:p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div className="flex flex-col gap-1.5 md:col-span-2">
                       <label htmlFor="contents-description" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
@@ -1122,7 +1460,7 @@ export default function AssetsPage() {
             </div>
 
             {/* ── Navigation Buttons ────────────────────────────────────── */}
-            <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
+            <div className="sticky bottom-0 z-10 mt-12 flex items-center justify-between border-t border-primary/10 bg-background-light py-4 dark:bg-background-dark md:static md:pt-8 md:pb-0 md:bg-transparent dark:md:bg-transparent">
               <Link
                 href="/employment-income"
                 className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5"
@@ -1130,8 +1468,8 @@ export default function AssetsPage() {
                 <span className="material-symbols-outlined text-[20px]">arrow_back</span>
                 Back
               </Link>
-              <div className="flex items-center gap-6">
-                <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
+              <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-6">
+                <span className="hidden sm:block text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
                   Save Draft
                 </span>
                 <Link
