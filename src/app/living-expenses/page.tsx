@@ -140,10 +140,7 @@ const EXPENSES: ExpenseDef[] = [
 ];
 
 // ── State ─────────────────────────────────────────────────────────────────
-interface ExpenseRow {
-  current: string;
-  postSettlement: string;
-}
+type ExpenseRow = string; // post-settlement amount only
 
 function parse(val: string): number {
   const n = parseFloat(val.replace(/,/g, ""));
@@ -155,35 +152,22 @@ function formatTotal(n: number): string {
   return `$${n.toLocaleString("en-AU", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-// ── Column header widths (must match input widths below) ──────────────────
-const COL = "w-28 sm:w-36";
+// ── Column input width ────────────────────────────────────────────────────
+const COL = "w-36 sm:w-44";
 
 // ══════════════════════════════════════════════════════════════════════════
 // Page
 // ══════════════════════════════════════════════════════════════════════════
 export default function LivingExpensesPage() {
-  const [rows, setRows]               = useState<Record<string, ExpenseRow>>({});
+  const [rows, setRows] = useState<Record<string, ExpenseRow>>({});
   const [hemExplanation, setHemExplanation] = useState("");
 
-  const getRow = (id: string): ExpenseRow =>
-    rows[id] ?? { current: "", postSettlement: "" };
+  const getRow = (id: string): ExpenseRow => rows[id] ?? "";
 
-  const setField = (id: string, field: keyof ExpenseRow, value: string) =>
-    setRows(prev => ({ ...prev, [id]: { ...getRow(id), [field]: value } }));
-
-  const totals = useMemo(() => {
-    return EXPENSES.reduce(
-      (acc, item) => {
-        const r = rows[item.id];
-        if (r) {
-          acc.current        += parse(r.current);
-          acc.postSettlement += parse(r.postSettlement);
-        }
-        return acc;
-      },
-      { current: 0, postSettlement: 0 }
-    );
-  }, [rows]);
+  const total = useMemo(
+    () => EXPENSES.reduce((acc, item) => acc + parse(rows[item.id] ?? ""), 0),
+    [rows]
+  );
 
   return (
     <PageShell>
@@ -195,8 +179,8 @@ export default function LivingExpensesPage() {
           Living Expenses
         </h1>
         <p className="text-slate-600 dark:text-slate-400 max-w-3xl">
-          Enter the household&apos;s combined monthly living expenses. For each category, provide
-          the expected post-settlement expense amount.
+          Enter the household&apos;s expected monthly living expenses post-settlement.
+          Leave fields blank if the category does not apply.
         </p>
       </header>
 
@@ -209,91 +193,60 @@ export default function LivingExpensesPage() {
           <h2 className="font-bold text-white uppercase tracking-wider text-base flex-1">
             Monthly Living Expenses
           </h2>
-          <div className={`${COL} text-white font-bold text-xs uppercase tracking-wider text-center hidden md:block`}>
-            Current
-          </div>
-          <div className={`${COL} text-white font-bold text-xs uppercase tracking-wider text-center hidden md:block`}>
-            Post-Settlement
-          </div>
-        </div>
-
-        {/* Column labels visible on mobile */}
-        <div className="flex justify-end gap-3 px-4 sm:px-6 py-2 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-200 dark:border-slate-700 md:hidden">
-          <span className={`${COL} text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center`}>Current</span>
-          <span className={`${COL} text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-center`}>Post-Settlement</span>
         </div>
 
         {/* Rows */}
         <div className="divide-y divide-slate-100 dark:divide-slate-700/60">
-          {EXPENSES.map((item, i) => {
-            const row = getRow(item.id);
-            return (
-              <div
-                key={item.id}
-                className={`flex flex-col md:flex-row md:items-center gap-3 px-4 sm:px-6 py-4 transition-colors ${
-                  i % 2 !== 0 ? "bg-slate-50/60 dark:bg-slate-700/20" : ""
-                }`}
-              >
-                {/* Label + description */}
-                <div className="flex-1 min-w-0 pr-2">
-                  <p className="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug">
-                    {item.label}
+          {EXPENSES.map((item, i) => (
+            <div
+              key={item.id}
+              className={`flex items-center gap-3 px-4 sm:px-6 py-4 transition-colors ${
+                i % 2 !== 0 ? "bg-slate-50/60 dark:bg-slate-700/20" : ""
+              }`}
+            >
+              {/* Label + description */}
+              <div className="flex-1 min-w-0 pr-2">
+                <p className="font-bold text-sm text-slate-800 dark:text-slate-100 leading-snug">
+                  {item.label}
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                  {item.description}
+                </p>
+                {item.excludes && (
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 italic">
+                    <span className="font-semibold not-italic">Excluding</span> {item.excludes}
                   </p>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
-                    {item.description}
-                  </p>
-                  {item.excludes && (
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 italic">
-                      <span className="font-semibold not-italic">Excluding</span> {item.excludes}
-                    </p>
-                  )}
-                </div>
-
-                {/* Inputs */}
-                <div className="flex gap-3 shrink-0 self-end md:self-center">
-                  <div className={COL}>
-                    <CurrencyInput
-                      value={row.current}
-                      onChange={v => setField(item.id, "current", v)}
-                      aria-label={`${item.label} — current`}
-                    />
-                  </div>
-                  <div className={COL}>
-                    <CurrencyInput
-                      value={row.postSettlement}
-                      onChange={v => setField(item.id, "postSettlement", v)}
-                      aria-label={`${item.label} — post-settlement`}
-                    />
-                  </div>
-                </div>
+                )}
               </div>
-            );
-          })}
+
+              {/* Input */}
+              <div className={`${COL} shrink-0`}>
+                <CurrencyInput
+                  value={getRow(item.id)}
+                  onChange={v => setRows(prev => ({ ...prev, [item.id]: v }))}
+                  aria-label={`${item.label} — post-settlement`}
+                />
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Total row */}
-        <div className="flex flex-col md:flex-row md:items-center gap-3 px-4 sm:px-6 py-5 bg-primary/5 dark:bg-primary/10 border-t-2 border-primary/20">
-          <div className="flex-1 font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider text-sm text-right md:text-left">
+        <div className="flex items-center gap-3 px-4 sm:px-6 py-5 bg-primary/5 dark:bg-primary/10 border-t-2 border-primary/20">
+          <div className="flex-1 font-bold text-slate-800 dark:text-slate-100 uppercase tracking-wider text-sm">
             Total Monthly Expenses
           </div>
-          <div className="flex gap-3 shrink-0 self-end md:self-center">
-            <div className={`${COL} flex items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 px-3 py-2.5`}>
-              <span className="font-bold text-primary dark:text-white text-sm">
-                {formatTotal(totals.current)}
-              </span>
-            </div>
-            <div className={`${COL} flex items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 px-3 py-2.5`}>
-              <span className="font-bold text-primary dark:text-white text-sm">
-                {formatTotal(totals.postSettlement)}
-              </span>
-            </div>
+          <div className={`${COL} shrink-0 flex items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/20 px-3 py-2.5`}>
+            <span className="font-bold text-primary dark:text-white text-sm">
+              {formatTotal(total)}
+            </span>
           </div>
         </div>
       </div>
 
       {/* ── HEM explanation ──────────────────────────────────────────────── */}
       <div className="mb-12 bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-        <div className="flex items-center gap-3 px-6 py-4 bg-primary">
+        <div className="flex items-center gap-3 px-4 sm:px-6 py-4 bg-primary">
           <span className="material-symbols-outlined text-white text-[20px]">help_outline</span>
           <h2 className="font-bold text-white uppercase tracking-wider text-base">HEM Comparison</h2>
           <span className="text-white/70 text-xs italic font-normal normal-case tracking-normal">
