@@ -48,13 +48,13 @@ export default function ApplicantsPage() {
 
         {/* Current applicants list */}
         <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white">Current Applicants</h3>
             {!showAddForm && (
               <button
                 type="button"
                 onClick={() => setShowAddForm(true)}
-                className="flex items-center gap-2 rounded-lg border-2 border-primary px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10"
+                className="flex items-center gap-2 rounded-lg border-2 border-primary px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10 self-start sm:self-auto"
               >
                 <span className="material-symbols-outlined text-lg">person_add</span>
                 Add Another Applicant
@@ -85,7 +85,7 @@ export default function ApplicantsPage() {
                       <button
                         type="button"
                         onClick={() => setEditingId(isEditing ? null : a.id)}
-                        className="flex size-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
+                        className="flex size-11 md:size-9 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
                       >
                         <span className="material-symbols-outlined">{isEditing ? "close" : "edit"}</span>
                       </button>
@@ -93,7 +93,7 @@ export default function ApplicantsPage() {
                         type="button"
                         disabled={a.isPrimary}
                         onClick={() => removeApplicant(a.id)}
-                        className={`flex size-9 items-center justify-center rounded-lg ${
+                        className={`flex size-11 md:size-9 items-center justify-center rounded-lg ${
                           a.isPrimary
                             ? "cursor-not-allowed text-slate-300"
                             : "text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
@@ -176,7 +176,7 @@ export default function ApplicantsPage() {
 
         {/* Add new applicant form */}
         {showAddForm && (
-          <div className="flex flex-col gap-6 rounded-2xl border-2 border-dashed border-primary/20 bg-primary/5 p-8 dark:bg-slate-800/50">
+          <div className="flex flex-col gap-6 rounded-2xl border-2 border-dashed border-primary/20 bg-primary/5 p-5 sm:p-8 dark:bg-slate-800/50">
             <div className="space-y-2 text-center flex flex-col items-center">
               <h3 className="text-xl font-bold text-primary dark:text-white">Adding a new applicant</h3>
               <p className="max-w-md text-slate-600 dark:text-slate-400">
@@ -185,26 +185,26 @@ export default function ApplicantsPage() {
             </div>
 
             {/* Role picker */}
-            <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="grid w-full grid-cols-3 gap-2 sm:gap-4">
               {ROLE_OPTIONS.map(opt => (
                 <label
                   key={opt.value}
-                  className={`relative flex cursor-pointer flex-col rounded-xl border p-4 transition-all ${
+                  className={`relative flex cursor-pointer flex-col rounded-xl border p-3 sm:p-4 transition-all ${
                     newRole === opt.value
                       ? "border-primary bg-white shadow dark:bg-slate-900"
                       : "border-slate-200 bg-white hover:border-primary dark:border-slate-800 dark:bg-slate-900"
                   }`}
                 >
                   <input
-                    className="absolute right-4 top-4 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
+                    className="absolute right-2 top-2 sm:right-4 sm:top-4 h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-700 dark:bg-slate-800"
                     name="new-relationship"
                     type="radio"
                     checked={newRole === opt.value}
                     onChange={() => setNewRole(opt.value)}
                   />
-                  <span className="material-symbols-outlined mb-2 text-3xl text-primary">{opt.icon}</span>
-                  <span className="text-sm font-bold text-slate-900 dark:text-white">{opt.value}</span>
-                  <span className="text-xs text-slate-500">{opt.description}</span>
+                  <span className="material-symbols-outlined mb-1 sm:mb-2 text-2xl sm:text-3xl text-primary">{opt.icon}</span>
+                  <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white leading-tight">{opt.value}</span>
+                  <span className="hidden sm:block text-xs text-slate-500">{opt.description}</span>
                 </label>
               ))}
             </div>
@@ -239,11 +239,11 @@ export default function ApplicantsPage() {
               </div>
             </div>
 
-            <div className="flex w-full justify-end gap-3 pt-2">
+            <div className="flex w-full flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
               <button
                 type="button"
                 onClick={() => { setShowAddForm(false); setNewFirstName(""); setNewLastName(""); }}
-                className="rounded px-6 py-2.5 font-bold text-slate-700 transition-colors hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+                className="w-full rounded px-6 py-2.5 font-bold text-slate-700 transition-colors hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800 sm:w-auto"
               >
                 Cancel
               </button>
@@ -251,7 +251,7 @@ export default function ApplicantsPage() {
                 type="button"
                 onClick={confirmAdd}
                 disabled={!newFirstName.trim()}
-                className="rounded bg-primary px-8 py-2.5 font-bold text-white shadow transition-shadow hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded bg-primary px-8 py-2.5 font-bold text-white shadow transition-shadow hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed sm:w-auto"
               >
                 Confirm Applicant
               </button>
@@ -261,7 +261,7 @@ export default function ApplicantsPage() {
       </div>
 
       {/* Navigation */}
-      <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
+      <div className="sticky bottom-0 z-10 mt-12 flex items-center justify-between border-t border-primary/10 bg-background-light py-4 dark:bg-background-dark md:static md:pt-8 md:pb-0 md:bg-transparent dark:md:bg-transparent">
         <Link
           href="/"
           className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5"
