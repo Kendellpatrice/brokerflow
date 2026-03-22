@@ -320,9 +320,23 @@ export default function PersonalDetailsPage() {
 
       </div>
 
+      {/* Need Help — mobile only (above nav) */}
+      <div className="mt-3 bg-slate-100 border border-slate-200 rounded-xl p-6 dark:bg-slate-800/50 dark:border-slate-700 md:hidden">
+        <div className="flex gap-4">
+          <span className="material-symbols-outlined text-primary mt-0.5">info</span>
+          <div>
+            <h3 className="font-bold text-slate-800 dark:text-slate-200 mb-1">Need help?</h3>
+            <p className="text-slate-600 dark:text-slate-400 text-sm">
+              If you&apos;re unsure about any details, you can save your progress and return later.
+              Your mortgage broker will also review all information during your consultation.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Navigation */}
       {/* Mobile */}
-      <div className="sticky bottom-0 z-10 mt-12 flex flex-col gap-3 border-t border-primary/10 bg-background-light px-4 py-4 dark:bg-background-dark md:hidden">
+      <div className="sticky bottom-0 z-10 mt-6 flex flex-col gap-3 bg-background-light py-4 dark:bg-background-dark md:hidden">
         <Link href="/employment-income" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90">
           Next: Employment &amp; Income
           <span className="material-symbols-outlined text-[20px]">chevron_right</span>
@@ -351,7 +365,7 @@ export default function PersonalDetailsPage() {
         </div>
       </div>
 
-      <div className="mt-8 bg-slate-100 border border-slate-200 rounded-xl p-6 dark:bg-slate-800/50 dark:border-slate-700">
+      <div className="mt-8 hidden bg-slate-100 border border-slate-200 rounded-xl p-6 dark:bg-slate-800/50 dark:border-slate-700 md:block">
         <div className="flex gap-4">
           <span className="material-symbols-outlined text-primary mt-0.5">info</span>
           <div>
