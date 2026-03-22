@@ -162,7 +162,7 @@ export default function EmploymentIncomePage() {
         <span className="mb-2 block text-sm font-bold uppercase tracking-widest text-primary">
           Step 3 of 6
         </span>
-        <h1 className="mb-4 text-4xl font-extrabold text-primary dark:text-slate-100">
+        <h1 className="mb-4 text-3xl sm:text-4xl font-extrabold text-primary dark:text-slate-100">
           Employment &amp; Income
         </h1>
         <p className="text-slate-600 dark:text-slate-400">
@@ -183,15 +183,14 @@ export default function EmploymentIncomePage() {
           <div className="flex items-center gap-3 px-6 py-4 bg-primary">
             <span className="material-symbols-outlined text-white text-[20px]">work</span>
             <h2 className="font-bold text-white uppercase tracking-wider text-base">Employment History</h2>
-            <span className="text-white/70 text-xs italic font-normal normal-case tracking-normal">(Min. 3 years required)</span>
           </div>
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             {employments.map((emp, index) => (
               <div
                 key={emp.id}
                 className={index > 0 ? "mt-8 border-t border-slate-200 dark:border-slate-700 pt-8" : ""}
               >
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col gap-2 mb-6 sm:flex-row sm:items-center sm:justify-between">
                   <h3 className="font-bold text-slate-800 dark:text-slate-200">
                     {index === 0 ? "Primary Employment" : `Additional Employment ${index}`}
                   </h3>
@@ -319,7 +318,7 @@ export default function EmploymentIncomePage() {
             <span className="material-symbols-outlined text-white text-[20px]">attach_money</span>
             <h2 className="font-bold text-white uppercase tracking-wider text-base">Income Details</h2>
           </div>
-          <div className="p-6 md:p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex flex-col gap-1.5">
                 <label htmlFor={`ei-base-salary-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Base Salary</label>
@@ -346,7 +345,7 @@ export default function EmploymentIncomePage() {
 
               <div className="flex flex-col gap-1.5 md:col-span-2">
                 <label htmlFor={`ei-allowances-amount-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Regular Allowances</label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <CurrencyInput id={`ei-allowances-amount-${sid}`} placeholder="Amount" value={income.allowancesAmount} onChange={v => setIncome("allowancesAmount", v)} />
                   <input id={`ei-allowances-type-${sid}`} className={inputCls} type="text" placeholder="Type (e.g. Car)"
                     value={income.allowancesType} onChange={e => setIncome("allowancesType", e.target.value)} />
@@ -370,7 +369,7 @@ export default function EmploymentIncomePage() {
 
               <div className="flex flex-col gap-1.5 md:col-span-2">
                 <label htmlFor={`ei-govt-amount-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Government Payments</label>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <CurrencyInput id={`ei-govt-amount-${sid}`} placeholder="Amount" value={income.govtAmount} onChange={v => setIncome("govtAmount", v)} />
                   <select id={`ei-govt-type-${sid}`} value={income.govtType} onChange={e => setIncome("govtType", e.target.value)} className={inputCls}>
                     <option value="">Select Type...</option>
@@ -391,7 +390,7 @@ export default function EmploymentIncomePage() {
               <span className="material-symbols-outlined text-white text-[20px]">storefront</span>
               <h2 className="font-bold text-white uppercase tracking-wider text-base">Self-Employed Applicants</h2>
             </div>
-            <div className="p-6 md:p-8">
+            <div className="p-4 sm:p-6 md:p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex flex-col gap-1.5 md:col-span-2">
                   <label htmlFor={`ei-business-name-${sid}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Business Name</label>
@@ -448,7 +447,7 @@ export default function EmploymentIncomePage() {
                   <CurrencyInput id={`ei-addbacks-prev-${sid}`} value={se.addBacksPrevious} onChange={v => setSE("addBacksPrevious", v)} />
                 </div>
 
-                <div className="col-span-1 md:col-span-2 pt-4 pb-2 border-b border-slate-200 dark:border-slate-700">
+                <div className="col-span-full pt-4 pb-2 border-b border-slate-200 dark:border-slate-700">
                   <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">Accountant Details</h4>
                 </div>
 
@@ -468,13 +467,13 @@ export default function EmploymentIncomePage() {
       )}
 
       {/* Navigation */}
-      <div className="mt-12 flex items-center justify-between border-t border-primary/10 pt-8">
+      <div className="sticky bottom-0 z-10 mt-12 flex items-center justify-between border-t border-primary/10 bg-background-light py-4 dark:bg-background-dark md:static md:pt-8 md:pb-0 md:bg-transparent dark:md:bg-transparent">
         <Link href="/personal-details" className="flex items-center gap-2 rounded-lg border border-primary px-6 py-3 font-bold text-primary transition-colors hover:bg-primary/5">
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           Back
         </Link>
-        <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
+        <div className="flex flex-col items-end gap-2 sm:flex-row sm:items-center sm:gap-6">
+          <span className="hidden sm:block text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
           <Link href="/assets" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
             Next Step
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
