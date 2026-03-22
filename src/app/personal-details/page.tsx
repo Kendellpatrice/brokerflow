@@ -29,11 +29,6 @@ interface PersonalData {
   mobilePhone: string;
   homePhone: string;
   workPhone: string;
-  // Nearest Relative
-  relativeName: string;
-  relativeRelationship: string;
-  relativePhone: string;
-  relativeAddress: string;
   // Address
   addressFinder: string;
   suburb: string;
@@ -52,8 +47,7 @@ const BLANK: PersonalData = {
   visaType: "", licenceNumber: "", licenceState: "", licenceExpiry: "",
   dependentAges: "", mothersMaidenName: "",
   email: "", mobilePhone: "", homePhone: "", workPhone: "",
-  relativeName: "", relativeRelationship: "", relativePhone: "", relativeAddress: "",
-  addressFinder: "", suburb: "", state: "", postcode: "",
+addressFinder: "", suburb: "", state: "", postcode: "",
   addressStartDate: "", addressStatus: "",
   prevAddress: "", prevAddressFrom: "", prevAddressTo: "",
 };
@@ -251,38 +245,7 @@ export default function PersonalDetailsPage() {
           </div>
         </div>
 
-        {/* ── Nearest Relative ─────────────────────────────────────── */}
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-          <div className="flex items-center gap-3 px-6 py-4 bg-primary">
-            <span className="material-symbols-outlined text-white text-[20px]">group</span>
-            <h2 className="font-bold text-white uppercase tracking-wider text-base">
-              Nearest Relative{" "}
-              <span className="text-white/70 text-xs font-normal normal-case tracking-normal italic">*Not living with you</span>
-            </h2>
-          </div>
-          <div className="p-4 sm:p-6 md:p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor={`pd-rel-name-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Name</label>
-                <input id={`pd-rel-name-${activeId}`} type="text" value={d.relativeName} onChange={up("relativeName")} className={inputCls} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor={`pd-rel-rel-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Relationship to You</label>
-                <input id={`pd-rel-rel-${activeId}`} type="text" value={d.relativeRelationship} onChange={up("relativeRelationship")} className={inputCls} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor={`pd-rel-phone-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Phone Number</label>
-                <input id={`pd-rel-phone-${activeId}`} type="tel" value={d.relativePhone} onChange={up("relativePhone")} className={inputCls} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor={`pd-rel-addr-${activeId}`} className="text-sm font-semibold text-slate-700 dark:text-slate-300">Address Details</label>
-                <input id={`pd-rel-addr-${activeId}`} type="text" value={d.relativeAddress} onChange={up("relativeAddress")} className={inputCls} />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Address Details ───────────────────────────────────────── */}
+{/* ── Address Details ───────────────────────────────────────── */}
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
           <div className="flex items-center gap-3 px-6 py-4 bg-primary">
             <span className="material-symbols-outlined text-white text-[20px]">home_pin</span>
