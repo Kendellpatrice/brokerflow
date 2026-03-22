@@ -195,8 +195,8 @@ export default function LivingExpensesPage() {
           Living Expenses
         </h1>
         <p className="text-slate-600 dark:text-slate-400 max-w-3xl">
-          Enter the household&apos;s combined monthly living expenses — both current and expected
-          post-settlement. Leave fields blank if the category does not apply.
+          Enter the household&apos;s combined monthly living expenses. For each category, provide
+          the expected post-settlement expense amount.
         </p>
       </header>
 
