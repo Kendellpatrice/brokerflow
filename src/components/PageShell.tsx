@@ -6,7 +6,7 @@ export function PageShell({ children }: { children: ReactNode }) {
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
       <AppHeader />
-      <main className="flex w-full flex-grow flex-col md:flex-row">
+      <main className="flex w-full grow flex-col md:flex-row">
         <SidebarNav />
         <section className="flex-1 overflow-y-auto bg-background-light p-6 dark:bg-background-dark md:p-12">
           <div className="mx-auto max-w-5xl">{children}</div>

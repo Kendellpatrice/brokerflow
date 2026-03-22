@@ -48,13 +48,13 @@ export default function ApplicantsPage() {
 
         {/* Current applicants list */}
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold text-slate-900 dark:text-white">Current Applicants</h3>
             {!showAddForm && (
               <button
                 type="button"
                 onClick={() => setShowAddForm(true)}
-                className="flex items-center gap-2 rounded-lg border-2 border-primary px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10 self-start sm:self-auto"
+                className="hidden sm:flex items-center gap-2 rounded-lg border-2 border-primary px-4 py-2 text-sm font-bold text-primary transition-colors hover:bg-primary/10"
               >
                 <span className="material-symbols-outlined text-lg">person_add</span>
                 Add Another Applicant
@@ -171,6 +171,18 @@ export default function ApplicantsPage() {
                 </div>
               );
             })}
+
+            {/* Add Another Applicant — full-width dashed tile (mobile only) */}
+            {!showAddForm && (
+              <button
+                type="button"
+                onClick={() => setShowAddForm(true)}
+                className="sm:hidden flex w-full items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-slate-300 py-5 font-bold text-slate-500 transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-primary dark:border-slate-600 dark:bg-slate-900 dark:text-slate-400 dark:hover:border-primary/50 dark:hover:text-primary"
+              >
+                <span className="material-symbols-outlined text-xl">person_add</span>
+                Add Another Applicant
+              </button>
+            )}
           </div>
         </div>
 
