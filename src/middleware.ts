@@ -7,8 +7,9 @@ export function middleware(request: NextRequest) {
 
   const isLoginPage = pathname === "/login";
   const isInvitePath = pathname.startsWith("/invite/");
+  const isApiRoute = pathname.startsWith("/api/");
 
-  if (!session && !isLoginPage && !isInvitePath) {
+  if (!session && !isLoginPage && !isInvitePath && !isApiRoute) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);
