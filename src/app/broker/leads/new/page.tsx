@@ -181,7 +181,7 @@ export default function NewLeadPage() {
               {/* ── Section 1: Contact Details ────────────────────────────── */}
               <div className="space-y-5 p-5 md:p-6">
                 <div className="flex items-center justify-between">
-                  <div className="flex cursor-pointer items-center gap-2">
+                  <div className="flex cursor-default items-center gap-2">
                     <SectionBadge n={1} />
                     <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Details</h4>
                   </div>
@@ -284,7 +284,7 @@ export default function NewLeadPage() {
 
               {/* ── Section 2: Loan Details ───────────────────────────────── */}
               <div className="space-y-5 border-t border-slate-100 p-5 dark:border-slate-800 md:p-6">
-                <div className="flex cursor-pointer items-center gap-2">
+                <div className="flex cursor-default items-center gap-2">
                   <SectionBadge n={2} />
                   <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Loan Details</h4>
                 </div>
@@ -363,7 +363,7 @@ export default function NewLeadPage() {
 
               {/* ── Section 3: Additional Details ─────────────────────────── */}
               <div className="space-y-5 border-t border-slate-100 p-5 dark:border-slate-800 md:p-6">
-                <div className="flex cursor-pointer items-center gap-2">
+                <div className="flex cursor-default items-center gap-2">
                   <SectionBadge n={3} />
                   <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Additional Details</h4>
                 </div>
