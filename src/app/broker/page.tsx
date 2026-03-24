@@ -274,9 +274,9 @@ export default function BrokerPortalPage() {
                 <div className="border-t border-slate-100 p-4 dark:border-slate-800">
                   <Link
                     href="/broker/activity"
-                    className="flex items-center justify-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                    className="flex items-center justify-center gap-1.5 text-sm font-semibold text-primary"
                   >
-                    View More
+                    <span className="hover:underline">View More</span>
                     <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                   </Link>
                 </div>

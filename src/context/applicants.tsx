@@ -41,21 +41,26 @@ export function ApplicantProvider({ children }: { children: ReactNode }) {
   // Load applicants from Firestore when user signs in
   useEffect(() => {
     if (!user) { setLoaded(true); return; }
+    setLoaded(false); // Block saves until load completes
     loadLeadData(user.uid).then((data) => {
       let loaded: Applicant[] = DEFAULT_APPLICANTS;
       if (data?.applicants && Array.isArray(data.applicants) && data.applicants.length > 0) {
         loaded = data.applicants as Applicant[];
       }
 
-      // If the primary applicant has no name, pre-fill from the pendingLeadName invite cookie
+      // Pre-fill primary applicant name if not yet saved
       const primary = loaded.find((a) => a.isPrimary);
       if (primary && !primary.firstName && !primary.lastName) {
-        const match = document.cookie.split("; ").find((c) => c.startsWith("pendingLeadName="));
-        if (match) {
-          const name = decodeURIComponent(match.split("=")[1]).trim();
-          const spaceIdx = name.lastIndexOf(" ");
-          const firstName = spaceIdx > 0 ? name.slice(0, spaceIdx) : name;
-          const lastName = spaceIdx > 0 ? name.slice(spaceIdx + 1) : "";
+        // Prefer fullName from the lead doc (set by broker)
+        const fullName = (data?.fullName as string | undefined)?.trim();
+        const raw = fullName ?? (() => {
+          const match = document.cookie.split("; ").find((c) => c.startsWith("pendingLeadName="));
+          return match ? decodeURIComponent(match.split("=")[1]).trim() : null;
+        })();
+        if (raw) {
+          const spaceIdx = raw.lastIndexOf(" ");
+          const firstName = spaceIdx > 0 ? raw.slice(0, spaceIdx) : raw;
+          const lastName = spaceIdx > 0 ? raw.slice(spaceIdx + 1) : "";
           loaded = loaded.map((a) => (a.isPrimary ? { ...a, firstName, lastName } : a));
         }
       }
