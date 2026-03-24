@@ -6,8 +6,9 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isLoginPage = pathname === "/login";
+  const isInvitePath = pathname.startsWith("/invite/");
 
-  if (!session && !isLoginPage) {
+  if (!session && !isLoginPage && !isInvitePath) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

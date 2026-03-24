@@ -1,6 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { BrokerShell } from "@/components/BrokerShell";
+import { db } from "@/lib/firestore";
+import { collection, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore";
+import { useAuth } from "@/context/auth";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -14,12 +18,12 @@ type CardFooter =
   | { type: "verified" };
 
 interface PipelineCard {
-  id: number;
+  id: string;
   loanType: LoanType;
-  lender: string;
+  lender?: string;
   client: string;
-  amount: string;
-  lvr: string;
+  amount?: string;
+  lvr?: string;
   highlight?: boolean;
   footer: CardFooter;
 }
@@ -28,50 +32,38 @@ interface Column {
   id: string;
   label: string;
   cards: PipelineCard[];
+  loading?: boolean;
   emptyIcon?: string;
   emptyText?: string;
 }
 
-// ── Data ───────────────────────────────────────────────────────────────────
+// ── Helpers ─────────────────────────────────────────────────────────────────
 
-const LOAN_TYPE_STYLES: Record<LoanType, string> = {
-  Purchase: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-  Refinance: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
-  "Equity Release": "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
-  Other: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300",
+const LOAN_PURPOSE_MAP: Record<string, LoanType> = {
+  purchase: "Purchase",
+  refinance: "Refinance",
+  equity_release: "Equity Release",
+  other: "Other",
 };
 
-const COLUMNS: Column[] = [
-  {
-    id: "new_leads",
-    label: "New Leads",
-    cards: [
-      {
-        id: 1,
-        loanType: "Purchase",
-        lender: "ANZ",
-        client: "John & Jane Doe",
-        amount: "$750k",
-        lvr: "80%",
-        footer: { type: "timestamp", text: "Updated 2h ago" },
-      },
-      {
-        id: 2,
-        loanType: "Refinance",
-        lender: "CBA",
-        client: "Sarah Miller",
-        amount: "$520k",
-        lvr: "90%",
-        footer: { type: "timestamp", text: "Added yesterday" },
-      },
-    ],
-  },
+function timeAgo(ts: Timestamp): string {
+  const seconds = Math.floor((Date.now() - ts.toDate().getTime()) / 1000);
+  if (seconds < 60) return "Just now";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  if (seconds < 172800) return "Yesterday";
+  return ts.toDate().toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+}
+
+// ── Static demo columns (everything except New Leads) ──────────────────────
+
+const DEMO_COLUMNS: Column[] = [
   {
     id: "pre_approval",
     label: "Pre-approval",
     cards: [
       {
-        id: 3,
+        id: "d3",
         loanType: "Purchase",
         lender: "NAB",
         client: "David Wilson",
@@ -86,7 +78,7 @@ const COLUMNS: Column[] = [
     label: "Lodged",
     cards: [
       {
-        id: 4,
+        id: "d4",
         loanType: "Equity Release",
         lender: "Westpac",
         client: "Emma Thompson",
@@ -101,7 +93,7 @@ const COLUMNS: Column[] = [
     label: "Conditional Approval",
     cards: [
       {
-        id: 5,
+        id: "d5",
         loanType: "Refinance",
         lender: "Macquarie",
         client: "Michael Chen",
@@ -116,7 +108,7 @@ const COLUMNS: Column[] = [
     label: "Unconditional",
     cards: [
       {
-        id: 6,
+        id: "d6",
         loanType: "Purchase",
         lender: "Suncorp",
         client: "Robert Smith",
@@ -135,6 +127,15 @@ const COLUMNS: Column[] = [
     emptyText: "No upcoming settlements",
   },
 ];
+
+// ── Styles ──────────────────────────────────────────────────────────────────
+
+const LOAN_TYPE_STYLES: Record<LoanType, string> = {
+  Purchase: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  Refinance: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+  "Equity Release": "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+  Other: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300",
+};
 
 // ── Card footer renderers ───────────────────────────────────────────────────
 
@@ -197,29 +198,37 @@ function KanbanCard({ card }: { card: PipelineCard }) {
       ].join(" ")}
     >
       {/* Loan type + lender */}
-      <div className="mb-2 flex items-start justify-between">
+      <div className="mb-2 flex items-start justify-between gap-2">
         <span className={`rounded px-2 py-0.5 text-xs font-bold ${LOAN_TYPE_STYLES[card.loanType]}`}>
           {card.loanType}
         </span>
-        <div className="flex h-5 w-10 items-center justify-center rounded bg-slate-100 text-[8px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
-          {card.lender}
-        </div>
+        {card.lender && (
+          <div className="flex h-5 min-w-10 items-center justify-center rounded bg-slate-100 px-1.5 text-[8px] font-bold text-slate-500 dark:bg-slate-700 dark:text-slate-400">
+            {card.lender}
+          </div>
+        )}
       </div>
 
       {/* Client name */}
       <h4 className="mb-1 font-bold text-slate-900 dark:text-white">{card.client}</h4>
 
       {/* Amount + LVR */}
-      <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-        <span className="flex items-center gap-1">
-          <span className="material-symbols-outlined text-[14px]">payments</span>
-          {card.amount}
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="material-symbols-outlined text-[14px]">pie_chart</span>
-          {card.lvr} LVR
-        </span>
-      </div>
+      {(card.amount || card.lvr) && (
+        <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
+          {card.amount && (
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">payments</span>
+              {card.amount}
+            </span>
+          )}
+          {card.lvr && (
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-[14px]">pie_chart</span>
+              {card.lvr} LVR
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Footer */}
       <div className="mt-3">
@@ -240,17 +249,25 @@ function KanbanColumn({ column }: { column: Column }) {
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
             {column.label}
           </h3>
-          <span className="rounded-full bg-slate-300 px-2 py-0.5 text-xs font-bold dark:bg-slate-700">
-            {column.cards.length}
-          </span>
+          {!column.loading && (
+            <span className="rounded-full bg-slate-300 px-2 py-0.5 text-xs font-bold dark:bg-slate-700">
+              {column.cards.length}
+            </span>
+          )}
         </div>
         <button className="rounded p-0.5 text-slate-400 hover:bg-slate-300/60 hover:text-slate-600 dark:hover:bg-slate-700/60">
           <span className="material-symbols-outlined text-[20px]">more_horiz</span>
         </button>
       </div>
 
-      {/* Cards or empty state */}
-      {column.cards.length > 0 ? (
+      {/* Loading skeleton */}
+      {column.loading ? (
+        <div className="flex flex-col gap-3">
+          {[1, 2].map((n) => (
+            <div key={n} className="h-24 animate-pulse rounded-lg border border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-900" />
+          ))}
+        </div>
+      ) : column.cards.length > 0 ? (
         <div className="flex flex-col gap-3">
           {column.cards.map((card) => (
             <KanbanCard key={card.id} card={card} />
@@ -268,14 +285,60 @@ function KanbanColumn({ column }: { column: Column }) {
 
 // ── Page ───────────────────────────────────────────────────────────────────
 
-const headerRight = (
-  <button className="flex items-center gap-2 rounded-lg bg-primary px-3 py-1.5 text-sm font-bold text-white transition hover:bg-primary/90 md:px-4 md:py-2">
-    <span className="material-symbols-outlined text-[18px]">add</span>
-    <span className="hidden sm:inline">Add New Application</span>
-  </button>
-);
-
 export default function PipelinePage() {
+  const { user } = useAuth();
+  const [newLeadsCards, setNewLeadsCards] = useState<PipelineCard[]>([]);
+  const [loadingLeads, setLoadingLeads] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    const q = query(
+      collection(db, "brokerLeads"),
+      where("brokerId", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+    getDocs(q)
+      .then((snap) => {
+        setNewLeadsCards(
+          snap.docs.map((d) => {
+            const data = d.data();
+            const loanType: LoanType = LOAN_PURPOSE_MAP[data.loanPurpose as string] ?? "Other";
+            const createdAt = data.createdAt as Timestamp | null;
+            return {
+              id: d.id,
+              loanType,
+              client: data.fullName as string,
+              amount: data.loanAmount ? `$${data.loanAmount}` : undefined,
+              footer: {
+                type: "timestamp" as const,
+                text: createdAt ? `Added ${timeAgo(createdAt)}` : "Just added",
+              },
+            };
+          })
+        );
+      })
+      .finally(() => setLoadingLeads(false));
+  }, [user]);
+
+  const columns: Column[] = [
+    {
+      id: "new_leads",
+      label: "New Leads",
+      cards: newLeadsCards,
+      loading: loadingLeads,
+      emptyIcon: "person_add",
+      emptyText: "No new leads",
+    },
+    ...DEMO_COLUMNS,
+  ];
+
+  const headerRight = (
+    <button className="flex items-center gap-2 rounded-lg bg-primary px-3 py-1.5 text-sm font-bold text-white transition hover:bg-primary/90 md:px-4 md:py-2">
+      <span className="material-symbols-outlined text-[18px]">add</span>
+      <span className="hidden sm:inline">Add New Application</span>
+    </button>
+  );
+
   return (
     <BrokerShell title="Pipeline" activeHref="/broker/pipeline" headerRight={headerRight}>
       <div className="flex h-full flex-col">
@@ -292,21 +355,18 @@ export default function PipelinePage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              {/* All Brokers filter */}
               <button className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-100 px-3 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
                 <span className="material-symbols-outlined text-[16px]">person</span>
                 All Brokers
                 <span className="material-symbols-outlined text-[16px]">expand_more</span>
               </button>
 
-              {/* Loan Type filter */}
               <button className="flex h-8 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-100 px-3 text-xs font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
                 <span className="material-symbols-outlined text-[16px]">filter_list</span>
                 Loan Type
                 <span className="material-symbols-outlined text-[16px]">expand_more</span>
               </button>
 
-              {/* View toggle */}
               <div className="flex h-8 items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-100 p-1 dark:border-slate-700 dark:bg-slate-800">
                 <button className="rounded px-3 py-1 text-xs font-bold text-primary shadow-sm ring-1 ring-slate-200/80 bg-white dark:bg-slate-700 dark:text-white dark:ring-slate-600">
                   Pipeline
@@ -322,7 +382,7 @@ export default function PipelinePage() {
         {/* Kanban board */}
         <div className="flex-1 overflow-x-auto overflow-y-auto bg-background-light dark:bg-background-dark">
           <div className="flex h-full gap-4 p-4 pb-8 md:gap-6 md:p-6">
-            {COLUMNS.map((column) => (
+            {columns.map((column) => (
               <KanbanColumn key={column.id} column={column} />
             ))}
           </div>

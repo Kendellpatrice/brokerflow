@@ -1,0 +1,274 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { BrokerShell } from "@/components/BrokerShell";
+import { db } from "@/lib/firestore";
+import { collection, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore";
+import { useAuth } from "@/context/auth";
+
+interface Lead {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  loanPurpose: string;
+  loanAmount: string;
+  createdAt: Timestamp | null;
+  activeInviteToken?: string;
+}
+
+const LOAN_PURPOSE_LABELS: Record<string, string> = {
+  purchase: "Purchase",
+  refinance: "Refinance",
+  equity_release: "Equity Release",
+  other: "Other",
+};
+
+function formatDate(ts: Timestamp | null) {
+  if (!ts) return "—";
+  return ts.toDate().toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
+}
+
+export default function LeadsPage() {
+  const { user } = useAuth();
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [resending, setResending] = useState<string | null>(null);
+  const [sentFor, setSentFor] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    const q = query(
+      collection(db, "brokerLeads"),
+      where("brokerId", "==", user.uid),
+      orderBy("createdAt", "desc")
+    );
+    getDocs(q)
+      .then((snap) => {
+        setLeads(
+          snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Lead, "id">) }))
+        );
+      })
+      .finally(() => setLoading(false));
+  }, [user]);
+
+  const handleResend = async (lead: Lead) => {
+    setResending(lead.id);
+    try {
+      const res = await fetch("/api/send-invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leadId: lead.id,
+          leadName: lead.fullName,
+          leadEmail: lead.email,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send invitation.");
+      setSentFor(lead.id);
+      setTimeout(() => setSentFor(null), 3000);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to send invitation.");
+    } finally {
+      setResending(null);
+    }
+  };
+
+  const headerRight = (
+    <Link
+      href="/broker/leads/new"
+      className="flex items-center gap-2 rounded-lg bg-primary px-3 py-1.5 text-sm font-bold text-white transition hover:bg-primary/90 md:px-4 md:py-2"
+    >
+      <span className="material-symbols-outlined text-[18px]">add</span>
+      <span className="hidden sm:inline">Add Lead</span>
+    </Link>
+  );
+
+  return (
+    <BrokerShell title="Leads" activeHref="/broker/leads" headerRight={headerRight}>
+      <div className="p-4 md:p-8">
+
+        {loading ? (
+          <div className="flex items-center justify-center py-24 text-slate-400">
+            <span className="material-symbols-outlined animate-spin text-[28px]">progress_activity</span>
+          </div>
+        ) : leads.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
+            <div className="flex size-14 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
+              <span className="material-symbols-outlined text-[28px] text-slate-400">group</span>
+            </div>
+            <div>
+              <p className="font-semibold text-slate-700 dark:text-slate-300">No leads yet</p>
+              <p className="mt-1 text-sm text-slate-500">Add your first lead to get started.</p>
+            </div>
+            <Link
+              href="/broker/leads/new"
+              className="mt-2 flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90"
+            >
+              <span className="material-symbols-outlined text-[18px]">person_add</span>
+              Add New Lead
+            </Link>
+          </div>
+        ) : (
+          <>
+            {/* Mobile: card list */}
+            <div className="flex flex-col gap-3 sm:hidden">
+              {leads.map((lead) => (
+                <div
+                  key={lead.id}
+                  className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                >
+                  <div className="mb-3 flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-semibold text-slate-900 dark:text-white">{lead.fullName}</p>
+                      <p className="text-xs text-slate-500">{lead.email}</p>
+                    </div>
+                    {lead.loanPurpose && (
+                      <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary">
+                        {LOAN_PURPOSE_LABELS[lead.loanPurpose] ?? lead.loanPurpose}
+                      </span>
+                    )}
+                  </div>
+                  <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                    {lead.phone && (
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[13px]">phone</span>
+                        {lead.phone}
+                      </span>
+                    )}
+                    {lead.loanAmount && (
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[13px]">payments</span>
+                        ${lead.loanAmount}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[13px]">calendar_today</span>
+                      {formatDate(lead.createdAt)}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <ResendButton
+                      sent={sentFor === lead.id}
+                      loading={resending === lead.id}
+                      hasToken={!!lead.activeInviteToken}
+                      onClick={() => handleResend(lead)}
+                    />
+                    <Link
+                      href={`/broker/leads/${lead.id}`}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                    >
+                      <span className="material-symbols-outlined text-[14px]">edit</span>
+                      Edit
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: table */}
+            <div className="hidden overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900 sm:block">
+              <table className="w-full text-left">
+                <thead className="bg-slate-50 text-xs font-bold uppercase tracking-wider text-slate-500 dark:bg-slate-800/50">
+                  <tr>
+                    <th className="px-6 py-3">Lead</th>
+                    <th className="px-6 py-3">Phone</th>
+                    <th className="px-6 py-3">Loan Purpose</th>
+                    <th className="px-6 py-3">Amount</th>
+                    <th className="px-6 py-3">Added</th>
+                    <th className="px-6 py-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {leads.map((lead) => (
+                    <tr key={lead.id} className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-slate-900 dark:text-white">{lead.fullName}</p>
+                        <p className="text-xs text-slate-500">{lead.email}</p>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{lead.phone || "—"}</td>
+                      <td className="px-6 py-4">
+                        {lead.loanPurpose ? (
+                          <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                            {LOAN_PURPOSE_LABELS[lead.loanPurpose] ?? lead.loanPurpose}
+                          </span>
+                        ) : (
+                          <span className="text-sm text-slate-400">—</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
+                        {lead.loanAmount ? `$${lead.loanAmount}` : "—"}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-500">{formatDate(lead.createdAt)}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-end gap-2">
+                          <ResendButton
+                            sent={sentFor === lead.id}
+                            loading={resending === lead.id}
+                            hasToken={!!lead.activeInviteToken}
+                            onClick={() => handleResend(lead)}
+                          />
+                          <Link
+                            href={`/broker/leads/${lead.id}`}
+                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">edit</span>
+                            Edit
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </div>
+    </BrokerShell>
+  );
+}
+
+function ResendButton({
+  sent,
+  loading,
+  hasToken,
+  onClick,
+}: {
+  sent: boolean;
+  loading: boolean;
+  hasToken: boolean;
+  onClick: () => void;
+}) {
+  if (sent) {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
+        <span className="material-symbols-outlined text-[14px]">mark_email_read</span>
+        Sent
+      </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={loading}
+      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+    >
+      {loading ? (
+        <>
+          <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+          Sending…
+        </>
+      ) : (
+        <>
+          <span className="material-symbols-outlined text-[14px]">send</span>
+          {hasToken ? "Resend Invitation" : "Send Invitation"}
+        </>
+      )}
+    </button>
+  );
+}

@@ -8,7 +8,7 @@ import { useAuth } from "@/context/auth";
 const navItems = [
   { icon: "dashboard", label: "Dashboard", href: "/broker" },
   { icon: "account_tree", label: "Pipeline", href: "/broker/pipeline" },
-  { icon: "groups", label: "Clients", href: "#" },
+  { icon: "group", label: "Leads", href: "/broker/leads" },
   { icon: "calendar_today", label: "Calendar", href: "#" },
   { icon: "analytics", label: "Reports", href: "#" },
 ];

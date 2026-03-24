@@ -4,6 +4,9 @@ import { useState, useRef, KeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BrokerShell } from "@/components/BrokerShell";
+import { db } from "@/lib/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { useAuth } from "@/context/auth";
 
 const LOAN_PURPOSES = [
   { value: "purchase", label: "Purchase", icon: "home" },
@@ -38,6 +41,7 @@ function FieldError({ message }: { message?: string }) {
 export default function NewLeadPage() {
   const router = useRouter();
   const chipInputRef = useRef<HTMLInputElement>(null);
+  const { user } = useAuth();
 
   const [form, setForm] = useState({
     fullName: "",
@@ -52,7 +56,10 @@ export default function NewLeadPage() {
   const [chipInput, setChipInput] = useState("");
   const [errors, setErrors] = useState<Partial<typeof form>>({});
   const [loading, setLoading] = useState(false);
+  const [inviteLoading, setInviteLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
+  const [inviteSent, setInviteSent] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
 
   const isDirty =
@@ -120,10 +127,51 @@ export default function NewLeadPage() {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 900));
-    setLoading(false);
-    setShowSuccess(true);
-    setTimeout(() => router.push("/broker"), 1800);
+    try {
+      const ref = await addDoc(collection(db, "brokerLeads"), {
+        fullName: form.fullName,
+        phone: form.phone,
+        email: form.email,
+        loanPurpose: form.loanPurpose,
+        loanPurposeOther: form.loanPurposeOther,
+        loanAmount: form.loanAmount,
+        notes: form.notes,
+        referredBy: chips,
+        brokerId: user?.uid ?? null,
+        createdAt: serverTimestamp(),
+      });
+      setSavedLeadId(ref.id);
+      setShowSuccess(true);
+    } catch {
+      setErrors({ fullName: "Failed to save lead. Please try again." });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Send Invitation ────────────────────────────────────────────────────────
+
+  const handleSendInvite = async () => {
+    if (!savedLeadId) return;
+    setInviteLoading(true);
+    try {
+      const res = await fetch("/api/send-invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          leadId: savedLeadId,
+          leadName: form.fullName,
+          leadEmail: form.email,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send invitation.");
+      setInviteSent(true);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to send invitation.");
+    } finally {
+      setInviteLoading(false);
+    }
   };
 
   // ── Cancel ─────────────────────────────────────────────────────────────────
@@ -151,11 +199,11 @@ export default function NewLeadPage() {
   return (
     <BrokerShell title="Add New Lead" headerRight={headerRight}>
 
-      {/* ── Success toast ──────────────────────────────────────────────────── */}
-      {showSuccess && (
+      {/* ── Invite sent toast ──────────────────────────────────────────────── */}
+      {inviteSent && (
         <div className="fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2.5 rounded-xl bg-slate-900 px-5 py-3.5 text-sm font-medium text-white shadow-lg dark:bg-slate-700">
-          <span className="material-symbols-outlined text-[20px] text-emerald-400">check_circle</span>
-          Lead saved successfully! Redirecting…
+          <span className="material-symbols-outlined text-[20px] text-emerald-400">mark_email_read</span>
+          Invitation sent to {form.email}
         </div>
       )}
 
@@ -411,32 +459,72 @@ export default function NewLeadPage() {
               )}
 
               {/* ── Footer actions ────────────────────────────────────────── */}
-              <div className="flex flex-col-reverse gap-3 border-t border-slate-100 p-5 dark:border-slate-800 sm:flex-row sm:justify-end md:p-6">
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="flex w-full cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto sm:py-2.5"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:w-auto sm:py-2.5"
-                >
-                  {loading ? (
-                    <>
-                      <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
-                      Saving…
-                    </>
-                  ) : (
-                    <>
-                      <span className="material-symbols-outlined text-[18px]">save</span>
-                      Save Lead
-                    </>
-                  )}
-                </button>
-              </div>
+              {showSuccess && savedLeadId ? (
+                <div className="flex flex-col gap-3 border-t border-slate-100 p-5 dark:border-slate-800 md:p-6">
+                  <div className="flex items-center gap-2.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300">
+                    <span className="material-symbols-outlined text-[18px] text-emerald-500">check_circle</span>
+                    Lead saved successfully.
+                  </div>
+                  <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                    <Link
+                      href="/broker"
+                      className="flex w-full cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto sm:py-2.5"
+                    >
+                      Go to Pipeline
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleSendInvite}
+                      disabled={inviteLoading || inviteSent}
+                      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:w-auto sm:py-2.5"
+                    >
+                      {inviteSent ? (
+                        <>
+                          <span className="material-symbols-outlined text-[18px]">mark_email_read</span>
+                          Invitation Sent
+                        </>
+                      ) : inviteLoading ? (
+                        <>
+                          <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                          Sending…
+                        </>
+                      ) : (
+                        <>
+                          <span className="material-symbols-outlined text-[18px]">send</span>
+                          Send Invitation
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col-reverse gap-3 border-t border-slate-100 p-5 dark:border-slate-800 sm:flex-row sm:justify-end md:p-6">
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="flex w-full cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto sm:py-2.5"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:w-auto sm:py-2.5"
+                  >
+                    {loading ? (
+                      <>
+                        <span className="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                        Saving…
+                      </>
+                    ) : (
+                      <>
+                        <span className="material-symbols-outlined text-[18px]">save</span>
+                        Save Lead
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
 
             </form>
           </div>
