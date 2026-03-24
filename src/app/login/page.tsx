@@ -65,7 +65,7 @@ export default function LoginPage() {
     }
     setLoading(true);
     await simulate();
-    document.cookie = "session=client; path=/; max-age=86400; SameSite=Lax";
+    document.cookie = "session=client; path=/; SameSite=Lax";
     router.push("/");
   };
 
@@ -93,7 +93,7 @@ export default function LoginPage() {
     }
     setLoading(true);
     await simulate();
-    document.cookie = "session=broker; path=/; max-age=86400; SameSite=Lax";
+    document.cookie = "session=broker; path=/; SameSite=Lax";
     router.push("/");
   };
 
