@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signInWithEmail } from "@/lib/auth";
 
 type UserType = "client" | "broker";
@@ -14,13 +14,31 @@ function maskEmail(email: string): string {
 }
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [userType, setUserType] = useState<UserType>("client");
   const [step, setStep] = useState<Step>("credentials");
 
   // Client state
   const [clientEmail, setClientEmail] = useState("");
   const [clientCode, setClientCode] = useState("");
+
+  // Pre-fill email from invite link (?email=...)
+  useEffect(() => {
+    const invited = searchParams.get("email");
+    if (invited) {
+      setClientEmail(invited);
+      setUserType("client");
+    }
+  }, [searchParams]);
 
   // Broker state
   const [brokerEmail, setBrokerEmail] = useState("");

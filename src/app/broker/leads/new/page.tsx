@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BrokerShell } from "@/components/BrokerShell";
 import { db } from "@/lib/firestore";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "@/context/auth";
 import { createAndSendInvite } from "@/lib/invite";
 
@@ -62,6 +62,8 @@ export default function NewLeadPage() {
   const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
   const [inviteSent, setInviteSent] = useState(false);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [duplicateLead, setDuplicateLead] = useState<{ id: string; fullName: string } | null>(null);
+  const [checkingEmail, setCheckingEmail] = useState(false);
 
   const isDirty =
     Object.values(form).some((v) => v.trim() !== "") || chips.length > 0;
@@ -72,6 +74,30 @@ export default function NewLeadPage() {
       setForm((f) => ({ ...f, [field]: e.target.value }));
       setErrors((err) => ({ ...err, [field]: "" }));
     };
+
+  // ── Duplicate email check ──────────────────────────────────────────────────
+
+  const handleEmailBlur = async () => {
+    const email = form.email.trim();
+    if (!email || !/\S+@\S+\.\S+/.test(email) || !user) return;
+    setCheckingEmail(true);
+    setDuplicateLead(null);
+    try {
+      const snap = await getDocs(
+        query(
+          collection(db, "brokerLeads"),
+          where("brokerId", "==", user.uid),
+          where("email", "==", email)
+        )
+      );
+      if (!snap.empty) {
+        const doc = snap.docs[0];
+        setDuplicateLead({ id: doc.id, fullName: doc.data().fullName });
+      }
+    } finally {
+      setCheckingEmail(false);
+    }
+  };
 
   // ── Chip handlers ──────────────────────────────────────────────────────────
 
@@ -276,13 +302,37 @@ export default function NewLeadPage() {
                     <input
                       type="email"
                       value={form.email}
-                      onChange={set("email")}
+                      onChange={(e) => {
+                        set("email")(e);
+                        setDuplicateLead(null);
+                      }}
+                      onBlur={handleEmailBlur}
                       placeholder="jane@example.com"
                       autoComplete="email"
-                      className={`${inputBase} pl-10 pr-3.5 ${errors.email ? inputError : inputNormal}`}
+                      className={`${inputBase} pl-10 pr-10 ${errors.email ? inputError : inputNormal}`}
                     />
+                    {checkingEmail && (
+                      <span className="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 animate-spin text-[18px] text-slate-400">
+                        progress_activity
+                      </span>
+                    )}
                   </div>
                   <FieldError message={errors.email} />
+                  {duplicateLead && (
+                    <div className="mt-2 flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 dark:border-amber-800 dark:bg-amber-900/20">
+                      <span className="material-symbols-outlined mt-0.5 shrink-0 text-[16px] text-amber-600">warning</span>
+                      <p className="text-sm text-amber-800 dark:text-amber-300">
+                        A lead with this email already exists —{" "}
+                        <strong>{duplicateLead.fullName}</strong>.{" "}
+                        <Link
+                          href={`/broker/leads/${duplicateLead.id}`}
+                          className="font-semibold underline hover:text-amber-900 dark:hover:text-amber-200"
+                        >
+                          View lead
+                        </Link>
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Referred by — chip input */}

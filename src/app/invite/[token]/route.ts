@@ -17,7 +17,7 @@ export async function GET(
     });
   }
 
-  const { expiresAt, superseded } = snap.data() as {
+  const { leadEmail, expiresAt, superseded } = snap.data() as {
     leadId: string;
     leadEmail: string;
     expiresAt: Timestamp;
@@ -38,14 +38,9 @@ export async function GET(
     );
   }
 
-  const response = NextResponse.redirect(new URL("/", _req.url));
-  response.cookies.set("session", "client", {
-    path: "/",
-    sameSite: "lax",
-    httpOnly: false,
-  });
-
-  return response;
+  const loginUrl = new URL("/login", _req.url);
+  loginUrl.searchParams.set("email", leadEmail);
+  return NextResponse.redirect(loginUrl);
 }
 
 function invalidPage(message: string) {
