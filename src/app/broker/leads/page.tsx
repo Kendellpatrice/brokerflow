@@ -89,6 +89,9 @@ export default function LeadsPage() {
   return (
     <BrokerShell title="Leads" activeHref="/broker/leads" headerRight={headerRight}>
       <div className="p-4 md:p-8">
+        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 font-mono text-xs text-amber-800">
+          NEXT_PUBLIC_BASE_URL = {process.env.NEXT_PUBLIC_BASE_URL ?? <em>undefined</em>}
+        </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-24 text-slate-400">
