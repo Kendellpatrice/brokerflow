@@ -1,4 +1,4 @@
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, signInWithCustomToken } from 'firebase/auth';
 import app from './firebase';
 
 export const auth = getAuth(app);
@@ -10,6 +10,10 @@ export async function signInWithGoogle() {
 
 export async function signInWithEmail(email: string, password: string) {
   return signInWithEmailAndPassword(auth, email, password);
+}
+
+export async function signInWithToken(customToken: string) {
+  return signInWithCustomToken(auth, customToken);
 }
 
 export async function logout() {

@@ -1,13 +1,16 @@
 import { db } from "@/lib/firestore";
 import { doc, setDoc, updateDoc, Timestamp } from "firebase/firestore";
+import { logActivity } from "@/lib/activity";
 
 export async function createAndSendInvite({
+  brokerId,
   leadId,
   leadName,
   leadEmail,
   leadRef,
   previousToken,
 }: {
+  brokerId?: string;
   leadId: string;
   leadName: string;
   leadEmail: string;
@@ -38,4 +41,8 @@ export async function createAndSendInvite({
 
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || "Failed to send invitation.");
+
+  if (brokerId) {
+    await logActivity({ brokerId, type: "invite_sent", leadName, leadId });
+  }
 }

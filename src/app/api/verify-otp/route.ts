@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firestore";
 import { doc, getDoc, updateDoc, Timestamp } from "firebase/firestore";
+import { createCustomToken } from "@/lib/firebase-admin";
 
 export async function POST(req: NextRequest) {
   const { email, code } = await req.json();
@@ -35,5 +36,6 @@ export async function POST(req: NextRequest) {
 
   await updateDoc(doc(db, "otpCodes", email), { used: true });
 
-  return NextResponse.json({ success: true });
+  const customToken = await createCustomToken(email);
+  return NextResponse.json({ success: true, customToken });
 }

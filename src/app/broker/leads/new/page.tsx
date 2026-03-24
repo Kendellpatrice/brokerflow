@@ -9,6 +9,7 @@ import { collection, addDoc, getDocs, getCountFromServer, query, where, serverTi
 import { useAuth } from "@/context/auth";
 import { useBrokerProfile } from "@/context/brokerProfile";
 import { createAndSendInvite } from "@/lib/invite";
+import { logActivity } from "@/lib/activity";
 
 const LOAN_PURPOSES = [
   { value: "purchase", label: "Purchase", icon: "home" },
@@ -192,6 +193,9 @@ export default function NewLeadPage() {
       setSavedLeadId(docRef.id);
       setSavedLeadRef(leadRef);
       setShowSuccess(true);
+      if (user?.uid) {
+        logActivity({ brokerId: user.uid, type: "lead_created", leadName: form.fullName, leadId: docRef.id });
+      }
     } catch {
       setErrors({ fullName: "Failed to save lead. Please try again." });
     } finally {
@@ -206,6 +210,7 @@ export default function NewLeadPage() {
     setInviteLoading(true);
     try {
       await createAndSendInvite({
+        brokerId: user?.uid,
         leadId: savedLeadId,
         leadName: form.fullName,
         leadEmail: form.email,

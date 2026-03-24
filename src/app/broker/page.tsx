@@ -1,7 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BrokerShell } from "@/components/BrokerShell";
+import { db } from "@/lib/firestore";
+import { collection, query, where, orderBy, limit, getDocs, Timestamp } from "firebase/firestore";
+import { useAuth } from "@/context/auth";
+import type { ActivityType } from "@/lib/activity";
 
 const settlements = [
   {
@@ -42,62 +47,77 @@ const settlements = [
   },
 ];
 
-const activity = [
-  {
-    icon: "task_alt",
-    iconBg: "bg-primary/10 text-primary",
-    text: (<>Application for <strong>Emma Wilson</strong> approved by CBA</>),
-    time: "2 hours ago",
-  },
-  {
-    icon: "outgoing_mail",
-    iconBg: "bg-blue-100 text-blue-600",
-    text: (<>Sent welcome pack to <strong>Robert Brown</strong></>),
-    time: "5 hours ago",
-  },
-  {
-    icon: "warning",
-    iconBg: "bg-rose-100 text-rose-600",
-    text: (<>Missing documents alert: <strong>John Doe</strong> — PAYG Summary</>),
-    time: "Yesterday",
-  },
-  {
-    icon: "person_add",
-    iconBg: "bg-slate-100 text-slate-600",
-    text: (<>New lead assigned: <strong>Alice Wong</strong></>),
-    time: "Yesterday",
-  },
-];
+interface ActivityEntry {
+  id: string;
+  type: ActivityType;
+  leadName: string;
+  leadId: string;
+  createdAt: Timestamp | null;
+}
 
-const headerRight = (
-  <>
-    <div className="relative hidden w-64 md:block">
-      <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
-        search
-      </span>
-      <input
-        type="text"
-        placeholder="Search clients, loans..."
-        className="w-full rounded-lg border-none bg-slate-100 py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 dark:bg-slate-800"
-      />
-    </div>
-    <button className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 md:hidden">
-      <span className="material-symbols-outlined">search</span>
-    </button>
-    <button className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 md:p-2">
-      <span className="material-symbols-outlined">notifications</span>
-    </button>
-    <Link
-      href="/broker/leads/new"
-      className="flex items-center gap-2 rounded-lg bg-primary px-3 py-1.5 text-sm font-bold text-white md:px-4 md:py-2"
-    >
-      <span className="material-symbols-outlined text-[18px]">add</span>
-      <span className="hidden sm:inline">Quick Action</span>
-    </Link>
-  </>
-);
+function timeAgo(ts: Timestamp | null): string {
+  if (!ts) return "";
+  const secs = Math.floor((Date.now() - ts.toDate().getTime()) / 1000);
+  if (secs < 60) return "Just now";
+  if (secs < 3600) return `${Math.floor(secs / 60)}m ago`;
+  if (secs < 86400) return `${Math.floor(secs / 3600)}h ago`;
+  if (secs < 172800) return "Yesterday";
+  return ts.toDate().toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+}
+
+const ACTIVITY_META: Record<ActivityType, { icon: string; iconBg: string; label: string }> = {
+  lead_created: { icon: "person_add", iconBg: "bg-slate-100 text-slate-600", label: "New lead added" },
+  invite_sent: { icon: "outgoing_mail", iconBg: "bg-blue-100 text-blue-600", label: "Invitation sent to" },
+};
 
 export default function BrokerPortalPage() {
+  const { user } = useAuth();
+  const [activity, setActivity] = useState<ActivityEntry[]>([]);
+  const [activityLoading, setActivityLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    const q = query(
+      collection(db, "brokerActivity"),
+      where("brokerId", "==", user.uid),
+      orderBy("createdAt", "desc"),
+      limit(8)
+    );
+    getDocs(q)
+      .then((snap) => {
+        setActivity(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<ActivityEntry, "id">) })));
+      })
+      .finally(() => setActivityLoading(false));
+  }, [user]);
+
+  const headerRight = (
+    <>
+      <div className="relative hidden w-64 md:block">
+        <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-slate-400">
+          search
+        </span>
+        <input
+          type="text"
+          placeholder="Search clients, loans..."
+          className="w-full rounded-lg border-none bg-slate-100 py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 dark:bg-slate-800"
+        />
+      </div>
+      <button className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 md:hidden">
+        <span className="material-symbols-outlined">search</span>
+      </button>
+      <button className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 md:p-2">
+        <span className="material-symbols-outlined">notifications</span>
+      </button>
+      <Link
+        href="/broker/leads/new"
+        className="flex items-center gap-2 rounded-lg bg-primary px-3 py-1.5 text-sm font-bold text-white md:px-4 md:py-2"
+      >
+        <span className="material-symbols-outlined text-[18px]">add</span>
+        <span className="hidden sm:inline">Quick Action</span>
+      </Link>
+    </>
+  );
+
   return (
     <BrokerShell title="Dashboard" headerRight={headerRight}>
       <div className="space-y-5 p-4 md:space-y-8 md:p-8">
@@ -207,27 +227,61 @@ export default function BrokerPortalPage() {
 
           {/* Recent activity */}
           <div className="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-            <div className="border-b border-slate-100 p-4 dark:border-slate-800 md:p-6">
+            <div className="flex items-center justify-between border-b border-slate-100 p-4 dark:border-slate-800 md:p-6">
               <h3 className="font-bold md:text-lg">Recent Activity</h3>
             </div>
-            <div className="flex-1 space-y-5 overflow-y-auto p-4 md:space-y-6 md:p-6">
-              {activity.map((item, i) => (
-                <div key={i} className="flex gap-4">
-                  <div className="relative">
-                    <div className={`flex size-8 shrink-0 items-center justify-center rounded-full ${item.iconBg}`}>
-                      <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
-                    </div>
-                    {i < activity.length - 1 && (
-                      <div className="absolute left-1/2 top-8 h-full w-px -translate-x-1/2 bg-slate-100 dark:bg-slate-800" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-sm">{item.text}</p>
-                    <p className="mt-1 text-xs text-slate-500">{item.time}</p>
-                  </div>
+
+            {activityLoading ? (
+              <div className="flex items-center justify-center py-12 text-slate-400">
+                <span className="material-symbols-outlined animate-spin text-[24px]">progress_activity</span>
+              </div>
+            ) : activity.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-2 py-12 text-center">
+                <span className="material-symbols-outlined text-[28px] text-slate-300">timeline</span>
+                <p className="text-sm text-slate-400">No activity yet.</p>
+              </div>
+            ) : (
+              <>
+                <div className="flex-1 space-y-5 overflow-y-auto p-4 md:space-y-6 md:p-6">
+                  {activity.map((item, i) => {
+                    const meta = ACTIVITY_META[item.type] ?? ACTIVITY_META.lead_created;
+                    return (
+                      <div key={item.id} className="flex gap-4">
+                        <div className="relative">
+                          <div className={`flex size-8 shrink-0 items-center justify-center rounded-full ${meta.iconBg}`}>
+                            <span className="material-symbols-outlined text-[18px]">{meta.icon}</span>
+                          </div>
+                          {i < activity.length - 1 && (
+                            <div className="absolute left-1/2 top-8 h-full w-px -translate-x-1/2 bg-slate-100 dark:bg-slate-800" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm">
+                            {meta.label}{" "}
+                            <Link
+                              href={`/broker/leads/${item.leadId}`}
+                              className="font-semibold hover:underline"
+                            >
+                              {item.leadName}
+                            </Link>
+                          </p>
+                          <p className="mt-1 text-xs text-slate-500">{timeAgo(item.createdAt)}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
-              ))}
-            </div>
+                <div className="border-t border-slate-100 p-4 dark:border-slate-800">
+                  <Link
+                    href="/broker/activity"
+                    className="flex items-center justify-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                  >
+                    View More
+                    <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
 
         </div>

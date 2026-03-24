@@ -42,9 +42,25 @@ export function ApplicantProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user) { setLoaded(true); return; }
     loadLeadData(user.uid).then((data) => {
+      let loaded: Applicant[] = DEFAULT_APPLICANTS;
       if (data?.applicants && Array.isArray(data.applicants) && data.applicants.length > 0) {
-        setApplicants(data.applicants as Applicant[]);
+        loaded = data.applicants as Applicant[];
       }
+
+      // If the primary applicant has no name, pre-fill from the pendingLeadName invite cookie
+      const primary = loaded.find((a) => a.isPrimary);
+      if (primary && !primary.firstName && !primary.lastName) {
+        const match = document.cookie.split("; ").find((c) => c.startsWith("pendingLeadName="));
+        if (match) {
+          const name = decodeURIComponent(match.split("=")[1]).trim();
+          const spaceIdx = name.lastIndexOf(" ");
+          const firstName = spaceIdx > 0 ? name.slice(0, spaceIdx) : name;
+          const lastName = spaceIdx > 0 ? name.slice(spaceIdx + 1) : "";
+          loaded = loaded.map((a) => (a.isPrimary ? { ...a, firstName, lastName } : a));
+        }
+      }
+
+      setApplicants(loaded);
       setLoaded(true);
     });
   }, [user]);

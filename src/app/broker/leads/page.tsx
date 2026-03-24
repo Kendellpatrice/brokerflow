@@ -59,6 +59,7 @@ export default function LeadsPage() {
     setResending(lead.id);
     try {
       await createAndSendInvite({
+        brokerId: user?.uid,
         leadId: lead.id,
         leadName: lead.fullName,
         leadEmail: lead.email,

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signInWithEmail } from "@/lib/auth";
+import { signInWithEmail, signInWithToken } from "@/lib/auth";
 
 type UserType = "client" | "broker";
 type Step = "credentials" | "verify";
@@ -100,6 +100,7 @@ function LoginForm() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Verification failed.");
+      await signInWithToken(data.customToken);
       document.cookie = "session=client; path=/; SameSite=Lax";
       router.push("/");
     } catch (err: unknown) {
