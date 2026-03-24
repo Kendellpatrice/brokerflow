@@ -10,37 +10,47 @@ function generateOtp(): string {
 }
 
 export async function POST(req: NextRequest) {
-  const { email } = await req.json();
+  try {
+    const { email } = await req.json();
 
-  if (!email || !email.includes("@")) {
-    return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
-  }
+    if (!email || !email.includes("@")) {
+      return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
+    }
 
-  const code = generateOtp();
-  const expiresAt = Timestamp.fromDate(new Date(Date.now() + 10 * 60 * 1000)); // 10 min
+    const code = generateOtp();
+    const expiresAt = Timestamp.fromDate(new Date(Date.now() + 10 * 60 * 1000)); // 10 min
 
-  await setDoc(doc(db, "otpCodes", email), { code, expiresAt, used: false });
+    try {
+      await setDoc(doc(db, "otpCodes", email), { code, expiresAt, used: false });
+    } catch (firestoreErr) {
+      console.error("[send-otp] Firestore error:", firestoreErr);
+      return NextResponse.json({ error: "Failed to store verification code. Please try again." }, { status: 500 });
+    }
 
-  const { error } = await resend.emails.send({
-    from: "BrokerFlow <services@brokerflow.agency>",
-    to: email,
-    subject: "Your BrokerFlow verification code",
-    html: `
-      <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px">
-        <h2 style="color:#1a2b3d;margin-bottom:8px">Your verification code</h2>
-        <p style="color:#64748b;margin-bottom:24px">Enter this code to sign in to your mortgage fact-find.</p>
-        <div style="background:#f6f7f7;border-radius:12px;padding:24px;text-align:center;letter-spacing:0.4em;font-size:32px;font-weight:700;color:#1a2b3d;font-family:monospace">
-          ${code}
+    const { error } = await resend.emails.send({
+      from: "BrokerFlow <services@brokerflow.agency>",
+      to: email,
+      subject: "Your BrokerFlow verification code",
+      html: `
+        <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:32px 24px">
+          <h2 style="color:#1a2b3d;margin-bottom:8px">Your verification code</h2>
+          <p style="color:#64748b;margin-bottom:24px">Enter this code to sign in to your mortgage fact-find.</p>
+          <div style="background:#f6f7f7;border-radius:12px;padding:24px;text-align:center;letter-spacing:0.4em;font-size:32px;font-weight:700;color:#1a2b3d;font-family:monospace">
+            ${code}
+          </div>
+          <p style="color:#94a3b8;font-size:13px;margin-top:24px">This code expires in 10 minutes. If you didn't request this, you can safely ignore this email.</p>
         </div>
-        <p style="color:#94a3b8;font-size:13px;margin-top:24px">This code expires in 10 minutes. If you didn't request this, you can safely ignore this email.</p>
-      </div>
-    `,
-  });
+      `,
+    });
 
-  if (error) {
-    console.error("[send-otp] Resend error:", error);
-    return NextResponse.json({ error: `Failed to send email: ${error.message}` }, { status: 500 });
+    if (error) {
+      console.error("[send-otp] Resend error:", error);
+      return NextResponse.json({ error: `Failed to send email: ${error.message}` }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    console.error("[send-otp] Unexpected error:", err);
+    return NextResponse.json({ error: "An unexpected error occurred. Please try again." }, { status: 500 });
   }
-
-  return NextResponse.json({ success: true });
 }
