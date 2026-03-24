@@ -3,8 +3,11 @@
 import { PageShell } from "@/components/PageShell";
 import { ApplicantTabs, CompletionStatus } from "@/components/ApplicantTabs";
 import { useApplicants } from "@/context/applicants";
+import { useAuth } from "@/context/auth";
+import { saveLeadData, loadLeadData } from "@/lib/firestore";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 // ── Per-applicant form data ───────────────────────────────────────────────
 interface PersonalData {
@@ -66,8 +69,32 @@ const inputCls = "rounded border-slate-300 dark:bg-slate-800 dark:border-slate-7
 // ── Page ─────────────────────────────────────────────────────────────────
 export default function PersonalDetailsPage() {
   const { applicants } = useApplicants();
+  const { user } = useAuth();
+  const router = useRouter();
   const [activeId, setActiveId]   = useState(() => applicants[0]?.id ?? "");
   const [formData, setFormData]   = useState<Record<string, PersonalData>>({});
+  const [isSaving, setIsSaving]   = useState(false);
+
+  // Load from Firestore on mount
+  useEffect(() => {
+    if (!user) return;
+    loadLeadData(user.uid).then((data) => {
+      if (data?.personalDetails) {
+        setFormData(data.personalDetails as Record<string, PersonalData>);
+      }
+    });
+  }, [user]);
+
+  const handleSave = useCallback(async (nextPath?: string) => {
+    if (!user) { if (nextPath) router.push(nextPath); return; }
+    setIsSaving(true);
+    try {
+      await saveLeadData(user.uid, { personalDetails: formData });
+      if (nextPath) router.push(nextPath);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [user, formData, router]);
 
   const getData = (id: string): PersonalData => ({ ...BLANK, ...formData[id] });
   const setField = (id: string, field: keyof PersonalData, value: string) =>
@@ -337,16 +364,18 @@ export default function PersonalDetailsPage() {
       {/* Navigation */}
       {/* Mobile */}
       <div className="sticky bottom-0 z-10 mt-6 flex flex-col gap-3 bg-background-light py-4 dark:bg-background-dark md:hidden">
-        <Link href="/employment-income" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90">
-          Next: Employment &amp; Income
+        <button type="button" onClick={() => handleSave("/employment-income")} disabled={isSaving}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90 disabled:opacity-60">
+          {isSaving ? "Saving…" : "Next: Employment & Income"}
           <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-        </Link>
+        </button>
         <div className="grid grid-cols-2 gap-3">
           <Link href="/applicants" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
             Previous Step
           </Link>
-          <button type="button" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
-            Save Draft
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Save Draft"}
           </button>
         </div>
       </div>
@@ -357,11 +386,15 @@ export default function PersonalDetailsPage() {
           Back
         </Link>
         <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
-          <Link href="/employment-income" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
-            Next Step
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Save Draft"}
+          </button>
+          <button type="button" onClick={() => handleSave("/employment-income")} disabled={isSaving}
+            className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Next Step"}
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-          </Link>
+          </button>
         </div>
       </div>
 

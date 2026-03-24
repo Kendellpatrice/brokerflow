@@ -1,0 +1,18 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true,
+      "googleSignIn": {
+        "oAuthBrandDisplayName": "BrokerFlow",
+        "supportEmail": "kendell.patrice@gmail.com",
+        "authorizedRedirectUris": [
+          "http://localhost:3000"
+        ]
+      }
+    }
+  }
+}

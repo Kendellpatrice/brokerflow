@@ -3,7 +3,10 @@
 import { PageShell } from "@/components/PageShell";
 import { CurrencyInput } from "@/components/CurrencyInput";
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/auth";
+import { saveLeadData, loadLeadData } from "@/lib/firestore";
 
 // ── Expense definitions (matches the fact-find form exactly) ─────────────
 interface ExpenseDef {
@@ -160,6 +163,27 @@ const COL = "w-36 sm:w-44";
 // ══════════════════════════════════════════════════════════════════════════
 export default function LivingExpensesPage() {
   const [rows, setRows] = useState<Record<string, ExpenseRow>>({});
+  const { user } = useAuth();
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    loadLeadData(user.uid).then((data) => {
+      if (data?.livingExpenses) setRows(data.livingExpenses as Record<string, ExpenseRow>);
+    });
+  }, [user]);
+
+  const handleSave = useCallback(async (nextPath?: string) => {
+    if (!user) { if (nextPath) router.push(nextPath); return; }
+    setIsSaving(true);
+    try {
+      await saveLeadData(user.uid, { livingExpenses: rows });
+      if (nextPath) router.push(nextPath);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [user, rows, router]);
 
   const getRow = (id: string): ExpenseRow => rows[id] ?? "";
 
@@ -260,16 +284,18 @@ export default function LivingExpensesPage() {
       {/* ── Navigation ──────────────────────────────────────────────────── */}
       {/* Mobile */}
       <div className="sticky bottom-0 z-10 mt-6 flex flex-col gap-3 bg-background-light py-4 dark:bg-background-dark md:hidden">
-        <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-emerald-700">
+        <button type="button" onClick={() => handleSave()} disabled={isSaving}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-emerald-700 disabled:opacity-60">
           <span className="material-symbols-outlined text-[20px]">check_circle</span>
-          Submit Fact Find
+          {isSaving ? "Saving…" : "Submit Fact Find"}
         </button>
         <div className="grid grid-cols-2 gap-3">
           <Link href="/liabilities" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
             Previous Step
           </Link>
-          <button type="button" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
-            Save Draft
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Save Draft"}
           </button>
         </div>
       </div>
@@ -283,15 +309,14 @@ export default function LivingExpensesPage() {
           Back
         </Link>
         <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
-            Save Draft
-          </span>
-          <button
-            type="button"
-            className="flex items-center gap-2 rounded-lg bg-emerald-600 px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-emerald-700"
-          >
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Save Draft"}
+          </button>
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="flex items-center gap-2 rounded-lg bg-emerald-600 px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-emerald-700 disabled:opacity-60">
             <span className="material-symbols-outlined text-[20px]">check_circle</span>
-            Submit Fact Find
+            {isSaving ? "Saving…" : "Submit Fact Find"}
           </button>
         </div>
       </div>

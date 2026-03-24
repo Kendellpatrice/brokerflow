@@ -2,13 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { signInWithEmail } from "@/lib/auth";
 
 type UserType = "client" | "broker";
 type Step = "credentials" | "verify";
 
-// Simulated masked contact details from the user's profile
-const CLIENT_OTP_CONTACT = { medium: "email", masked: "j***s@gmail.com" };
-const BROKER_OTP_CONTACT = { medium: "phone", masked: "+61 4** *** 892" };
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (local.length <= 2) return `${local[0]}***@${domain}`;
+  return `${local[0]}***${local[local.length - 1]}@${domain}`;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,10 +23,9 @@ export default function LoginPage() {
   const [clientCode, setClientCode] = useState("");
 
   // Broker state
-  const [brokerUsername, setBrokerUsername] = useState("");
+  const [brokerEmail, setBrokerEmail] = useState("");
   const [brokerPassword, setBrokerPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [brokerCode, setBrokerCode] = useState("");
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,12 +36,9 @@ export default function LoginPage() {
     setError("");
     setClientEmail("");
     setClientCode("");
-    setBrokerUsername("");
+    setBrokerEmail("");
     setBrokerPassword("");
-    setBrokerCode("");
   };
-
-  const simulate = (ms = 900) => new Promise((r) => setTimeout(r, ms));
 
   // ── Client handlers ────────────────────────────────────────────────────────
 
@@ -51,9 +50,20 @@ export default function LoginPage() {
       return;
     }
     setLoading(true);
-    await simulate();
-    setLoading(false);
-    setStep("verify");
+    try {
+      const res = await fetch("/api/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: clientEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send code.");
+      setStep("verify");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to send code.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClientVerify = async (e: React.FormEvent) => {
@@ -64,37 +74,42 @@ export default function LoginPage() {
       return;
     }
     setLoading(true);
-    await simulate();
-    document.cookie = "session=client; path=/; SameSite=Lax";
-    router.push("/");
+    try {
+      const res = await fetch("/api/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: clientEmail, code: clientCode }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Verification failed.");
+      document.cookie = "session=client; path=/; SameSite=Lax";
+      router.push("/");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Verification failed.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // ── Broker handlers ────────────────────────────────────────────────────────
+  // ── Broker handler ─────────────────────────────────────────────────────────
 
-  const handleBrokerCredentials = async (e: React.FormEvent) => {
+  const handleBrokerSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!brokerUsername.trim() || !brokerPassword.trim()) {
-      setError("Please enter your username and password.");
+    if (!brokerEmail.trim() || !brokerPassword.trim()) {
+      setError("Please enter your email and password.");
       return;
     }
     setLoading(true);
-    await simulate();
-    setLoading(false);
-    setStep("verify");
-  };
-
-  const handleBrokerVerify = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (brokerCode.length !== 6) {
-      setError("Please enter the full 6-digit security code.");
-      return;
+    try {
+      await signInWithEmail(brokerEmail, brokerPassword);
+      document.cookie = "session=broker; path=/; SameSite=Lax";
+      router.push("/broker");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Sign-in failed. Check your credentials.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(true);
-    await simulate();
-    document.cookie = "session=broker; path=/; SameSite=Lax";
-    router.push("/broker");
   };
 
   return (
@@ -134,10 +149,10 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => switchUserType(type)}
                   className={[
-                    "py-4 text-sm font-semibold transition-colors",
+                    "cursor-pointer py-4 text-sm font-semibold transition-colors",
                     userType === type
-                      ? "border-b-2 border-primary bg-primary/5 text-primary"
-                      : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300",
+                      ? "bg-white text-primary font-bold dark:bg-slate-800 dark:text-slate-100"
+                      : "bg-slate-100 text-slate-500 hover:text-slate-700 dark:bg-slate-700/50 dark:hover:text-slate-300",
                   ].join(" ")}
                 >
                   {type === "client" ? "I'm a Client" : "I'm a Broker"}
@@ -206,12 +221,12 @@ export default function LoginPage() {
 
                   <div className="mb-6">
                     <h2 className="text-xl font-bold text-primary dark:text-slate-100">
-                      Check your {CLIENT_OTP_CONTACT.medium}
+                      Check your email
                     </h2>
                     <p className="mt-1 text-sm text-slate-500">
                       We sent a 6-digit code to{" "}
                       <span className="font-medium text-slate-700 dark:text-slate-300">
-                        {CLIENT_OTP_CONTACT.masked}
+                        {maskEmail(clientEmail)}
                       </span>
                       . Enter it below to sign in.
                     </p>
@@ -252,7 +267,12 @@ export default function LoginPage() {
 
                     <p className="text-center text-sm text-slate-500">
                       Didn&apos;t receive a code?{" "}
-                      <button type="button" className="font-medium text-primary hover:underline">
+                      <button
+                        type="button"
+                        disabled={loading}
+                        onClick={() => { setClientCode(""); setError(""); handleClientEmail({ preventDefault: () => {} } as React.FormEvent); }}
+                        className="font-medium text-primary hover:underline disabled:opacity-60"
+                      >
                         Resend
                       </button>
                     </p>
@@ -260,8 +280,8 @@ export default function LoginPage() {
                 </>
               )}
 
-              {/* ── BROKER — step 1: credentials ─────────────────────────── */}
-              {userType === "broker" && step === "credentials" && (
+              {/* ── BROKER ────────────────────────────────────────────────── */}
+              {userType === "broker" && (
                 <>
                   <div className="mb-6">
                     <h2 className="text-xl font-bold text-primary dark:text-slate-100">
@@ -272,17 +292,17 @@ export default function LoginPage() {
                     </p>
                   </div>
 
-                  <form onSubmit={handleBrokerCredentials} className="flex flex-col gap-4">
+                  <form onSubmit={handleBrokerSignIn} className="flex flex-col gap-4">
                     <div>
                       <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Username
+                        Email address
                       </label>
                       <input
-                        type="text"
-                        value={brokerUsername}
-                        onChange={(e) => setBrokerUsername(e.target.value)}
-                        placeholder="your.username"
-                        autoComplete="username"
+                        type="email"
+                        value={brokerEmail}
+                        onChange={(e) => setBrokerEmail(e.target.value)}
+                        placeholder="you@example.com"
+                        autoComplete="email"
                         className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-3 text-base text-slate-900 placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 sm:py-2.5 sm:text-sm"
                       />
                     </div>
@@ -326,7 +346,7 @@ export default function LoginPage() {
                       disabled={loading}
                       className="w-full rounded-lg bg-primary py-3.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:py-2.5"
                     >
-                      {loading ? "Checking credentials…" : "Continue"}
+                      {loading ? "Signing in…" : "Sign in"}
                     </button>
 
                     <div className="text-center">
@@ -334,74 +354,6 @@ export default function LoginPage() {
                         Forgot password?
                       </button>
                     </div>
-                  </form>
-                </>
-              )}
-
-              {/* ── BROKER — step 2: 2FA ──────────────────────────────────── */}
-              {userType === "broker" && step === "verify" && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => { setStep("credentials"); setError(""); setBrokerCode(""); }}
-                    className="mb-6 -mt-1 flex items-center gap-1.5 text-sm text-slate-500 transition hover:text-primary"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-                    Back
-                  </button>
-
-                  <div className="mb-6">
-                    <h2 className="text-xl font-bold text-primary dark:text-slate-100">
-                      Two-factor verification
-                    </h2>
-                    <p className="mt-1 text-sm text-slate-500">
-                      A security code has been sent to{" "}
-                      <span className="font-medium text-slate-700 dark:text-slate-300">
-                        {BROKER_OTP_CONTACT.masked}
-                      </span>
-                      . Enter it below to complete sign in.
-                    </p>
-                  </div>
-
-                  <form onSubmit={handleBrokerVerify} className="flex flex-col gap-4">
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Security code
-                      </label>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={6}
-                        value={brokerCode}
-                        onChange={(e) =>
-                          setBrokerCode(e.target.value.replace(/\D/g, "").slice(0, 6))
-                        }
-                        placeholder="000000"
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-3 font-mono text-base tracking-[0.4em] text-slate-900 placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 sm:py-2.5 sm:text-sm"
-                      />
-                    </div>
-
-                    {error && (
-                      <p className="flex items-center gap-1.5 text-sm text-red-600">
-                        <span className="material-symbols-outlined text-[16px]">error</span>
-                        {error}
-                      </p>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="w-full rounded-lg bg-primary py-3.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:py-2.5"
-                    >
-                      {loading ? "Verifying…" : "Verify & sign in"}
-                    </button>
-
-                    <p className="text-center text-sm text-slate-500">
-                      Didn&apos;t receive a code?{" "}
-                      <button type="button" className="font-medium text-primary hover:underline">
-                        Resend
-                      </button>
-                    </p>
                   </form>
                 </>
               )}

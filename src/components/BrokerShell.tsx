@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
+import { useAuth } from "@/context/auth";
 
 const navItems = [
   { icon: "dashboard", label: "Dashboard", href: "/broker" },
@@ -13,9 +16,11 @@ const navItems = [
 function SidebarContents({
   activeHref,
   onNavClick,
+  onSignOut,
 }: {
   activeHref: string;
   onNavClick?: () => void;
+  onSignOut: () => void;
 }) {
   return (
     <>
@@ -50,18 +55,21 @@ function SidebarContents({
 
       <div className="border-t border-slate-200 p-4 dark:border-slate-800">
         <div className="flex items-center gap-3 p-2">
-          <div
-            className="size-10 shrink-0 rounded-full bg-slate-200 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                "url('https://lh3.googleusercontent.com/aida-public/AB6AXuCQPXcCfcK-NTqr0FUpR8Acx_jcAJqxaB8cA_oyzdYPuSbmfWqB_G37CnObgfNbnnPSiJxEGKUNXdT8U1lbHRBKG3Xt-WsOqLOH0eh7KCzH2Gf3uHjqeU3SMHaqKFRTMMfVHVqWXaKqd3pcawqjMVWYw0AOWTsi3_QQtmgXnt8DKRj6Kg8gkHtfFUgm7zVZPD-G49etQ3t6Pv-MQmxLWNvf7mgmq5RsZClFFdn7lqtsDAwBTK7jtS6t-aMXxijepyyEK5DC8MvtRwn2')",
-            }}
-          />
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold">James Anderson</p>
-            <p className="text-xs text-slate-500">Senior Broker</p>
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <span className="material-symbols-outlined text-[20px]">person</span>
           </div>
-          <span className="material-symbols-outlined text-slate-400">settings</span>
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-semibold">Broker</p>
+            <p className="text-xs text-slate-500">Logged in</p>
+          </div>
+          <button
+            type="button"
+            onClick={onSignOut}
+            title="Sign out"
+            className="cursor-pointer rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px]">logout</span>
+          </button>
         </div>
       </div>
     </>
@@ -77,13 +85,21 @@ type Props = {
 
 export function BrokerShell({ title, activeHref = "/broker", headerRight, children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handleSignOut = async () => {
+    await logout();
+    document.cookie = "session=; path=/; max-age=0";
+    router.push("/login");
+  };
 
   return (
     <div className="flex h-screen overflow-hidden bg-background-light dark:bg-background-dark">
 
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 md:flex">
-        <SidebarContents activeHref={activeHref} />
+        <SidebarContents activeHref={activeHref} onSignOut={handleSignOut} />
       </aside>
 
       {/* Mobile sidebar overlay */}
@@ -106,6 +122,7 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
             <SidebarContents
               activeHref={activeHref}
               onNavClick={() => setSidebarOpen(false)}
+              onSignOut={handleSignOut}
             />
           </aside>
         </>

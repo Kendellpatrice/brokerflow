@@ -3,8 +3,11 @@
 import { PageShell } from "@/components/PageShell";
 import { ApplicantTabs, CompletionStatus } from "@/components/ApplicantTabs";
 import { useApplicants } from "@/context/applicants";
+import { useAuth } from "@/context/auth";
+import { saveLeadData, loadLeadData } from "@/lib/firestore";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { CurrencyInput } from "@/components/CurrencyInput";
 
 // ── Per-applicant data shapes ─────────────────────────────────────────────
@@ -87,12 +90,36 @@ const inputCls = "rounded border-slate-300 dark:bg-slate-800 dark:border-slate-7
 // ══════════════════════════════════════════════════════════════════════════
 export default function EmploymentIncomePage() {
   const { applicants } = useApplicants();
+  const { user } = useAuth();
+  const router = useRouter();
   const [activeId, setActiveId] = useState(() => applicants[0]?.id ?? "");
+  const [isSaving, setIsSaving] = useState(false);
 
   // All per-applicant state lives here, keyed by applicant ID
   const [allData, setAllData] = useState<Record<string, ApplicantEmploymentData>>(() =>
     Object.fromEntries(applicants.map(a => [a.id, blankApplicantData()]))
   );
+
+  // Load from Firestore on mount
+  useEffect(() => {
+    if (!user) return;
+    loadLeadData(user.uid).then((data) => {
+      if (data?.employment) {
+        setAllData(data.employment as Record<string, ApplicantEmploymentData>);
+      }
+    });
+  }, [user]);
+
+  const handleSave = useCallback(async (nextPath?: string) => {
+    if (!user) { if (nextPath) router.push(nextPath); return; }
+    setIsSaving(true);
+    try {
+      await saveLeadData(user.uid, { employment: allData });
+      if (nextPath) router.push(nextPath);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [user, allData, router]);
 
   const getData = (id: string): ApplicantEmploymentData =>
     allData[id] ?? blankApplicantData();
@@ -483,16 +510,18 @@ export default function EmploymentIncomePage() {
       {/* Navigation */}
       {/* Mobile */}
       <div className="sticky bottom-0 z-10 mt-6 flex flex-col gap-3 bg-background-light py-4 dark:bg-background-dark md:hidden">
-        <Link href="/assets" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90">
-          Next: Assets
+        <button type="button" onClick={() => handleSave("/assets")} disabled={isSaving}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90 disabled:opacity-60">
+          {isSaving ? "Saving…" : "Next: Assets"}
           <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-        </Link>
+        </button>
         <div className="grid grid-cols-2 gap-3">
           <Link href="/personal-details" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
             Previous Step
           </Link>
-          <button type="button" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
-            Save Draft
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Save Draft"}
           </button>
         </div>
       </div>
@@ -503,11 +532,15 @@ export default function EmploymentIncomePage() {
           Back
         </Link>
         <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">Save Draft</span>
-          <Link href="/assets" className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
-            Next Step
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Save Draft"}
+          </button>
+          <button type="button" onClick={() => handleSave("/assets")} disabled={isSaving}
+            className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Next Step"}
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-          </Link>
+          </button>
         </div>
       </div>
 

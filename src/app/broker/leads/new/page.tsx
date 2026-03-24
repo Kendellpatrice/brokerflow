@@ -181,7 +181,7 @@ export default function NewLeadPage() {
               {/* ── Section 1: Contact Details ────────────────────────────── */}
               <div className="space-y-5 p-5 md:p-6">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                  <div className="flex cursor-pointer items-center gap-2">
                     <SectionBadge n={1} />
                     <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Contact Details</h4>
                   </div>
@@ -284,7 +284,7 @@ export default function NewLeadPage() {
 
               {/* ── Section 2: Loan Details ───────────────────────────────── */}
               <div className="space-y-5 border-t border-slate-100 p-5 dark:border-slate-800 md:p-6">
-                <div className="flex items-center gap-2">
+                <div className="flex cursor-pointer items-center gap-2">
                   <SectionBadge n={2} />
                   <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Loan Details</h4>
                 </div>
@@ -303,7 +303,7 @@ export default function NewLeadPage() {
                           type="button"
                           onClick={() => togglePurpose(value)}
                           className={[
-                            "relative flex flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center transition sm:py-4",
+                            "relative flex cursor-pointer flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center transition sm:py-4",
                             selected
                               ? "border-primary bg-primary/5 text-primary"
                               : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-slate-600",
@@ -363,7 +363,7 @@ export default function NewLeadPage() {
 
               {/* ── Section 3: Additional Details ─────────────────────────── */}
               <div className="space-y-5 border-t border-slate-100 p-5 dark:border-slate-800 md:p-6">
-                <div className="flex items-center gap-2">
+                <div className="flex cursor-pointer items-center gap-2">
                   <SectionBadge n={3} />
                   <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Additional Details</h4>
                 </div>
@@ -415,14 +415,14 @@ export default function NewLeadPage() {
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="flex w-full items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto sm:py-2.5"
+                  className="flex w-full cursor-pointer items-center justify-center rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700 sm:w-auto sm:py-2.5"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:w-auto sm:py-2.5"
+                  className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:w-auto sm:py-2.5"
                 >
                   {loading ? (
                     <>

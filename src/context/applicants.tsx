@@ -1,6 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { auth } from "@/lib/auth";
+import { saveLeadData, loadLeadData } from "@/lib/firestore";
 
 export type ApplicantRole = "Primary Applicant" | "Spouse / Partner" | "Business Partner" | "Co-Borrower";
 
@@ -27,6 +30,30 @@ const DEFAULT_APPLICANTS: Applicant[] = [
 
 export function ApplicantProvider({ children }: { children: ReactNode }) {
   const [applicants, setApplicants] = useState<Applicant[]>(DEFAULT_APPLICANTS);
+  const [user, setUser] = useState<User | null>(null);
+  const [loaded, setLoaded] = useState(false);
+
+  // Track auth user
+  useEffect(() => {
+    return onAuthStateChanged(auth, (u) => setUser(u));
+  }, []);
+
+  // Load applicants from Firestore when user signs in
+  useEffect(() => {
+    if (!user) { setLoaded(true); return; }
+    loadLeadData(user.uid).then((data) => {
+      if (data?.applicants && Array.isArray(data.applicants) && data.applicants.length > 0) {
+        setApplicants(data.applicants as Applicant[]);
+      }
+      setLoaded(true);
+    });
+  }, [user]);
+
+  // Save applicants to Firestore whenever they change (after initial load)
+  useEffect(() => {
+    if (!user || !loaded) return;
+    saveLeadData(user.uid, { applicants });
+  }, [applicants, user, loaded]);
 
   const addApplicant = (a: Omit<Applicant, "id" | "isPrimary">) =>
     setApplicants(prev => [...prev, { ...a, id: `app-${Date.now()}`, isPrimary: false }]);

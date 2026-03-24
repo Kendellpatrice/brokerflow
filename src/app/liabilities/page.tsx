@@ -5,7 +5,10 @@ import { CurrencyInput } from "@/components/CurrencyInput";
 import { CollapsibleSection } from "@/components/CollapsibleSection";
 import { PhaseDivider } from "@/components/PhaseDivider";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/auth";
+import { saveLeadData, loadLeadData } from "@/lib/firestore";
 
 // ── Types ─────────────────────────────────────────────────────────────────
 type YesNo     = "" | "yes" | "no";
@@ -379,6 +382,46 @@ export default function LiabilitiesPage() {
   // Insurance
   const [ins, setIns] = useState<Record<string, YesNoNS>>({});
   const setInsField = (k: string, v: YesNoNS) => setIns(p => ({ ...p, [k]: v }));
+
+  // ── Firestore persistence ────────────────────────────────────────────────
+  const { user } = useAuth();
+  const router = useRouter();
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    if (!user) return;
+    loadLeadData(user.uid).then((data) => {
+      if (!data?.liabilities) return;
+      const l = data.liabilities as Record<string, unknown>;
+      if (l.mortgages) mortgages.items.length === 0 && (mortgages as unknown as { items: unknown[] }).items.splice(0, 0, ...(l.mortgages as unknown[]));
+      if (l.retirementApp1) setRetirementApp1(l.retirementApp1 as string);
+      if (l.retirementApp2) setRetirementApp2(l.retirementApp2 as string);
+      if (l.exitStrategy) setExitStrategy(l.exitStrategy as string);
+      if (l.credit) setCredit(l.credit as typeof credit);
+      if (l.ins) setIns(l.ins as Record<string, YesNoNS>);
+    });
+  }, [user]);
+
+  const handleSave = useCallback(async (nextPath?: string) => {
+    if (!user) { if (nextPath) router.push(nextPath); return; }
+    setIsSaving(true);
+    try {
+      await saveLeadData(user.uid, {
+        liabilities: {
+          mortgages: mortgages.items,
+          personalLoans: personalLoans.items,
+          carFinance: carFinance.items,
+          creditCards: creditCards.items,
+          hecsHelp: hecsHelp.items,
+          otherLiabs: otherLiabs.items,
+          retirementApp1, retirementApp2, exitStrategy, credit, ins,
+        },
+      });
+      if (nextPath) router.push(nextPath);
+    } finally {
+      setIsSaving(false);
+    }
+  }, [user, mortgages.items, personalLoans.items, carFinance.items, creditCards.items, hecsHelp.items, otherLiabs.items, retirementApp1, retirementApp2, exitStrategy, credit, ins, router]);
 
   return (
     <PageShell>
@@ -1105,16 +1148,18 @@ export default function LiabilitiesPage() {
       {/* ── Navigation ──────────────────────────────────────────────────── */}
       {/* Mobile */}
       <div className="sticky bottom-0 z-10 mt-6 flex flex-col gap-3 bg-background-light py-4 dark:bg-background-dark md:hidden">
-        <Link href="/living-expenses" className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90">
-          Next: Living Expenses
+        <button type="button" onClick={() => handleSave("/living-expenses")} disabled={isSaving}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90 disabled:opacity-60">
+          {isSaving ? "Saving…" : "Next: Living Expenses"}
           <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-        </Link>
+        </button>
         <div className="grid grid-cols-2 gap-3">
           <Link href="/assets" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
             Previous Step
           </Link>
-          <button type="button" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
-            Save Draft
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Save Draft"}
           </button>
         </div>
       </div>
@@ -1128,16 +1173,15 @@ export default function LiabilitiesPage() {
           Back
         </Link>
         <div className="flex items-center gap-6">
-          <span className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400">
-            Save Draft
-          </span>
-          <Link
-            href="/living-expenses"
-            className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90"
-          >
-            Next Step
+          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+            className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Save Draft"}
+          </button>
+          <button type="button" onClick={() => handleSave("/living-expenses")} disabled={isSaving}
+            className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90 disabled:opacity-60">
+            {isSaving ? "Saving…" : "Next Step"}
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-          </Link>
+          </button>
         </div>
       </div>
 
