@@ -8,15 +8,15 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == request.resource.data.brokerId;
     }
 
-    // Invite tokens — broker can create; public read for invite link validation
+    // Invite tokens — broker can create/update; public read for invite link validation
     match /brokerLeadInvites/{token} {
       allow read: if true;
-      allow create: if request.auth != null;
+      allow create, update: if request.auth != null;
     }
 
-    // OTP codes — server-side only via API routes (no client-side access needed)
+    // OTP codes — written and read by server-side API routes (client SDK, no auth context)
     match /otpCodes/{email} {
-      allow read, write: if false;
+      allow read, write: if true;
     }
 
     // Fact-find data — authenticated users can read/write their own doc

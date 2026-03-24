@@ -1,30 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { db } from "@/lib/firestore";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
-import { randomUUID } from "crypto";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
-  const { leadId, leadName, leadEmail } = await req.json();
+  const { leadName, leadEmail, token } = await req.json();
 
-  if (!leadId || !leadName || !leadEmail) {
+  if (!leadName || !leadEmail || !token) {
     return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
   }
 
-  const token = randomUUID();
-  const expiresAt = Timestamp.fromDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)); // 30 days
-
-  // Store the invite token and mark it as the active token on the lead doc.
-  // Any previously issued token is implicitly expired because the lead doc now
-  // points to this new token — the validation step checks activeInviteToken.
-  await Promise.all([
-    setDoc(doc(db, "brokerLeadInvites", token), { leadId, leadEmail, expiresAt }),
-    setDoc(doc(db, "brokerLeads", leadId), { activeInviteToken: token }, { merge: true }),
-  ]);
-
-  const inviteUrl = `${process.env.NEXT_PUBLIC_BASE_URL || "https://localhost:3000"}/invite/${token}`;
+  const baseUrl =
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  const inviteUrl = `${baseUrl}/invite/${token}`;
 
   const { error } = await resend.emails.send({
     from: "BrokerFlow <onboarding@resend.dev>",
@@ -48,7 +37,11 @@ export async function POST(req: NextRequest) {
   });
 
   if (error) {
-    return NextResponse.json({ error: "Failed to send invitation email." }, { status: 500 });
+    console.error("[send-invite] Resend error:", error);
+    return NextResponse.json(
+      { error: `Failed to send invitation email: ${error.message}` },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ success: true });

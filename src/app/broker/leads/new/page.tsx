@@ -7,6 +7,7 @@ import { BrokerShell } from "@/components/BrokerShell";
 import { db } from "@/lib/firestore";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "@/context/auth";
+import { createAndSendInvite } from "@/lib/invite";
 
 const LOAN_PURPOSES = [
   { value: "purchase", label: "Purchase", icon: "home" },
@@ -155,17 +156,11 @@ export default function NewLeadPage() {
     if (!savedLeadId) return;
     setInviteLoading(true);
     try {
-      const res = await fetch("/api/send-invite", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          leadId: savedLeadId,
-          leadName: form.fullName,
-          leadEmail: form.email,
-        }),
+      await createAndSendInvite({
+        leadId: savedLeadId,
+        leadName: form.fullName,
+        leadEmail: form.email,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send invitation.");
       setInviteSent(true);
     } catch (err) {
       alert(err instanceof Error ? err.message : "Failed to send invitation.");

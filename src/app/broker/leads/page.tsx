@@ -6,6 +6,7 @@ import { BrokerShell } from "@/components/BrokerShell";
 import { db } from "@/lib/firestore";
 import { collection, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/auth";
+import { createAndSendInvite } from "@/lib/invite";
 
 interface Lead {
   id: string;
@@ -56,17 +57,16 @@ export default function LeadsPage() {
   const handleResend = async (lead: Lead) => {
     setResending(lead.id);
     try {
-      const res = await fetch("/api/send-invite", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          leadId: lead.id,
-          leadName: lead.fullName,
-          leadEmail: lead.email,
-        }),
+      await createAndSendInvite({
+        leadId: lead.id,
+        leadName: lead.fullName,
+        leadEmail: lead.email,
+        previousToken: lead.activeInviteToken,
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to send invitation.");
+      // Update local state so the button reflects the new token exists
+      setLeads((prev) =>
+        prev.map((l) => (l.id === lead.id ? { ...l, activeInviteToken: "sent" } : l))
+      );
       setSentFor(lead.id);
       setTimeout(() => setSentFor(null), 3000);
     } catch (err) {

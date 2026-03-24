@@ -17,22 +17,25 @@ export async function GET(
     });
   }
 
-  const { leadId, expiresAt } = snap.data() as { leadId: string; leadEmail: string; expiresAt: Timestamp };
+  const { expiresAt, superseded } = snap.data() as {
+    leadId: string;
+    leadEmail: string;
+    expiresAt: Timestamp;
+    superseded?: boolean;
+  };
 
-  if (expiresAt.toDate() < new Date()) {
-    return new NextResponse(invalidPage("This invitation link has expired. Please contact your broker for a new link."), {
-      status: 410,
-      headers: { "Content-Type": "text/html" },
-    });
+  if (superseded) {
+    return new NextResponse(
+      invalidPage("A newer invitation link has been sent. Please check your email for the latest link."),
+      { status: 410, headers: { "Content-Type": "text/html" } }
+    );
   }
 
-  // Check that this token is still the active one (a resend would have replaced it)
-  const leadSnap = await getDoc(doc(db, "brokerLeads", leadId));
-  if (!leadSnap.exists() || leadSnap.data().activeInviteToken !== token) {
-    return new NextResponse(invalidPage("A newer invitation link has been sent. Please check your email for the latest link."), {
-      status: 410,
-      headers: { "Content-Type": "text/html" },
-    });
+  if (expiresAt.toDate() < new Date()) {
+    return new NextResponse(
+      invalidPage("This invitation link has expired. Please contact your broker for a new link."),
+      { status: 410, headers: { "Content-Type": "text/html" } }
+    );
   }
 
   const response = NextResponse.redirect(new URL("/", _req.url));
