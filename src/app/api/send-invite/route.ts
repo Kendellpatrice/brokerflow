@@ -13,17 +13,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL ||
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000');
-  const inviteUrl = `${baseUrl}/invite/${token}`;
+  const origin = new URL(req.url).origin;
+  const inviteUrl = `${origin}/invite/${token}`;
 
   const { error } = await resend.emails.send({
-    from: 'BrokerFlow <onboarding@resend.dev>',
+    from: 'BrokerFlow <services@brokerflow.agency>',
     to: leadEmail,
-    subject: 'Your mortgage fact-find is ready to complete',
+    subject: 'Your Fact Find Form is ready to complete',
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px">
         <div style="margin-bottom:24px">
@@ -32,7 +28,7 @@ export async function POST(req: NextRequest) {
         <h2 style="color:#1a2b3d;margin:0 0 8px">Hi ${leadName},</h2>
         <p style="color:#64748b;margin:0 0 24px">Your broker has invited you to complete your digital mortgage fact-find. This helps us understand your financial situation so we can find the right loan for you.</p>
         <a href="${inviteUrl}" style="display:inline-block;background:#1a2b3d;color:white;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px">
-          Start my Fact Find →
+          Start my Fact Find Form →
         </a>
         <p style="color:#94a3b8;font-size:13px;margin-top:24px">This link expires in 30 days. If you have questions, please contact your broker directly.</p>
         <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0" />

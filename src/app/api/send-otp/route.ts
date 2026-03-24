@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
   await setDoc(doc(db, "otpCodes", email), { code, expiresAt, used: false });
 
   const { error } = await resend.emails.send({
-    from: "BrokerFlow <onboarding@resend.dev>",
+    from: "BrokerFlow <services@brokerflow.agency>",
     to: email,
     subject: "Your BrokerFlow verification code",
     html: `
