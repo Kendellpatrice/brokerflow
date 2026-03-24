@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const navItems = [
   { icon: "dashboard", label: "Dashboard", href: "/broker" },
-  { icon: "account_tree", label: "Pipeline", href: "#" },
+  { icon: "account_tree", label: "Pipeline", href: "/broker/pipeline" },
   { icon: "groups", label: "Clients", href: "#" },
   { icon: "calendar_today", label: "Calendar", href: "#" },
   { icon: "analytics", label: "Reports", href: "#" },
