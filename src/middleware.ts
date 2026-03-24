@@ -15,7 +15,7 @@ export function middleware(request: NextRequest) {
 
   if (session && isLoginPage) {
     const url = request.nextUrl.clone();
-    url.pathname = "/";
+    url.pathname = session.value === "broker" ? "/broker" : "/";
     return NextResponse.redirect(url);
   }
 

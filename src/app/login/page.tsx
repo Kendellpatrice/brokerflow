@@ -94,7 +94,7 @@ export default function LoginPage() {
     setLoading(true);
     await simulate();
     document.cookie = "session=broker; path=/; SameSite=Lax";
-    router.push("/");
+    router.push("/broker");
   };
 
   return (
