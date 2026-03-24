@@ -112,11 +112,11 @@ export default function LoginPage() {
       </header>
 
       {/* Body */}
-      <main className="flex flex-1 items-center justify-center p-4 py-12">
+      <main className="flex flex-1 items-center justify-center p-4 py-6 sm:py-12">
         <div className="w-full max-w-md">
 
-          <div className="mb-8 text-center">
-            <h1 className="text-2xl font-bold text-primary dark:text-slate-100">
+          <div className="mb-6 text-center sm:mb-8">
+            <h1 className="text-xl font-bold text-primary dark:text-slate-100 sm:text-2xl">
               Digital Fact Find
             </h1>
             <p className="mt-1 text-sm text-slate-500">
@@ -145,7 +145,7 @@ export default function LoginPage() {
               ))}
             </div>
 
-            <div className="p-8">
+            <div className="p-5 sm:p-8">
 
               {/* ── CLIENT — step 1: email ─────────────────────────────────── */}
               {userType === "client" && step === "credentials" && (
@@ -170,8 +170,7 @@ export default function LoginPage() {
                         onChange={(e) => setClientEmail(e.target.value)}
                         placeholder="you@example.com"
                         autoComplete="email"
-                        autoFocus
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-3 text-base text-slate-900 placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 sm:py-2.5 sm:text-sm"
                       />
                     </div>
 
@@ -185,7 +184,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60"
+                      className="w-full rounded-lg bg-primary py-3.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:py-2.5"
                     >
                       {loading ? "Sending code…" : "Send verification code"}
                     </button>
@@ -232,8 +231,7 @@ export default function LoginPage() {
                           setClientCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                         }
                         placeholder="000000"
-                        autoFocus
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-sm tracking-[0.4em] text-slate-900 placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-3 font-mono text-base tracking-[0.4em] text-slate-900 placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 sm:py-2.5 sm:text-sm"
                       />
                     </div>
 
@@ -247,7 +245,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60"
+                      className="w-full rounded-lg bg-primary py-3.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:py-2.5"
                     >
                       {loading ? "Verifying…" : "Verify & sign in"}
                     </button>
@@ -285,8 +283,7 @@ export default function LoginPage() {
                         onChange={(e) => setBrokerUsername(e.target.value)}
                         placeholder="your.username"
                         autoComplete="username"
-                        autoFocus
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-3 text-base text-slate-900 placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 sm:py-2.5 sm:text-sm"
                       />
                     </div>
 
@@ -301,7 +298,7 @@ export default function LoginPage() {
                           onChange={(e) => setBrokerPassword(e.target.value)}
                           placeholder="••••••••"
                           autoComplete="current-password"
-                          className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 pr-11 text-sm text-slate-900 placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                          className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-3 pr-11 text-base text-slate-900 placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 sm:py-2.5 sm:text-sm"
                         />
                         <button
                           type="button"
@@ -327,7 +324,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60"
+                      className="w-full rounded-lg bg-primary py-3.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:py-2.5"
                     >
                       {loading ? "Checking credentials…" : "Continue"}
                     </button>
@@ -380,8 +377,7 @@ export default function LoginPage() {
                           setBrokerCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                         }
                         placeholder="000000"
-                        autoFocus
-                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 font-mono text-sm tracking-[0.4em] text-slate-900 placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100"
+                        className="w-full rounded-lg border border-slate-300 bg-white px-3.5 py-3 font-mono text-base tracking-[0.4em] text-slate-900 placeholder:font-sans placeholder:tracking-normal placeholder:text-slate-400 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-100 sm:py-2.5 sm:text-sm"
                       />
                     </div>
 
@@ -395,7 +391,7 @@ export default function LoginPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full rounded-lg bg-primary py-2.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60"
+                      className="w-full rounded-lg bg-primary py-3.5 text-sm font-semibold text-white transition hover:bg-primary/90 disabled:opacity-60 sm:py-2.5"
                     >
                       {loading ? "Verifying…" : "Verify & sign in"}
                     </button>
