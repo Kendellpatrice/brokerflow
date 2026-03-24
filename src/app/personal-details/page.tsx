@@ -75,15 +75,41 @@ export default function PersonalDetailsPage() {
   const [formData, setFormData]   = useState<Record<string, PersonalData>>({});
   const [isSaving, setIsSaving]   = useState(false);
 
-  // Load from Firestore on mount
+  // Load from Firestore on mount; pre-fill name from invite cookie if first applicant is blank
   useEffect(() => {
-    if (!user) return;
-    loadLeadData(user.uid).then((data) => {
-      if (data?.personalDetails) {
-        setFormData(data.personalDetails as Record<string, PersonalData>);
-      }
-    });
-  }, [user]);
+    const firstApplicantId = applicants[0]?.id;
+
+    const applyPrefill = (existing: Record<string, PersonalData>) => {
+      if (!firstApplicantId) return existing;
+      const current = existing[firstApplicantId] ?? BLANK;
+      if (current.givenNames || current.surname) return existing; // already has data
+
+      const raw = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith("pendingLeadName="))
+        ?.split("=")[1];
+      if (!raw) return existing;
+
+      const name = decodeURIComponent(raw).trim();
+      const lastSpace = name.lastIndexOf(" ");
+      const givenNames = lastSpace > 0 ? name.slice(0, lastSpace) : name;
+      const surname = lastSpace > 0 ? name.slice(lastSpace + 1) : "";
+
+      // Clear the cookie now that it's been consumed
+      document.cookie = "pendingLeadName=; path=/; max-age=0";
+
+      return { ...existing, [firstApplicantId]: { ...BLANK, ...current, givenNames, surname } };
+    };
+
+    if (user) {
+      loadLeadData(user.uid).then((data) => {
+        const loaded = (data?.personalDetails as Record<string, PersonalData>) ?? {};
+        setFormData(applyPrefill(loaded));
+      });
+    } else {
+      setFormData((prev) => applyPrefill(prev));
+    }
+  }, [user, applicants]);
 
   const handleSave = useCallback(async (nextPath?: string) => {
     if (!user) { if (nextPath) router.push(nextPath); return; }

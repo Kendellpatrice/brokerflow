@@ -2,11 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function SidebarNav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [leadRef, setLeadRef] = useState<string | null>(null);
+
+  useEffect(() => {
+    const match = document.cookie
+      .split("; ")
+      .find((c) => c.startsWith("pendingLeadRef="));
+    if (match) setLeadRef(decodeURIComponent(match.split("=")[1]));
+  }, []);
 
   const navItems = [
     { href: "/", icon: "info", label: "Introduction" },
@@ -127,7 +135,7 @@ export function SidebarNav() {
             <h1 className="text-base font-bold text-primary dark:text-slate-100">
               Fact Find Form
             </h1>
-            <p className="text-xs text-slate-500">Ref: UB-2024-8832</p>
+            {leadRef && <p className="text-xs text-slate-500">Ref: {leadRef}</p>}
           </div>
         </div>
       </div>

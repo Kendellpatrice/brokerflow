@@ -5,11 +5,13 @@ export async function createAndSendInvite({
   leadId,
   leadName,
   leadEmail,
+  leadRef,
   previousToken,
 }: {
   leadId: string;
   leadName: string;
   leadEmail: string;
+  leadRef?: string;
   previousToken?: string;
 }) {
   const token = crypto.randomUUID();
@@ -17,7 +19,7 @@ export async function createAndSendInvite({
 
   // Mark the previous token as superseded so old links stop working immediately
   const writes: Promise<void>[] = [
-    setDoc(doc(db, "brokerLeadInvites", token), { leadId, leadEmail, expiresAt, superseded: false }),
+    setDoc(doc(db, "brokerLeadInvites", token), { leadId, leadEmail, leadName, leadRef, expiresAt, superseded: false }),
     updateDoc(doc(db, "brokerLeads", leadId), { activeInviteToken: token }),
   ];
 

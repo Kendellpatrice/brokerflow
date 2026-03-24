@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { BrokerShell } from "@/components/BrokerShell";
 import { db } from "@/lib/firestore";
-import { collection, addDoc, getDocs, query, where, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, getDocs, getCountFromServer, query, where, serverTimestamp } from "firebase/firestore";
 import { useAuth } from "@/context/auth";
+import { useBrokerProfile } from "@/context/brokerProfile";
 import { createAndSendInvite } from "@/lib/invite";
 
 const LOAN_PURPOSES = [
@@ -43,6 +44,7 @@ export default function NewLeadPage() {
   const router = useRouter();
   const chipInputRef = useRef<HTMLInputElement>(null);
   const { user } = useAuth();
+  const { profile } = useBrokerProfile();
 
   const [form, setForm] = useState({
     fullName: "",
@@ -61,6 +63,7 @@ export default function NewLeadPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [savedLeadId, setSavedLeadId] = useState<string | null>(null);
   const [inviteSent, setInviteSent] = useState(false);
+  const [savedLeadRef, setSavedLeadRef] = useState<string | null>(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [duplicateLead, setDuplicateLead] = useState<{ id: string; fullName: string } | null>(null);
   const [checkingEmail, setCheckingEmail] = useState(false);
@@ -155,7 +158,23 @@ export default function NewLeadPage() {
     }
     setLoading(true);
     try {
-      const ref = await addDoc(collection(db, "brokerLeads"), {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const dd = String(now.getDate()).padStart(2, "0");
+      const dateKey = `${yyyy}-${mm}-${dd}`;
+
+      const countSnap = await getCountFromServer(
+        query(
+          collection(db, "brokerLeads"),
+          where("brokerId", "==", user?.uid ?? ""),
+          where("dateKey", "==", dateKey)
+        )
+      );
+      const increment = countSnap.data().count + 1;
+      const leadRef = `UB-${yyyy}-${mm}${dd}${increment}`;
+
+      const docRef = await addDoc(collection(db, "brokerLeads"), {
         fullName: form.fullName,
         phone: form.phone,
         email: form.email,
@@ -165,9 +184,13 @@ export default function NewLeadPage() {
         notes: form.notes,
         referredBy: chips,
         brokerId: user?.uid ?? null,
+        orgId: profile?.orgId ?? null,
+        ref: leadRef,
+        dateKey,
         createdAt: serverTimestamp(),
       });
-      setSavedLeadId(ref.id);
+      setSavedLeadId(docRef.id);
+      setSavedLeadRef(leadRef);
       setShowSuccess(true);
     } catch {
       setErrors({ fullName: "Failed to save lead. Please try again." });
@@ -186,6 +209,7 @@ export default function NewLeadPage() {
         leadId: savedLeadId,
         leadName: form.fullName,
         leadEmail: form.email,
+        leadRef: savedLeadRef ?? undefined,
       });
       setInviteSent(true);
     } catch (err) {

@@ -17,6 +17,7 @@ interface Lead {
   loanAmount: string;
   createdAt: Timestamp | null;
   activeInviteToken?: string;
+  ref?: string;
 }
 
 const LOAN_PURPOSE_LABELS: Record<string, string> = {
@@ -61,6 +62,7 @@ export default function LeadsPage() {
         leadId: lead.id,
         leadName: lead.fullName,
         leadEmail: lead.email,
+        leadRef: lead.ref,
         previousToken: lead.activeInviteToken,
       });
       // Update local state so the button reflects the new token exists

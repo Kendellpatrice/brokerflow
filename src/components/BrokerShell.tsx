@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { logout } from "@/lib/auth";
 import { useAuth } from "@/context/auth";
+import { useBrokerProfile } from "@/context/brokerProfile";
 
 const navItems = [
   { icon: "dashboard", label: "Dashboard", href: "/broker" },
@@ -17,10 +18,14 @@ function SidebarContents({
   activeHref,
   onNavClick,
   onSignOut,
+  orgName,
+  displayName,
 }: {
   activeHref: string;
   onNavClick?: () => void;
   onSignOut: () => void;
+  orgName: string;
+  displayName: string;
 }) {
   return (
     <>
@@ -28,9 +33,9 @@ function SidebarContents({
         <div className="rounded-lg bg-primary p-2 text-white">
           <span className="material-symbols-outlined">account_balance</span>
         </div>
-        <div>
+        <div className="min-w-0">
           <h1 className="text-lg font-bold leading-none">BrokerCRM</h1>
-          <p className="text-xs text-slate-500">AU Mortgage Solutions</p>
+          <p className="truncate text-xs text-slate-500">{orgName}</p>
         </div>
       </div>
 
@@ -59,7 +64,7 @@ function SidebarContents({
             <span className="material-symbols-outlined text-[20px]">person</span>
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-semibold">Broker</p>
+            <p className="truncate text-sm font-semibold">{displayName || "Broker"}</p>
             <p className="text-xs text-slate-500">Logged in</p>
           </div>
           <button
@@ -87,6 +92,13 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
   const { user } = useAuth();
+  const { profile, loading: profileLoading } = useBrokerProfile();
+
+  useEffect(() => {
+    if (!profileLoading && user && !profile) {
+      router.replace("/broker/onboarding");
+    }
+  }, [profile, profileLoading, user, router]);
 
   const handleSignOut = async () => {
     await logout();
@@ -99,7 +111,12 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
 
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 md:flex">
-        <SidebarContents activeHref={activeHref} onSignOut={handleSignOut} />
+        <SidebarContents
+          activeHref={activeHref}
+          onSignOut={handleSignOut}
+          orgName={profile?.orgName ?? ""}
+          displayName={profile?.displayName ?? ""}
+        />
       </aside>
 
       {/* Mobile sidebar overlay */}
@@ -123,6 +140,8 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
               activeHref={activeHref}
               onNavClick={() => setSidebarOpen(false)}
               onSignOut={handleSignOut}
+              orgName={profile?.orgName ?? ""}
+              displayName={profile?.displayName ?? ""}
             />
           </aside>
         </>

@@ -17,9 +17,11 @@ export async function GET(
     });
   }
 
-  const { leadEmail, expiresAt, superseded } = snap.data() as {
+  const { leadEmail, leadName, leadRef, expiresAt, superseded } = snap.data() as {
     leadId: string;
     leadEmail: string;
+    leadName?: string;
+    leadRef?: string;
     expiresAt: Timestamp;
     superseded?: boolean;
   };
@@ -40,7 +42,11 @@ export async function GET(
 
   const loginUrl = new URL("/login", _req.url);
   loginUrl.searchParams.set("email", leadEmail);
-  return NextResponse.redirect(loginUrl);
+  const response = NextResponse.redirect(loginUrl);
+  const cookieOpts = { path: "/", sameSite: "lax" as const, httpOnly: false, maxAge: 60 * 60 };
+  if (leadName) response.cookies.set("pendingLeadName", leadName, cookieOpts);
+  if (leadRef) response.cookies.set("pendingLeadRef", leadRef, cookieOpts);
+  return response;
 }
 
 function invalidPage(message: string) {
