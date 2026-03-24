@@ -95,7 +95,7 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background-light dark:bg-background-dark">
+    <div className="flex h-dvh overflow-hidden bg-background-light dark:bg-background-dark">
 
       {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 md:flex">
