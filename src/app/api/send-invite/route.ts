@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { NextRequest, NextResponse } from 'next/server';
+import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -7,18 +7,23 @@ export async function POST(req: NextRequest) {
   const { leadName, leadEmail, token } = await req.json();
 
   if (!leadName || !leadEmail || !token) {
-    return NextResponse.json({ error: "Missing required fields." }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Missing required fields.' },
+      { status: 400 },
+    );
   }
 
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ||
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : 'http://localhost:3000');
   const inviteUrl = `${baseUrl}/invite/${token}`;
 
   const { error } = await resend.emails.send({
-    from: "BrokerFlow <onboarding@resend.dev>",
+    from: 'BrokerFlow <onboarding@resend.dev>',
     to: leadEmail,
-    subject: "Your mortgage fact-find is ready to complete",
+    subject: 'Your mortgage fact-find is ready to complete',
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px">
         <div style="margin-bottom:24px">
@@ -27,7 +32,7 @@ export async function POST(req: NextRequest) {
         <h2 style="color:#1a2b3d;margin:0 0 8px">Hi ${leadName},</h2>
         <p style="color:#64748b;margin:0 0 24px">Your broker has invited you to complete your digital mortgage fact-find. This helps us understand your financial situation so we can find the right loan for you.</p>
         <a href="${inviteUrl}" style="display:inline-block;background:#1a2b3d;color:white;text-decoration:none;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px">
-          Start my fact-find →
+          Start my Fact Find →
         </a>
         <p style="color:#94a3b8;font-size:13px;margin-top:24px">This link expires in 30 days. If you have questions, please contact your broker directly.</p>
         <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0" />
@@ -37,10 +42,10 @@ export async function POST(req: NextRequest) {
   });
 
   if (error) {
-    console.error("[send-invite] Resend error:", error);
+    console.error('[send-invite] Resend error:', error);
     return NextResponse.json(
       { error: `Failed to send invitation email: ${error.message}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
