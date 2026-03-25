@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BrokerShell } from "@/components/BrokerShell";
 import { db } from "@/lib/firestore";
-import { collection, query, where, orderBy, getDocs, Timestamp } from "firebase/firestore";
+import { collection, query, where, orderBy, getDocs, doc, updateDoc, deleteField, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/auth";
 import { createAndSendInvite } from "@/lib/invite";
 
@@ -46,6 +46,7 @@ export default function LeadsPage() {
   const [loading, setLoading] = useState(true);
   const [resending, setResending] = useState<string | null>(null);
   const [sentFor, setSentFor] = useState<string | null>(null);
+  const [unlocking, setUnlocking] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -84,6 +85,22 @@ export default function LeadsPage() {
       alert(err instanceof Error ? err.message : "Failed to send invitation.");
     } finally {
       setResending(null);
+    }
+  };
+
+  const handleUnlock = async (lead: Lead) => {
+    setUnlocking(lead.id);
+    try {
+      await updateDoc(doc(db, "brokerLeads", lead.id), {
+        factFindStatus: deleteField(),
+      });
+      setLeads((prev) =>
+        prev.map((l) => (l.id === lead.id ? { ...l, factFindStatus: undefined } : l))
+      );
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to unlock fact find.");
+    } finally {
+      setUnlocking(null);
     }
   };
 
@@ -235,12 +252,16 @@ export default function LeadsPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <ResendButton
-                      sent={sentFor === lead.id}
-                      loading={resending === lead.id}
-                      hasToken={!!lead.activeInviteToken}
-                      onClick={() => handleResend(lead)}
-                    />
+                    {lead.factFindStatus === "submitted" ? (
+                      <UnlockButton loading={unlocking === lead.id} onClick={() => handleUnlock(lead)} />
+                    ) : (
+                      <ResendButton
+                        sent={sentFor === lead.id}
+                        loading={resending === lead.id}
+                        hasToken={!!lead.activeInviteToken}
+                        onClick={() => handleResend(lead)}
+                      />
+                    )}
                     <Link
                       href={`/broker/leads/${lead.id}`}
                       className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
@@ -293,12 +314,16 @@ export default function LeadsPage() {
                       <td className="px-6 py-4 text-sm text-slate-500">{formatDate(lead.createdAt)}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          <ResendButton
-                            sent={sentFor === lead.id}
-                            loading={resending === lead.id}
-                            hasToken={!!lead.activeInviteToken}
-                            onClick={() => handleResend(lead)}
-                          />
+                          {lead.factFindStatus === "submitted" ? (
+                            <UnlockButton loading={unlocking === lead.id} onClick={() => handleUnlock(lead)} />
+                          ) : (
+                            <ResendButton
+                              sent={sentFor === lead.id}
+                              loading={resending === lead.id}
+                              hasToken={!!lead.activeInviteToken}
+                              onClick={() => handleResend(lead)}
+                            />
+                          )}
                           <Link
                             href={`/broker/leads/${lead.id}`}
                             className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
@@ -342,6 +367,29 @@ function LeadStatusBadge({ lead }: { lead: Lead }) {
       <span className="material-symbols-outlined text-[11px]">person</span>
       New
     </span>
+  );
+}
+
+function UnlockButton({ loading, onClick }: { loading: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={loading}
+      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100 disabled:opacity-50 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
+    >
+      {loading ? (
+        <>
+          <span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+          Unlocking…
+        </>
+      ) : (
+        <>
+          <span className="material-symbols-outlined text-[14px]">lock_open</span>
+          Unlock
+        </>
+      )}
+    </button>
   );
 }
 
