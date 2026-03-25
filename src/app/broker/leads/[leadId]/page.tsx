@@ -87,7 +87,7 @@ function ReviewSection({
         <span className="material-symbols-outlined text-[20px] text-white">{icon}</span>
         <span className="font-bold text-white">{title}</span>
       </div>
-      <div className="p-5">{children}</div>
+      <div className="p-8 md:p-10">{children}</div>
     </div>
   );
 }
@@ -97,7 +97,7 @@ function KvRow({ label, value }: { label: string; value: React.ReactNode }) {
   const strVal = typeof value === "string" ? value.trim() : null;
   if (strVal === "" || strVal === null && typeof value !== "number") return null;
   return (
-    <div className="py-1.5">
+    <div className="py-2.5">
       <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{label}</p>
       <p className="mt-0.5 text-sm text-slate-900 dark:text-white">{value}</p>
     </div>
@@ -217,7 +217,7 @@ function FinancialSummary({ data }: { data: RawDoc }) {
       {metrics.map((m) => (
         <div
           key={m.label}
-          className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
         >
           <div className="mb-2 flex size-9 items-center justify-center rounded-lg bg-primary/10">
             <span className="material-symbols-outlined text-[20px] text-primary">{m.icon}</span>
@@ -959,47 +959,13 @@ export default function EditLeadPage() {
   const isSubmitted = rawDoc.factFindStatus === "submitted";
 
   const headerRight = (
-    <div className="flex items-center gap-3">
-      {isSubmitted ? (
-        <button
-          type="button"
-          onClick={handleUnlock}
-          disabled={unlocking}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100 disabled:opacity-50 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
-        >
-          {unlocking ? (
-            <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>Unlocking…</>
-          ) : (
-            <><span className="material-symbols-outlined text-[14px]">lock_open</span>Unlock</>
-          )}
-        </button>
-      ) : sentInvite ? (
-        <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
-          <span className="material-symbols-outlined text-[14px]">mark_email_read</span>
-          Sent
-        </span>
-      ) : (
-        <button
-          type="button"
-          onClick={handleResend}
-          disabled={resending}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
-        >
-          {resending ? (
-            <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>Sending…</>
-          ) : (
-            <><span className="material-symbols-outlined text-[14px]">send</span>{rawDoc.activeInviteToken ? "Resend Invitation" : "Send Invitation"}</>
-          )}
-        </button>
-      )}
-      <Link
-        href="/broker/leads"
-        className="flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-primary"
-      >
-        <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-        <span className="hidden sm:inline">Back to Leads</span>
-      </Link>
-    </div>
+    <Link
+      href="/broker/leads"
+      className="flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-primary"
+    >
+      <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+      <span className="hidden sm:inline">Back to Leads</span>
+    </Link>
   );
 
   // ── Not found ─────────────────────────────────────────────────────────────────
@@ -1037,21 +1003,96 @@ export default function EditLeadPage() {
         </div>
       )}
 
-      <div className="p-4 md:p-8">
+      <div className="p-6 md:p-10">
         <div className="mx-auto max-w-7xl">
 
-          {/* ── Page header with tabs ───────────────────────────────────────── */}
+          {/* ── Profile header ──────────────────────────────────────────────── */}
           <div className="mb-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div>
-                <h1 className="text-xl font-bold text-slate-900 dark:text-white">
-                  {fetchState === "loading" ? (
-                    <span className="inline-block h-6 w-40 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />
-                  ) : (
-                    form.fullName || "Lead Details"
-                  )}
-                </h1>
-                <p className="mt-0.5 text-sm text-slate-500">{form.email}</p>
+            <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+
+              {/* Left: avatar + info */}
+              <div className="flex items-start gap-4">
+                <div className="relative shrink-0">
+                  <div className="flex size-14 items-center justify-center rounded-full bg-primary text-xl font-bold text-white">
+                    {form.fullName ? form.fullName.charAt(0).toUpperCase() : "?"}
+                  </div>
+                  <span className="absolute bottom-0.5 right-0.5 size-3 rounded-full border-2 border-white bg-emerald-400 dark:border-slate-900" />
+                </div>
+                <div className="min-w-0">
+                  <h1 className="text-xl font-bold text-slate-900 dark:text-white sm:text-2xl">
+                    {fetchState === "loading" ? (
+                      <span className="inline-block h-7 w-48 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />
+                    ) : (
+                      form.fullName || "Lead Details"
+                    )}
+                  </h1>
+                  <div className="mt-1 flex flex-col gap-y-0.5 text-sm text-slate-500">
+                    {form.email && (
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">mail</span>
+                        {form.email}
+                      </span>
+                    )}
+                    {form.phone && (
+                      <span className="flex items-center gap-1">
+                        <span className="material-symbols-outlined text-[14px]">phone</span>
+                        {form.phone}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-1.5 text-xs text-slate-400">
+                    {isSubmitted ? "Fact Find Submitted" : rawDoc.activeInviteToken ? "Invitation Sent" : "New Lead"}
+                    {!!rawDoc.createdAt && (
+                      <> · Registered {(rawDoc.createdAt as Timestamp).toDate().toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* Right: action buttons */}
+              <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
+                {isSubmitted && (
+                  <button
+                    type="button"
+                    onClick={handleUnlock}
+                    disabled={unlocking}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100 disabled:opacity-50 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
+                  >
+                    {unlocking ? (
+                      <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>Unlocking…</>
+                    ) : (
+                      <><span className="material-symbols-outlined text-[14px]">lock_open</span>Unlock</>
+                    )}
+                  </button>
+                )}
+                {!isSubmitted && (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    disabled={resending}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                  >
+                    {resending ? (
+                      <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>Sending…</>
+                    ) : sentInvite ? (
+                      <><span className="material-symbols-outlined text-[14px]">mark_email_read</span>Sent</>
+                    ) : (
+                      <><span className="material-symbols-outlined text-[14px]">outgoing_mail</span>{rawDoc.activeInviteToken ? "Resend Invite" : "Send Invite"}</>
+                    )}
+                  </button>
+                )}
+                <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  <span className="material-symbols-outlined text-[14px]">mail</span>
+                  Send Email
+                </button>
+                <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  <span className="material-symbols-outlined text-[14px]">upload_file</span>
+                  Upload Document
+                </button>
+                <button type="button" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:bg-primary/90">
+                  <span className="material-symbols-outlined text-[14px]">note_add</span>
+                  New Application
+                </button>
               </div>
             </div>
 
@@ -1093,20 +1134,21 @@ export default function EditLeadPage() {
           {activeTab === "factfind" && isSubmitted ? (
             <FactFindReview data={rawDoc} />
           ) : (
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-
-              {/* Card header */}
-              <div className="border-b border-slate-100 p-5 dark:border-slate-800 md:p-6">
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <span className="material-symbols-outlined">edit</span>
-                  </div>
-                  <div>
-                    <h3 className="font-bold md:text-lg">Edit Lead</h3>
-                    <p className="text-xs text-slate-500">Update the details below. Saving won&apos;t affect any sent invitations.</p>
-                  </div>
+            <>
+              {/* Loan volume stat card */}
+              <div className="mb-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-slate-500">Total Loan Volume</p>
+                  <span className="material-symbols-outlined text-[22px] text-slate-300 dark:text-slate-600">payments</span>
                 </div>
+                <p className="mt-3 text-3xl font-bold text-slate-900 dark:text-white">
+                  {form.loanAmount
+                    ? `$${Number(form.loanAmount.replace(/,/g, "")).toLocaleString("en-AU")}`
+                    : "$0"}
+                </p>
               </div>
+
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
 
               {fetchState === "loading" ? (
                 <div className="flex items-center justify-center py-20">
@@ -1116,7 +1158,7 @@ export default function EditLeadPage() {
                 <form onSubmit={handleSave} noValidate>
 
                   {/* ── Section 1: Contact Details ──────────────────────────── */}
-                  <div className="space-y-5 p-5 md:p-6">
+                  <div className="space-y-5 p-8 md:p-10">
                     <div className="flex items-center justify-between">
                       <div className="flex cursor-default items-center gap-2">
                         <SectionBadge n={1} />
@@ -1216,7 +1258,7 @@ export default function EditLeadPage() {
                   </div>
 
                   {/* ── Section 2: Loan Details ─────────────────────────────── */}
-                  <div className="space-y-5 border-t border-slate-100 p-5 dark:border-slate-800 md:p-6">
+                  <div className="space-y-5 border-t border-slate-100 p-8 dark:border-slate-800 md:p-10">
                     <div className="flex cursor-default items-center gap-2">
                       <SectionBadge n={2} />
                       <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Loan Details</h4>
@@ -1293,7 +1335,7 @@ export default function EditLeadPage() {
                   </div>
 
                   {/* ── Section 3: Additional Details ──────────────────────── */}
-                  <div className="space-y-5 border-t border-slate-100 p-5 dark:border-slate-800 md:p-6">
+                  <div className="space-y-5 border-t border-slate-100 p-8 dark:border-slate-800 md:p-10">
                     <div className="flex cursor-default items-center gap-2">
                       <SectionBadge n={3} />
                       <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Additional Details</h4>
@@ -1344,6 +1386,7 @@ export default function EditLeadPage() {
                 </form>
               )}
             </div>
+          </>
           )}
         </div>
       </div>
