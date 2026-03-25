@@ -219,11 +219,11 @@ function FinancialSummary({ data }: { data: RawDoc }) {
           key={m.label}
           className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900"
         >
-          <div className="mb-2 flex size-9 items-center justify-center rounded-lg bg-primary/10">
-            <span className="material-symbols-outlined text-[20px] text-primary">{m.icon}</span>
+          <div className="mb-2 flex items-start justify-between">
+            <p className="text-xs text-slate-500">{m.label}</p>
+            <span className="material-symbols-outlined text-[11px] text-slate-500">{m.icon}</span>
           </div>
           <p className="text-lg font-bold text-slate-900 dark:text-white">{formatCurrency(m.value)}</p>
-          <p className="mt-0.5 text-xs text-slate-500">{m.label}</p>
         </div>
       ))}
     </div>
