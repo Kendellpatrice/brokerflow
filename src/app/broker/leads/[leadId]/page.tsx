@@ -5,7 +5,9 @@ import { useRouter, useParams } from "next/navigation";
 import Link from "next/link";
 import { BrokerShell } from "@/components/BrokerShell";
 import { db } from "@/lib/firestore";
-import { doc, getDoc, updateDoc, serverTimestamp, Timestamp } from "firebase/firestore";
+import { doc, getDoc, updateDoc, deleteField, serverTimestamp, Timestamp } from "firebase/firestore";
+import { useAuth } from "@/context/auth";
+import { createAndSendInvite } from "@/lib/invite";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -782,6 +784,7 @@ function FactFindReview({ data }: { data: RawDoc }) {
 
 export default function EditLeadPage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { user } = useAuth();
   const router = useRouter();
   const params = useParams<{ leadId: string }>();
   const leadId = params.leadId;
@@ -804,6 +807,9 @@ export default function EditLeadPage() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [activeTab, setActiveTab] = useState<"details" | "factfind">("details");
+  const [resending, setResending] = useState(false);
+  const [sentInvite, setSentInvite] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
 
   // ── Load existing lead data ──────────────────────────────────────────────────
 
@@ -878,6 +884,45 @@ export default function EditLeadPage() {
     return next;
   };
 
+  // ── Invite actions ────────────────────────────────────────────────────────────
+
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      await createAndSendInvite({
+        brokerId: user?.uid,
+        leadId,
+        leadName: rawDoc.fullName as string,
+        leadEmail: rawDoc.email as string,
+        leadRef: rawDoc.ref as string | undefined,
+        previousToken: rawDoc.activeInviteToken as string | undefined,
+      });
+      setRawDoc((prev) => ({ ...prev, activeInviteToken: "sent" }));
+      setSentInvite(true);
+      setTimeout(() => setSentInvite(false), 3000);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to send invitation.");
+    } finally {
+      setResending(false);
+    }
+  };
+
+  const handleUnlock = async () => {
+    setUnlocking(true);
+    try {
+      await updateDoc(doc(db, "brokerLeads", leadId), { factFindStatus: deleteField() });
+      setRawDoc((prev) => {
+        const next = { ...prev };
+        delete next.factFindStatus;
+        return next;
+      });
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to unlock fact find.");
+    } finally {
+      setUnlocking(false);
+    }
+  };
+
   // ── Save ──────────────────────────────────────────────────────────────────────
 
   const handleSave = async (e: React.FormEvent) => {
@@ -911,21 +956,57 @@ export default function EditLeadPage() {
 
   // ── Header ────────────────────────────────────────────────────────────────────
 
+  const isSubmitted = rawDoc.factFindStatus === "submitted";
+
   const headerRight = (
-    <Link
-      href="/broker/leads"
-      className="flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-primary"
-    >
-      <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-      <span className="hidden sm:inline">Back to Leads</span>
-    </Link>
+    <div className="flex items-center gap-3">
+      {isSubmitted ? (
+        <button
+          type="button"
+          onClick={handleUnlock}
+          disabled={unlocking}
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100 disabled:opacity-50 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
+        >
+          {unlocking ? (
+            <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>Unlocking…</>
+          ) : (
+            <><span className="material-symbols-outlined text-[14px]">lock_open</span>Unlock</>
+          )}
+        </button>
+      ) : sentInvite ? (
+        <span className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400">
+          <span className="material-symbols-outlined text-[14px]">mark_email_read</span>
+          Sent
+        </span>
+      ) : (
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resending}
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+        >
+          {resending ? (
+            <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>Sending…</>
+          ) : (
+            <><span className="material-symbols-outlined text-[14px]">send</span>{rawDoc.activeInviteToken ? "Resend Invitation" : "Send Invitation"}</>
+          )}
+        </button>
+      )}
+      <Link
+        href="/broker/leads"
+        className="flex items-center gap-1.5 text-sm font-medium text-slate-500 transition hover:text-primary"
+      >
+        <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+        <span className="hidden sm:inline">Back to Leads</span>
+      </Link>
+    </div>
   );
 
   // ── Not found ─────────────────────────────────────────────────────────────────
 
   if (fetchState === "notfound") {
     return (
-      <BrokerShell title="Edit Lead" headerRight={headerRight}>
+      <BrokerShell title="Edit Lead" activeHref="/broker/leads" headerRight={headerRight}>
         <div className="flex flex-col items-center justify-center gap-4 py-24 text-center">
           <div className="flex size-14 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
             <span className="material-symbols-outlined text-[28px] text-slate-400">person_off</span>
@@ -945,10 +1026,8 @@ export default function EditLeadPage() {
     );
   }
 
-  const isSubmitted = rawDoc.factFindStatus === "submitted";
-
   return (
-    <BrokerShell title="Lead Details" headerRight={headerRight}>
+    <BrokerShell title="Lead Details" activeHref="/broker/leads" headerRight={headerRight}>
 
       {/* Success toast */}
       {saved && (
@@ -959,7 +1038,7 @@ export default function EditLeadPage() {
       )}
 
       <div className="p-4 md:p-8">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-7xl">
 
           {/* ── Page header with tabs ───────────────────────────────────────── */}
           <div className="mb-6">
