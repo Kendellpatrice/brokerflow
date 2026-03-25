@@ -116,6 +116,56 @@ export default function LeadsPage() {
 
   const [statusFilter, setStatusFilter] = useState("");
   const [loanTypeFilter, setLoanTypeFilter] = useState("");
+  const [dateRangeFilter, setDateRangeFilter] = useState("");
+
+  const filteredLeads = leads.filter((lead) => {
+    if (loanTypeFilter && lead.loanPurpose !== loanTypeFilter) return false;
+    if (statusFilter === "submitted") { if (lead.factFindStatus !== "submitted") return false; }
+    else if (statusFilter === "invited") { if (!lead.activeInviteToken || lead.factFindStatus === "submitted") return false; }
+    else if (statusFilter === "new") { if (lead.activeInviteToken || lead.factFindStatus === "submitted") return false; }
+    if (dateRangeFilter && lead.createdAt) {
+      const created = lead.createdAt.toDate();
+      const now = new Date();
+      let cutoff: Date;
+      switch (dateRangeFilter) {
+        case "today": {
+          cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          break;
+        }
+        case "yesterday": {
+          cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+          const end = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          if (created < cutoff || created >= end) return false;
+          return true;
+        }
+        case "7d":
+          cutoff = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          break;
+        case "30d":
+          cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          break;
+        case "90d":
+          cutoff = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+          break;
+        case "this_month":
+          cutoff = new Date(now.getFullYear(), now.getMonth(), 1);
+          break;
+        case "last_month": {
+          const firstOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+          cutoff = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+          if (created < cutoff || created >= firstOfThisMonth) return false;
+          return true;
+        }
+        case "this_year":
+          cutoff = new Date(now.getFullYear(), 0, 1);
+          break;
+        default:
+          cutoff = new Date(0);
+      }
+      if (created < cutoff) return false;
+    }
+    return true;
+  });
 
   return (
     <BrokerShell title="Leads" activeHref="/broker/leads" headerRight={headerRight}>
@@ -127,7 +177,10 @@ export default function LeadsPage() {
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Leads</h1>
             {!loading && (
               <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
-                You have <span className="font-bold text-slate-700 dark:text-slate-200">{leads.length}</span> active lead{leads.length !== 1 ? "s" : ""} in your portfolio.
+                {filteredLeads.length < leads.length
+                  ? <><span className="font-bold text-slate-700 dark:text-slate-200">{filteredLeads.length}</span> of <span className="font-bold text-slate-700 dark:text-slate-200">{leads.length}</span> leads</>
+                  : <><span className="font-bold text-slate-700 dark:text-slate-200">{leads.length}</span> active lead{leads.length !== 1 ? "s" : ""} in your portfolio.</>
+                }
               </p>
             )}
           </div>
@@ -180,11 +233,25 @@ export default function LeadsPage() {
               </div>
             </div>
             <div>
-              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Date Range</p>
-              <button className="flex w-full items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                <span className="material-symbols-outlined text-[16px] text-slate-400">calendar_today</span>
-                Last 30 Days
-              </button>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Date Added</p>
+              <div className="relative">
+                <select
+                  value={dateRangeFilter}
+                  onChange={(e) => setDateRangeFilter(e.target.value)}
+                  className="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-3 pr-8 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                >
+                  <option value="">All Time</option>
+                  <option value="today">Today</option>
+                  <option value="yesterday">Yesterday</option>
+                  <option value="7d">Last 7 Days</option>
+                  <option value="30d">Last 30 Days</option>
+                  <option value="90d">Last 90 Days</option>
+                  <option value="this_month">This Month</option>
+                  <option value="last_month">Last Month</option>
+                  <option value="this_year">This Year</option>
+                </select>
+                <span className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">expand_more</span>
+              </div>
             </div>
           </div>
         </div>
@@ -214,7 +281,15 @@ export default function LeadsPage() {
           <>
             {/* Mobile: card list */}
             <div className="flex flex-col gap-3 sm:hidden">
-              {leads.map((lead) => (
+              {filteredLeads.length === 0 ? (
+                <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
+                  <span className="material-symbols-outlined text-[32px] text-slate-300">search_off</span>
+                  <p className="text-sm font-semibold text-slate-500">No leads match your filters.</p>
+                  <button onClick={() => { setStatusFilter(""); setLoanTypeFilter(""); setDateRangeFilter(""); }} className="text-xs font-semibold text-primary hover:underline">
+                    Clear filters
+                  </button>
+                </div>
+              ) : filteredLeads.map((lead) => (
                 <div
                   key={lead.id}
                   className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
@@ -289,7 +364,19 @@ export default function LeadsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                  {leads.map((lead) => (
+                  {filteredLeads.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-6 py-16 text-center">
+                        <div className="flex flex-col items-center gap-2">
+                          <span className="material-symbols-outlined text-[32px] text-slate-300">search_off</span>
+                          <p className="text-sm font-semibold text-slate-500">No leads match your filters.</p>
+                          <button onClick={() => { setStatusFilter(""); setLoanTypeFilter(""); setDateRangeFilter(""); }} className="text-xs font-semibold text-primary hover:underline">
+                            Clear filters
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : filteredLeads.map((lead) => (
                     <tr key={lead.id} className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
                       <td className="px-6 py-4">
                         <p className="font-semibold text-slate-900 dark:text-white">{lead.fullName}</p>
