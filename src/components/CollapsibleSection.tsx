@@ -23,10 +23,12 @@ export function CollapsibleSection({
 
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden dark:bg-slate-800 dark:border-slate-700 shadow-sm">
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setIsOpen((prev) => !prev)}
-        className="w-full flex items-center justify-between px-4 sm:px-6 py-4 bg-primary hover:bg-primary/90 transition-colors text-left group"
+        onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setIsOpen((prev) => !prev)}
+        className="w-full flex items-center justify-between px-4 sm:px-6 py-4 bg-primary hover:bg-primary/90 transition-colors text-left group cursor-pointer select-none"
         aria-expanded={isOpen}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -52,7 +54,7 @@ export function CollapsibleSection({
             expand_more
           </span>
         </div>
-      </button>
+      </div>
 
       <div
         className={`transition-all duration-300 ease-in-out overflow-hidden ${

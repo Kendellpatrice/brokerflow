@@ -4,6 +4,7 @@ import { PageShell } from "@/components/PageShell";
 import { ApplicantTabs, CompletionStatus } from "@/components/ApplicantTabs";
 import { useApplicants } from "@/context/applicants";
 import { useAuth } from "@/context/auth";
+import { useFactFindStatus } from "@/context/factFindStatus";
 import { saveLeadData, loadLeadData } from "@/lib/firestore";
 import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
@@ -70,6 +71,7 @@ const inputCls = "rounded border-slate-300 dark:bg-slate-800 dark:border-slate-7
 export default function PersonalDetailsPage() {
   const { applicants } = useApplicants();
   const { user } = useAuth();
+  const { isSubmitted } = useFactFindStatus();
   const router = useRouter();
   const [activeId, setActiveId]   = useState(() => applicants[0]?.id ?? "");
   const [formData, setFormData]   = useState<Record<string, PersonalData>>({});
@@ -112,6 +114,7 @@ export default function PersonalDetailsPage() {
   }, [user, applicants]);
 
   const handleSave = useCallback(async (nextPath?: string) => {
+    if (isSubmitted) { if (nextPath) router.push(nextPath); return; }
     if (!user) { if (nextPath) router.push(nextPath); return; }
     setIsSaving(true);
     try {
@@ -120,7 +123,7 @@ export default function PersonalDetailsPage() {
     } finally {
       setIsSaving(false);
     }
-  }, [user, formData, router]);
+  }, [user, formData, router, isSubmitted]);
 
   const getData = (id: string): PersonalData => ({ ...BLANK, ...formData[id] });
   const setField = (id: string, field: keyof PersonalData, value: string) =>
@@ -390,11 +393,12 @@ export default function PersonalDetailsPage() {
       {/* Navigation */}
       {/* Mobile */}
       <div className="sticky bottom-0 z-10 mt-6 flex flex-col gap-3 bg-background-light py-4 dark:bg-background-dark md:hidden">
-        <button type="button" onClick={() => handleSave("/employment-income")} disabled={isSaving}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90 disabled:opacity-60">
+        <Link href="/employment-income"
+          onClick={!isSubmitted ? (e) => { e.preventDefault(); handleSave("/employment-income"); } : undefined}
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-primary/90">
           {isSaving ? "Saving…" : "Next: Employment & Income"}
           <span className="material-symbols-outlined text-[20px]">chevron_right</span>
-        </button>
+        </Link>
         <div className="grid grid-cols-2 gap-3">
           <Link href="/applicants" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
             Previous Step
@@ -416,11 +420,12 @@ export default function PersonalDetailsPage() {
             className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400 disabled:opacity-60">
             {isSaving ? "Saving…" : "Save Draft"}
           </button>
-          <button type="button" onClick={() => handleSave("/employment-income")} disabled={isSaving}
-            className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90 disabled:opacity-60">
+          <Link href="/employment-income"
+            onClick={!isSubmitted ? (e) => { e.preventDefault(); handleSave("/employment-income"); } : undefined}
+            className="flex items-center gap-2 rounded-lg bg-primary px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-primary/90">
             {isSaving ? "Saving…" : "Next Step"}
             <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
-          </button>
+          </Link>
         </div>
       </div>
 

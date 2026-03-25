@@ -295,10 +295,10 @@ export default function LeadsPage() {
                   className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
                 >
                   <div className="mb-3 flex items-start justify-between gap-2">
-                    <div>
-                      <p className="font-semibold text-slate-900 dark:text-white">{lead.fullName}</p>
-                      <p className="text-xs text-slate-500">{lead.email}</p>
-                    </div>
+                    <Link href={"/broker/leads/" + lead.id} className="group min-w-0">
+                      <p className="font-semibold text-slate-900 group-hover:text-primary dark:text-white">{lead.fullName}</p>
+                      <p className="text-xs text-slate-500 group-hover:text-primary/70">{lead.email}</p>
+                    </Link>
                     <div className="flex shrink-0 flex-col items-end gap-1.5">
                       {lead.loanPurpose && (
                         <span className={`rounded px-2 py-0.5 text-xs font-bold ${LOAN_PURPOSE_STYLES[lead.loanPurpose] ?? "bg-slate-100 text-slate-700"}`}>
@@ -379,8 +379,10 @@ export default function LeadsPage() {
                   ) : filteredLeads.map((lead) => (
                     <tr key={lead.id} className="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/30">
                       <td className="px-6 py-4">
-                        <p className="font-semibold text-slate-900 dark:text-white">{lead.fullName}</p>
-                        <p className="text-xs text-slate-500">{lead.email}</p>
+                        <Link href={"/broker/leads/" + lead.id} className="group block">
+                          <p className="font-semibold text-slate-900 group-hover:text-primary dark:text-white">{lead.fullName}</p>
+                          <p className="text-xs text-slate-500 group-hover:text-primary/70">{lead.email}</p>
+                        </Link>
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{lead.phone || "—"}</td>
                       <td className="px-6 py-4">
