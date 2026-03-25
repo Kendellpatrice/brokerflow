@@ -18,6 +18,7 @@ interface Lead {
   createdAt: Timestamp | null;
   activeInviteToken?: string;
   ref?: string;
+  factFindStatus?: string;
 }
 
 const LOAN_PURPOSE_LABELS: Record<string, string> = {
@@ -25,6 +26,13 @@ const LOAN_PURPOSE_LABELS: Record<string, string> = {
   refinance: "Refinance",
   equity_release: "Equity Release",
   other: "Other",
+};
+
+const LOAN_PURPOSE_STYLES: Record<string, string> = {
+  purchase: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
+  refinance: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
+  equity_release: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300",
+  other: "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300",
 };
 
 function formatDate(ts: Timestamp | null) {
@@ -128,11 +136,14 @@ export default function LeadsPage() {
                       <p className="font-semibold text-slate-900 dark:text-white">{lead.fullName}</p>
                       <p className="text-xs text-slate-500">{lead.email}</p>
                     </div>
-                    {lead.loanPurpose && (
-                      <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary">
-                        {LOAN_PURPOSE_LABELS[lead.loanPurpose] ?? lead.loanPurpose}
-                      </span>
-                    )}
+                    <div className="flex shrink-0 flex-col items-end gap-1.5">
+                      {lead.loanPurpose && (
+                        <span className={`rounded px-2 py-0.5 text-xs font-bold ${LOAN_PURPOSE_STYLES[lead.loanPurpose] ?? "bg-slate-100 text-slate-700"}`}>
+                          {LOAN_PURPOSE_LABELS[lead.loanPurpose] ?? lead.loanPurpose}
+                        </span>
+                      )}
+                      <LeadStatusBadge lead={lead} />
+                    </div>
                   </div>
                   <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
                     {lead.phone && (
@@ -180,6 +191,7 @@ export default function LeadsPage() {
                     <th className="px-6 py-3">Phone</th>
                     <th className="px-6 py-3">Loan Purpose</th>
                     <th className="px-6 py-3">Amount</th>
+                    <th className="px-6 py-3">Status</th>
                     <th className="px-6 py-3">Added</th>
                     <th className="px-6 py-3 text-right">Actions</th>
                   </tr>
@@ -194,7 +206,7 @@ export default function LeadsPage() {
                       <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">{lead.phone || "—"}</td>
                       <td className="px-6 py-4">
                         {lead.loanPurpose ? (
-                          <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                          <span className={`rounded px-2 py-0.5 text-xs font-bold ${LOAN_PURPOSE_STYLES[lead.loanPurpose] ?? "bg-slate-100 text-slate-700"}`}>
                             {LOAN_PURPOSE_LABELS[lead.loanPurpose] ?? lead.loanPurpose}
                           </span>
                         ) : (
@@ -203,6 +215,9 @@ export default function LeadsPage() {
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400">
                         {lead.loanAmount ? `$${lead.loanAmount}` : "—"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <LeadStatusBadge lead={lead} />
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-500">{formatDate(lead.createdAt)}</td>
                       <td className="px-6 py-4">
@@ -231,6 +246,31 @@ export default function LeadsPage() {
         )}
       </div>
     </BrokerShell>
+  );
+}
+
+function LeadStatusBadge({ lead }: { lead: Lead }) {
+  if (lead.factFindStatus === "submitted") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-bold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+        <span className="material-symbols-outlined text-[11px]">task_alt</span>
+        Submitted
+      </span>
+    );
+  }
+  if (lead.activeInviteToken) {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-bold text-primary dark:bg-primary/20">
+        <span className="material-symbols-outlined text-[11px]">outgoing_mail</span>
+        Invited
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+      <span className="material-symbols-outlined text-[11px]">person</span>
+      New
+    </span>
   );
 }
 

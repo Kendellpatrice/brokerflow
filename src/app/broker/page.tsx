@@ -68,6 +68,7 @@ function timeAgo(ts: Timestamp | null): string {
 const ACTIVITY_META: Record<ActivityType, { icon: string; iconBg: string; label: string }> = {
   lead_created: { icon: "person_add", iconBg: "bg-slate-100 text-slate-600", label: "New lead added" },
   invite_sent: { icon: "outgoing_mail", iconBg: "bg-blue-100 text-blue-600", label: "Invitation sent to" },
+  fact_find_submitted: { icon: "task_alt", iconBg: "bg-emerald-100 text-emerald-600", label: "Fact Find submitted by" },
 };
 
 export default function BrokerPortalPage() {

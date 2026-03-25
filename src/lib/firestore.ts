@@ -6,6 +6,10 @@ export const db = getFirestore(app);
 // Cached after the first load so saves don't need an extra query
 let cachedLeadId: string | null = null;
 
+export function getCachedLeadId(): string | null {
+  return cachedLeadId;
+}
+
 export async function loadLeadData(email: string) {
   const snap = await getDocs(
     query(collection(db, 'brokerLeads'), where('email', '==', email))

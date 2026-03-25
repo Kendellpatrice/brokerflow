@@ -7,6 +7,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth";
 import { saveLeadData, loadLeadData } from "@/lib/firestore";
+import { useFactFindStatus } from "@/context/factFindStatus";
 
 // ── Expense definitions (matches the fact-find form exactly) ─────────────
 interface ExpenseDef {
@@ -166,6 +167,7 @@ export default function LivingExpensesPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const { isSubmitted, submit } = useFactFindStatus();
 
   useEffect(() => {
     if (!user) return;
@@ -284,16 +286,16 @@ export default function LivingExpensesPage() {
       {/* ── Navigation ──────────────────────────────────────────────────── */}
       {/* Mobile */}
       <div className="sticky bottom-0 z-10 mt-6 flex flex-col gap-3 bg-background-light py-4 dark:bg-background-dark md:hidden">
-        <button type="button" onClick={() => handleSave()} disabled={isSaving}
+        <button type="button" onClick={async () => { await handleSave(); await submit(); }} disabled={isSaving || isSubmitted}
           className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-600 px-6 py-4 text-base font-bold text-white shadow-lg transition-colors hover:bg-emerald-700 disabled:opacity-60">
-          <span className="material-symbols-outlined text-[20px]">check_circle</span>
-          {isSaving ? "Saving…" : "Submit Fact Find"}
+          <span className="material-symbols-outlined text-[20px]">{isSubmitted ? "task_alt" : "check_circle"}</span>
+          {isSubmitted ? "Submitted" : isSaving ? "Saving…" : "Submit Fact Find"}
         </button>
         <div className="grid grid-cols-2 gap-3">
           <Link href="/liabilities" className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
             Previous Step
           </Link>
-          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+          <button type="button" onClick={() => handleSave()} disabled={isSaving || isSubmitted}
             className="flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-3.5 font-bold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 disabled:opacity-60">
             {isSaving ? "Saving…" : "Save Draft"}
           </button>
@@ -309,14 +311,14 @@ export default function LivingExpensesPage() {
           Back
         </Link>
         <div className="flex items-center gap-6">
-          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+          <button type="button" onClick={() => handleSave()} disabled={isSaving || isSubmitted}
             className="text-slate-500 font-semibold cursor-pointer hover:text-primary transition-colors dark:text-slate-400 disabled:opacity-60">
             {isSaving ? "Saving…" : "Save Draft"}
           </button>
-          <button type="button" onClick={() => handleSave()} disabled={isSaving}
+          <button type="button" onClick={async () => { await handleSave(); await submit(); }} disabled={isSaving || isSubmitted}
             className="flex items-center gap-2 rounded-lg bg-emerald-600 px-10 py-3 font-bold text-white shadow-lg transition-shadow hover:bg-emerald-700 disabled:opacity-60">
-            <span className="material-symbols-outlined text-[20px]">check_circle</span>
-            {isSaving ? "Saving…" : "Submit Fact Find"}
+            <span className="material-symbols-outlined text-[20px]">{isSubmitted ? "task_alt" : "check_circle"}</span>
+            {isSubmitted ? "Submitted" : isSaving ? "Saving…" : "Submit Fact Find"}
           </button>
         </div>
       </div>

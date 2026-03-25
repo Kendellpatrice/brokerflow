@@ -1,15 +1,30 @@
+"use client";
+
 import { ReactNode } from "react";
 import { SidebarNav } from "./SidebarNav";
 import { AppHeader } from "./AppHeader";
+import { useFactFindStatus } from "@/context/factFindStatus";
 
 export function PageShell({ children }: { children: ReactNode }) {
+  const { isSubmitted } = useFactFindStatus();
+
   return (
     <div className="relative flex min-h-screen w-full flex-col overflow-x-clip">
       <AppHeader />
       <main className="flex w-full grow flex-col md:flex-row">
         <SidebarNav />
         <section className="flex-1 overflow-y-auto bg-background-light p-6 dark:bg-background-dark md:p-12">
-          <div className="mx-auto max-w-5xl">{children}</div>
+          {isSubmitted && (
+            <div className="mx-auto mb-6 max-w-5xl flex items-center gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 dark:border-emerald-800 dark:bg-emerald-900/20">
+              <span className="material-symbols-outlined shrink-0 text-[20px] text-emerald-600">check_circle</span>
+              <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+                Your Fact Find has been submitted. This form is now read-only.
+              </p>
+            </div>
+          )}
+          <fieldset disabled={isSubmitted} className="m-0 min-w-0 border-0 p-0">
+            <div className="mx-auto max-w-5xl">{children}</div>
+          </fieldset>
         </section>
       </main>
       <button

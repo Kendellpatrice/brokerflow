@@ -26,6 +26,8 @@ interface PipelineCard {
   lvr?: string;
   highlight?: boolean;
   footer: CardFooter;
+  factFindSubmitted?: boolean;
+  inviteSent?: boolean;
 }
 
 interface Column {
@@ -209,8 +211,21 @@ function KanbanCard({ card }: { card: PipelineCard }) {
         )}
       </div>
 
-      {/* Client name */}
-      <h4 className="mb-1 font-bold text-slate-900 dark:text-white">{card.client}</h4>
+      {/* Client name + status badge */}
+      <div className="mb-1 flex flex-wrap items-center gap-1.5">
+        <h4 className="font-bold text-slate-900 dark:text-white">{card.client}</h4>
+        {card.factFindSubmitted ? (
+          <span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-100 px-1.5 py-0.5 text-[9px] font-bold text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+            <span className="material-symbols-outlined text-[10px]">task_alt</span>
+            Submitted
+          </span>
+        ) : card.inviteSent ? (
+          <span className="inline-flex items-center gap-0.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary dark:bg-primary/20">
+            <span className="material-symbols-outlined text-[10px]">outgoing_mail</span>
+            Invited
+          </span>
+        ) : null}
+      </div>
 
       {/* Amount + LVR */}
       {(card.amount || card.lvr) && (
@@ -309,6 +324,8 @@ export default function PipelinePage() {
               loanType,
               client: data.fullName as string,
               amount: data.loanAmount ? `$${data.loanAmount}` : undefined,
+              inviteSent: !!data.activeInviteToken,
+              factFindSubmitted: data.factFindStatus === "submitted",
               footer: {
                 type: "timestamp" as const,
                 text: createdAt ? `Added ${timeAgo(createdAt)}` : "Just added",

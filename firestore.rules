@@ -13,10 +13,11 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
 
-    // Activity log — broker can create and read their own entries
+    // Activity log — broker can read their own entries; any authenticated user can create
+    // (leads submit fact_find_submitted events on behalf of their broker)
     match /brokerActivity/{entryId} {
       allow read: if request.auth != null && request.auth.uid == resource.data.brokerId;
-      allow create: if request.auth != null && request.auth.uid == request.resource.data.brokerId;
+      allow create: if request.auth != null;
     }
 
     // Broker-created leads — broker has full access; client can read/update their own
