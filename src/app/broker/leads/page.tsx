@@ -97,9 +97,80 @@ export default function LeadsPage() {
     </Link>
   );
 
+  const [statusFilter, setStatusFilter] = useState("");
+  const [loanTypeFilter, setLoanTypeFilter] = useState("");
+
   return (
     <BrokerShell title="Leads" activeHref="/broker/leads" headerRight={headerRight}>
       <div className="p-4 md:p-8">
+
+        {/* Page header */}
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Leads</h1>
+            {!loading && (
+              <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">
+                You have <span className="font-bold text-slate-700 dark:text-slate-200">{leads.length}</span> active lead{leads.length !== 1 ? "s" : ""} in your portfolio.
+              </p>
+            )}
+          </div>
+          <div className="flex shrink-0 gap-2">
+            <button className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+              <span className="material-symbols-outlined text-[18px]">download</span>
+              Export CSV
+            </button>
+            <button className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700">
+              <span className="material-symbols-outlined text-[18px]">filter_list</span>
+              Bulk Actions
+            </button>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Status</p>
+              <div className="relative">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-3 pr-8 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                >
+                  <option value="">All Statuses</option>
+                  <option value="new">New</option>
+                  <option value="invited">Invited</option>
+                  <option value="submitted">Submitted</option>
+                </select>
+                <span className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">expand_more</span>
+              </div>
+            </div>
+            <div>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Loan Type</p>
+              <div className="relative">
+                <select
+                  value={loanTypeFilter}
+                  onChange={(e) => setLoanTypeFilter(e.target.value)}
+                  className="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2.5 pl-3 pr-8 text-sm font-medium text-slate-700 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                >
+                  <option value="">All Types</option>
+                  <option value="purchase">Purchase</option>
+                  <option value="refinance">Refinance</option>
+                  <option value="equity_release">Equity Release</option>
+                  <option value="other">Other</option>
+                </select>
+                <span className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-slate-400">expand_more</span>
+              </div>
+            </div>
+            <div>
+              <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Date Range</p>
+              <button className="flex w-full items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                <span className="material-symbols-outlined text-[16px] text-slate-400">calendar_today</span>
+                Last 30 Days
+              </button>
+            </div>
+          </div>
+        </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-24 text-slate-400">
