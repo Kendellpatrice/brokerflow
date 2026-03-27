@@ -3,13 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { useLeadData } from "@/context/lead";
 
 export function SidebarNav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { leadData } = useLeadData();
-  const leadRef = leadData?.ref as string | undefined;
 
   const navItems = [
     { href: "/", icon: "info", label: "Introduction" },
@@ -130,7 +127,6 @@ export function SidebarNav() {
             <h1 className="text-base font-bold text-primary dark:text-slate-100">
               Fact Find Form
             </h1>
-            {leadRef && <p className="text-xs text-slate-500">Ref: {leadRef}</p>}
           </div>
         </div>
       </div>

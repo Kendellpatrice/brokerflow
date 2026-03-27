@@ -1,35 +1,18 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { useAuth } from "@/context/auth";
-import { loadLeadData } from "@/lib/firestore";
+import { createContext, useContext, ReactNode } from "react";
+
+type LeadData = Record<string, unknown>;
 
 interface LeadContextValue {
-  leadData: Record<string, unknown> | null;
-  loading: boolean;
+  leadData: LeadData;
 }
 
-const LeadContext = createContext<LeadContextValue>({ leadData: null, loading: true });
+const LeadContext = createContext<LeadContextValue>({ leadData: {} });
 
-export function LeadProvider({ children }: { children: ReactNode }) {
-  const { user, loading: authLoading } = useAuth();
-  const [leadData, setLeadData] = useState<Record<string, unknown> | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    loadLeadData(user.uid).then((data) => {
-      setLeadData(data);
-      setLoading(false);
-    });
-  }, [user, authLoading]);
-
+export function LeadProvider({ children, initialData }: { children: ReactNode; initialData: LeadData }) {
   return (
-    <LeadContext.Provider value={{ leadData, loading }}>
+    <LeadContext.Provider value={{ leadData: initialData }}>
       {children}
     </LeadContext.Provider>
   );

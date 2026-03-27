@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
 
     const response = NextResponse.json({ success: true, role });
     response.cookies.set("session", role, sessionCookieOpts);
+    response.cookies.set("uid", decoded.uid, sessionCookieOpts);
 
     // For client users, also set a readable leadRef cookie so the Fact Find Form
     // sidebar can display the ref immediately on render without waiting for Firestore.

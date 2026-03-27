@@ -16,9 +16,16 @@ export function proxy(request: NextRequest) {
   }
 
   if (session && isLoginPage) {
-    const url = request.nextUrl.clone();
-    url.pathname = session.value === "broker" ? "/broker" : "/";
-    return NextResponse.redirect(url);
+    const isBroker = session.value === "broker";
+    const hasUid = request.cookies.has("uid");
+    // For client sessions, only redirect away from login if uid cookie is also present.
+    // If uid is missing (e.g. expired or stale session), let them re-authenticate
+    // rather than bouncing between /login and the fact-find layout redirect.
+    if (isBroker || hasUid) {
+      const url = request.nextUrl.clone();
+      url.pathname = isBroker ? "/broker" : "/";
+      return NextResponse.redirect(url);
+    }
   }
 
   return NextResponse.next();

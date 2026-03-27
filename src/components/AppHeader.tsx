@@ -1,6 +1,11 @@
-/* eslint-disable @next/next/no-img-element */
+"use client";
+
+import { useLeadData } from "@/context/lead";
 
 export function AppHeader() {
+  const { leadData } = useLeadData();
+  const leadRef = leadData?.ref as string | undefined;
+
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between border-b border-primary/10 bg-white px-6 py-4 dark:bg-background-dark md:px-20">
       <div className="flex items-center gap-3">
@@ -21,18 +26,11 @@ export function AppHeader() {
           uBroker
         </h2>
       </div>
-      <div className="flex items-center gap-4">
+      {leadRef && (
         <span className="hidden text-sm font-medium text-slate-600 dark:text-slate-400 md:block">
-          Client: James &amp; Sarah Smith
+          Ref: {leadRef}
         </span>
-        <div className="flex size-10 items-center justify-center overflow-hidden rounded-full border border-primary/20 bg-primary/10">
-          <img
-            alt="Profile"
-            className="h-full w-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVTiH53nUWx2K08UJP04ET2KL0-kTlCzir8zZw3rNoV69RM2CUxestGhNa4A5ahcP819A5L4vFfKg1v6kPO58N0txgYEZ4mzHT4Tz_enrMUAug9t35ueraB-RtasfUOl7vHSF14QreLtZAfPIuEiwXikpuOGca7aU-qopaMCx8qOHXO_c3ancY66m-_tAwyDNZIfHP7hNypGTPsJ6lEUZDplwTXA8MVYXQao1Ifc7RiGm8_9ekTjbeGNlwtVzGCiF6fZ1_CajXQYRZ"
-          />
-        </div>
-      </div>
+      )}
     </header>
   );
 }
