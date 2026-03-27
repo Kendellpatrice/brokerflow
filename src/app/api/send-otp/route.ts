@@ -1,31 +1,77 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { db } from "@/lib/firestore";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { getAdminDb } from "@/lib/firebase-admin";
+import { FieldValue } from "firebase-admin/firestore";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_EMAIL_LENGTH = 254;
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000; // 5 minutes
 
 function generateOtp(): string {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-export async function POST(req: NextRequest) {
+function validateOrigin(req: NextRequest): boolean {
+  const origin = req.headers.get("origin");
+  const host = req.headers.get("host");
+  if (!origin) return process.env.NODE_ENV !== "production";
+  if (!host) return false;
   try {
-    const { email } = await req.json();
+    return new URL(origin).host === host;
+  } catch {
+    return false;
+  }
+}
 
-    if (!email || !email.includes("@")) {
+export async function POST(req: NextRequest) {
+  if (!validateOrigin(req)) {
+    return NextResponse.json({ error: "Forbidden." }, { status: 403 });
+  }
+
+  try {
+    const body = await req.json();
+    const email = typeof body?.email === "string" ? body.email.trim().toLowerCase() : "";
+
+    if (!email || email.length > MAX_EMAIL_LENGTH || !EMAIL_REGEX.test(email)) {
       return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
     }
 
-    const code = generateOtp();
-    const expiresAt = Timestamp.fromDate(new Date(Date.now() + 10 * 60 * 1000)); // 10 min
+    const db = getAdminDb();
+    const now = Date.now();
 
-    try {
-      await setDoc(doc(db, "otpCodes", email), { code, expiresAt, used: false });
-    } catch (firestoreErr) {
-      console.error("[send-otp] Firestore error:", firestoreErr);
-      return NextResponse.json({ error: "Failed to store verification code. Please try again." }, { status: 500 });
+    // Rate limiting: max 3 OTP requests per email per 5 minutes
+    const rateLimitRef = db.collection("otpRateLimit").doc(email);
+    const rateLimitSnap = await rateLimitRef.get();
+
+    if (rateLimitSnap.exists) {
+      const { count, windowStart } = rateLimitSnap.data() as { count: number; windowStart: number };
+      if (now - windowStart < RATE_LIMIT_WINDOW_MS) {
+        if (count >= RATE_LIMIT_MAX) {
+          return NextResponse.json(
+            { error: "Too many requests. Please wait before requesting a new code." },
+            { status: 429 }
+          );
+        }
+        await rateLimitRef.update({ count: FieldValue.increment(1) });
+      } else {
+        await rateLimitRef.set({ count: 1, windowStart: now });
+      }
+    } else {
+      await rateLimitRef.set({ count: 1, windowStart: now });
     }
+
+    const code = generateOtp();
+    const expiresAt = new Date(now + 10 * 60 * 1000);
+
+    await db.collection("otpCodes").doc(email).set({
+      code,
+      expiresAt,
+      used: false,
+      attempts: 0,
+    });
 
     const { error } = await resend.emails.send({
       from: "BrokerFlow <services@brokerflow.agency>",
@@ -45,7 +91,7 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("[send-otp] Resend error:", error);
-      return NextResponse.json({ error: `Failed to send email: ${error.message}` }, { status: 500 });
+      return NextResponse.json({ error: "Failed to send email. Please try again." }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });

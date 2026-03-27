@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/firestore";
-import { doc, getDoc, Timestamp } from "firebase/firestore";
+import { getAdminDb } from "@/lib/firebase-admin";
 
 export async function GET(
   _req: NextRequest,
@@ -8,9 +7,10 @@ export async function GET(
 ) {
   const { token } = await params;
 
-  const snap = await getDoc(doc(db, "brokerLeadInvites", token));
+  const db = getAdminDb();
+  const snap = await db.collection("brokerLeadInvites").doc(token).get();
 
-  if (!snap.exists()) {
+  if (!snap.exists) {
     return new NextResponse(invalidPage("This invitation link is invalid."), {
       status: 404,
       headers: { "Content-Type": "text/html" },
@@ -22,7 +22,7 @@ export async function GET(
     leadEmail: string;
     leadName?: string;
     leadRef?: string;
-    expiresAt: Timestamp;
+    expiresAt: FirebaseFirestore.Timestamp;
     superseded?: boolean;
   };
 
@@ -43,7 +43,7 @@ export async function GET(
   const loginUrl = new URL("/login", _req.url);
   loginUrl.searchParams.set("email", leadEmail);
   const response = NextResponse.redirect(loginUrl);
-  const cookieOpts = { path: "/", sameSite: "lax" as const, httpOnly: false, maxAge: 60 * 60 };
+  const cookieOpts = { path: "/", sameSite: "strict" as const, httpOnly: true, maxAge: 10 * 60 };
   if (leadName) response.cookies.set("pendingLeadName", leadName, cookieOpts);
   if (leadRef) response.cookies.set("pendingLeadRef", leadRef, cookieOpts);
   return response;

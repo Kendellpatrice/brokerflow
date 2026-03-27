@@ -2,19 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useLeadData } from "@/context/lead";
 
 export function SidebarNav() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [leadRef, setLeadRef] = useState<string | null>(null);
-
-  useEffect(() => {
-    const match = document.cookie
-      .split("; ")
-      .find((c) => c.startsWith("pendingLeadRef="));
-    if (match) setLeadRef(decodeURIComponent(match.split("=")[1]));
-  }, []);
+  const { leadData } = useLeadData();
+  const leadRef = leadData?.ref as string | undefined;
 
   const navItems = [
     { href: "/", icon: "info", label: "Introduction" },

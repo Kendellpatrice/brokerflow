@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { signInWithEmail, signInWithToken } from "@/lib/auth";
+import { signInWithEmail, signInWithToken, auth } from "@/lib/auth";
 
 type UserType = "client" | "broker";
 type Step = "credentials" | "verify";
@@ -101,7 +101,14 @@ function LoginForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Verification failed.");
       await signInWithToken(data.customToken);
-      document.cookie = "session=client; path=/; SameSite=Lax";
+      const idToken = await auth.currentUser?.getIdToken();
+      if (idToken) {
+        await fetch("/api/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        });
+      }
       router.push("/");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Verification failed.");
@@ -122,7 +129,14 @@ function LoginForm() {
     setLoading(true);
     try {
       await signInWithEmail(brokerEmail, brokerPassword);
-      document.cookie = "session=broker; path=/; SameSite=Lax";
+      const idToken = await auth.currentUser?.getIdToken();
+      if (idToken) {
+        await fetch("/api/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ idToken }),
+        });
+      }
       router.push("/broker");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Sign-in failed. Check your credentials.");
