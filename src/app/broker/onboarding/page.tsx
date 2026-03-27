@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth";
-import { createOrgAndProfile, useBrokerProfile } from "@/context/brokerProfile";
+import { createOrgAndProfile } from "@/context/brokerProfile";
 
 const inputBase =
   "w-full rounded-lg border bg-white py-3 px-3.5 text-base text-slate-900 placeholder:text-slate-400 transition focus:outline-none focus:ring-2 focus:ring-primary/20 dark:bg-slate-800 dark:text-slate-100 sm:py-2.5 sm:text-sm";
@@ -13,7 +13,6 @@ const inputError = "border-red-400 focus:border-red-400";
 export default function BrokerOnboardingPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { reload } = useBrokerProfile();
 
   const [orgName, setOrgName] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -31,7 +30,6 @@ export default function BrokerOnboardingPage() {
     setLoading(true);
     try {
       await createOrgAndProfile({ uid: user.uid, orgName: orgName.trim(), displayName: displayName.trim() });
-      reload();
       router.replace("/broker");
     } catch {
       setErrors({ orgName: "Failed to create organisation. Please try again." });

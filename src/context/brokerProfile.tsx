@@ -1,9 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { createContext, useContext, ReactNode } from "react";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firestore";
-import { useAuth } from "@/context/auth";
 
 export interface BrokerProfile {
   uid: string;
@@ -14,52 +13,29 @@ export interface BrokerProfile {
 }
 
 interface BrokerProfileContextValue {
-  profile: BrokerProfile | null;
-  loading: boolean;
-  /** Call after onboarding to refresh */
-  reload: () => void;
+  profile: BrokerProfile;
 }
 
-const BrokerProfileContext = createContext<BrokerProfileContextValue>({
-  profile: null,
-  loading: true,
-  reload: () => {},
-});
+const BrokerProfileContext = createContext<BrokerProfileContextValue | null>(null);
 
-export function BrokerProfileProvider({ children }: { children: ReactNode }) {
-  const { user, loading: authLoading } = useAuth();
-  const [profile, setProfile] = useState<BrokerProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [rev, setRev] = useState(0);
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      setProfile(null);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    getDoc(doc(db, "brokerProfiles", user.uid))
-      .then((snap) => {
-        if (snap.exists()) {
-          setProfile({ uid: user.uid, ...(snap.data() as Omit<BrokerProfile, "uid">) });
-        } else {
-          setProfile(null);
-        }
-      })
-      .finally(() => setLoading(false));
-  }, [user, authLoading, rev]);
-
+export function BrokerProfileProvider({
+  children,
+  initialData,
+}: {
+  children: ReactNode;
+  initialData: BrokerProfile;
+}) {
   return (
-    <BrokerProfileContext.Provider value={{ profile, loading, reload: () => setRev((r) => r + 1) }}>
+    <BrokerProfileContext.Provider value={{ profile: initialData }}>
       {children}
     </BrokerProfileContext.Provider>
   );
 }
 
 export function useBrokerProfile() {
-  return useContext(BrokerProfileContext);
+  const ctx = useContext(BrokerProfileContext);
+  if (!ctx) throw new Error("useBrokerProfile must be used within BrokerProfileProvider");
+  return ctx;
 }
 
 /** Creates org + broker profile doc. Call from onboarding page. */

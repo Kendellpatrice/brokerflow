@@ -1,9 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { logout } from "@/lib/auth";
-import { useAuth } from "@/context/auth";
 import { useBrokerProfile } from "@/context/brokerProfile";
 
 const navItems = [
@@ -91,18 +89,10 @@ type Props = {
 export function BrokerShell({ title, activeHref = "/broker", headerRight, children }: Props) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const router = useRouter();
-  const { user } = useAuth();
-  const { profile, loading: profileLoading } = useBrokerProfile();
-
-  useEffect(() => {
-    if (!profileLoading && user && !profile) {
-      router.replace("/broker/onboarding");
-    }
-  }, [profile, profileLoading, user, router]);
+  const { profile } = useBrokerProfile();
 
   const handleSignOut = async () => {
-    await logout();
-    document.cookie = "session=; path=/; max-age=0";
+    await fetch("/api/signout", { method: "POST" });
     router.push("/login");
   };
 
@@ -114,8 +104,8 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
         <SidebarContents
           activeHref={activeHref}
           onSignOut={handleSignOut}
-          orgName={profile?.orgName ?? ""}
-          displayName={profile?.displayName ?? ""}
+          orgName={profile.orgName}
+          displayName={profile.displayName}
         />
       </aside>
 
@@ -140,8 +130,8 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
               activeHref={activeHref}
               onNavClick={() => setSidebarOpen(false)}
               onSignOut={handleSignOut}
-              orgName={profile?.orgName ?? ""}
-              displayName={profile?.displayName ?? ""}
+              orgName={profile.orgName}
+              displayName={profile.displayName}
             />
           </aside>
         </>
