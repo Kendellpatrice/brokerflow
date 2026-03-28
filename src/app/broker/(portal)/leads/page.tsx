@@ -197,7 +197,7 @@ export default function LeadsPage() {
         </div>
 
         {/* Filters */}
-        <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
+        <div className="mb-6 rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-800 dark:bg-slate-900 sm:p-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <p className="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">Status</p>
@@ -292,12 +292,12 @@ export default function LeadsPage() {
               ) : filteredLeads.map((lead) => (
                 <div
                   key={lead.id}
-                  className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                  className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900"
                 >
-                  <div className="mb-3 flex items-start justify-between gap-2">
-                    <Link href={"/broker/leads/" + lead.id} className="group min-w-0">
-                      <p className="font-semibold text-slate-900 group-hover:text-primary dark:text-white">{lead.fullName}</p>
-                      <p className="text-xs text-slate-500 group-hover:text-primary/70">{lead.email}</p>
+                  <div className="mb-2 flex items-start justify-between gap-2">
+                    <Link href={"/broker/leads/" + lead.id} className="group min-w-0 overflow-hidden">
+                      <p className="truncate font-semibold text-slate-900 group-hover:text-primary dark:text-white">{lead.fullName}</p>
+                      <p className="truncate text-xs text-slate-500 group-hover:text-primary/70">{lead.email}</p>
                     </Link>
                     <div className="flex shrink-0 flex-col items-end gap-1.5">
                       {lead.loanPurpose && (
@@ -308,7 +308,7 @@ export default function LeadsPage() {
                       <LeadStatusBadge lead={lead} />
                     </div>
                   </div>
-                  <div className="mb-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                  <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
                     {lead.phone && (
                       <span className="flex items-center gap-1">
                         <span className="material-symbols-outlined text-[13px]">phone</span>

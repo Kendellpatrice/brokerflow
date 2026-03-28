@@ -1003,7 +1003,7 @@ export default function EditLeadPage() {
         </div>
       )}
 
-      <div className="p-6 md:p-10">
+      <div className="p-4 md:p-10">
         <div className="mx-auto max-w-7xl">
 
           {/* ── Profile header ──────────────────────────────────────────────── */}
@@ -1050,7 +1050,7 @@ export default function EditLeadPage() {
               </div>
 
               {/* Right: action buttons */}
-              <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
+              <div className="flex items-center gap-2 sm:shrink-0">
                 {isSubmitted && (
                   <button
                     type="button"
@@ -1059,9 +1059,9 @@ export default function EditLeadPage() {
                     className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700 transition hover:border-amber-300 hover:bg-amber-100 disabled:opacity-50 dark:border-amber-800 dark:bg-amber-900/20 dark:text-amber-400"
                   >
                     {unlocking ? (
-                      <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>Unlocking…</>
+                      <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span><span className="hidden sm:inline">Unlocking…</span></>
                     ) : (
-                      <><span className="material-symbols-outlined text-[14px]">lock_open</span>Unlock</>
+                      <><span className="material-symbols-outlined text-[14px]">lock_open</span><span className="hidden sm:inline">Unlock</span></>
                     )}
                   </button>
                 )}
@@ -1073,25 +1073,26 @@ export default function EditLeadPage() {
                     className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
                   >
                     {resending ? (
-                      <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>Sending…</>
+                      <><span className="material-symbols-outlined animate-spin text-[14px]">progress_activity</span><span className="hidden sm:inline">Sending…</span></>
                     ) : sentInvite ? (
-                      <><span className="material-symbols-outlined text-[14px]">mark_email_read</span>Sent</>
+                      <><span className="material-symbols-outlined text-[14px]">mark_email_read</span><span className="hidden sm:inline">Sent</span></>
                     ) : (
-                      <><span className="material-symbols-outlined text-[14px]">outgoing_mail</span>{rawDoc.activeInviteToken ? "Resend Invite" : "Send Invite"}</>
+                      <><span className="material-symbols-outlined text-[14px]">outgoing_mail</span><span className="hidden sm:inline">{rawDoc.activeInviteToken ? "Resend Invite" : "Send Invite"}</span></>
                     )}
                   </button>
                 )}
+                {/* Secondary actions: icon-only on mobile, full label on sm+ */}
                 <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
                   <span className="material-symbols-outlined text-[14px]">mail</span>
-                  Send Email
+                  <span className="hidden sm:inline">Send Email</span>
                 </button>
-                <button type="button" className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                <button type="button" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:border-primary/30 hover:bg-primary/5 hover:text-primary dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300">
                   <span className="material-symbols-outlined text-[14px]">upload_file</span>
                   Upload Document
                 </button>
                 <button type="button" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:bg-primary/90">
                   <span className="material-symbols-outlined text-[14px]">note_add</span>
-                  New Application
+                  <span className="hidden sm:inline">New Application</span>
                 </button>
               </div>
             </div>
@@ -1136,7 +1137,7 @@ export default function EditLeadPage() {
           ) : (
             <>
               {/* Loan volume stat card */}
-              <div className="mb-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div className="mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 md:p-6">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium text-slate-500">Total Loan Volume</p>
                   <span className="material-symbols-outlined text-[22px] text-slate-300 dark:text-slate-600">payments</span>
@@ -1158,7 +1159,7 @@ export default function EditLeadPage() {
                 <form onSubmit={handleSave} noValidate>
 
                   {/* ── Section 1: Contact Details ──────────────────────────── */}
-                  <div className="space-y-5 p-8 md:p-10">
+                  <div className="space-y-5 p-5 md:p-10">
                     <div className="flex items-center justify-between">
                       <div className="flex cursor-default items-center gap-2">
                         <SectionBadge n={1} />
@@ -1258,7 +1259,7 @@ export default function EditLeadPage() {
                   </div>
 
                   {/* ── Section 2: Loan Details ─────────────────────────────── */}
-                  <div className="space-y-5 border-t border-slate-100 p-8 dark:border-slate-800 md:p-10">
+                  <div className="space-y-5 border-t border-slate-100 p-5 dark:border-slate-800 md:p-10">
                     <div className="flex cursor-default items-center gap-2">
                       <SectionBadge n={2} />
                       <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Loan Details</h4>
@@ -1335,7 +1336,7 @@ export default function EditLeadPage() {
                   </div>
 
                   {/* ── Section 3: Additional Details ──────────────────────── */}
-                  <div className="space-y-5 border-t border-slate-100 p-8 dark:border-slate-800 md:p-10">
+                  <div className="space-y-5 border-t border-slate-100 p-5 dark:border-slate-800 md:p-10">
                     <div className="flex cursor-default items-center gap-2">
                       <SectionBadge n={3} />
                       <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">Additional Details</h4>
