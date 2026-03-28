@@ -139,7 +139,7 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
 
       {/* Main */}
       <main className="flex flex-1 flex-col overflow-y-auto">
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 dark:border-slate-800 dark:bg-slate-900 md:px-8 md:py-4">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] dark:border-slate-800 dark:bg-slate-900 md:px-8 md:py-4 md:pt-4">
           <div className="flex items-center gap-3">
             <button
               className="rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 md:hidden"
@@ -155,7 +155,7 @@ export function BrokerShell({ title, activeHref = "/broker", headerRight, childr
           )}
         </header>
 
-        <div className="flex-1">
+        <div className="flex-1 pb-[env(safe-area-inset-bottom)]">
           {children}
         </div>
       </main>
