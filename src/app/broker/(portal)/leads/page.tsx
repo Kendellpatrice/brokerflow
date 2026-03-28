@@ -292,41 +292,51 @@ export default function LeadsPage() {
               ) : filteredLeads.map((lead) => (
                 <div
                   key={lead.id}
-                  className="rounded-xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900"
+                  className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900"
                 >
-                  <div className="mb-2 flex items-start justify-between gap-2">
-                    <Link href={"/broker/leads/" + lead.id} className="group min-w-0 overflow-hidden">
-                      <p className="truncate font-semibold text-slate-900 group-hover:text-primary dark:text-white">{lead.fullName}</p>
-                      <p className="truncate text-xs text-slate-500 group-hover:text-primary/70">{lead.email}</p>
-                    </Link>
-                    <div className="flex shrink-0 flex-col items-end gap-1.5">
-                      {lead.loanPurpose && (
-                        <span className={`rounded px-2 py-0.5 text-xs font-bold ${LOAN_PURPOSE_STYLES[lead.loanPurpose] ?? "bg-slate-100 text-slate-700"}`}>
-                          {LOAN_PURPOSE_LABELS[lead.loanPurpose] ?? lead.loanPurpose}
-                        </span>
-                      )}
-                      <LeadStatusBadge lead={lead} />
+                  {/* Header: avatar + name + status + loan type */}
+                  <div className="flex items-start gap-3 p-3">
+                    <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-bold text-white">
+                      {lead.fullName?.charAt(0)?.toUpperCase() ?? "?"}
                     </div>
-                  </div>
-                  <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                    {lead.phone && (
-                      <span className="flex items-center gap-1">
-                        <span className="material-symbols-outlined text-[13px]">phone</span>
-                        {lead.phone}
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <Link href={"/broker/leads/" + lead.id} className="min-w-0">
+                          <p className="truncate font-semibold text-slate-900 dark:text-white">{lead.fullName}</p>
+                        </Link>
+                        <LeadStatusBadge lead={lead} />
+                      </div>
+                      <p className="truncate text-xs text-slate-500">{lead.email}</p>
+                    </div>
+                    {lead.loanPurpose && (
+                      <span className={`shrink-0 rounded px-2 py-0.5 text-xs font-bold ${LOAN_PURPOSE_STYLES[lead.loanPurpose] ?? "bg-slate-100 text-slate-700"}`}>
+                        {LOAN_PURPOSE_LABELS[lead.loanPurpose] ?? lead.loanPurpose}
                       </span>
+                    )}
+                  </div>
+
+                  {/* Meta strip: phone · amount · date */}
+                  <div className="flex divide-x divide-slate-100 border-t border-slate-100 dark:divide-slate-800 dark:border-slate-800">
+                    {lead.phone && (
+                      <div className="flex min-w-0 flex-1 items-center gap-1 px-3 py-2 text-xs text-slate-500">
+                        <span className="material-symbols-outlined shrink-0 text-[13px]">phone</span>
+                        <span className="truncate">{lead.phone}</span>
+                      </div>
                     )}
                     {lead.loanAmount && (
-                      <span className="flex items-center gap-1">
+                      <div className="flex shrink-0 items-center gap-1 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
                         <span className="material-symbols-outlined text-[13px]">payments</span>
-                        ${lead.loanAmount}
-                      </span>
+                        <span>${lead.loanAmount}</span>
+                      </div>
                     )}
-                    <span className="flex items-center gap-1">
+                    <div className="flex shrink-0 items-center gap-1 px-3 py-2 text-xs text-slate-500">
                       <span className="material-symbols-outlined text-[13px]">calendar_today</span>
-                      {formatDate(lead.createdAt)}
-                    </span>
+                      <span>{formatDate(lead.createdAt)}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
+
+                  {/* Actions footer */}
+                  <div className="flex items-center gap-2 border-t border-slate-100 p-2 dark:border-slate-800">
                     {lead.factFindStatus === "submitted" ? (
                       <UnlockButton loading={unlocking === lead.id} onClick={() => handleUnlock(lead)} />
                     ) : (
@@ -339,10 +349,10 @@ export default function LeadsPage() {
                     )}
                     <Link
                       href={`/broker/leads/${lead.id}`}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300"
+                      className="ml-auto inline-flex cursor-pointer items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-primary/90"
                     >
-                      <span className="material-symbols-outlined text-[14px]">edit</span>
-                      Edit
+                      View
+                      <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
                     </Link>
                   </div>
                 </div>
